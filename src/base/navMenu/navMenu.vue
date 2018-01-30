@@ -62,17 +62,17 @@ export default {
             lines: [
               {
                 text: '批量发货',
-                link: 'auditOrder',
+                link: 'batchOrder',
                 bradge: this.orderWaitPassCount
               },
               {
                 text: '任务列表',
-                link: 'editEvlate',
+                link: 'taskList',
                 bradge: this.toAddFavorCount
               },
               {
                 text: '快递单列表',
-                link: 'appraiseOrder',
+                link: 'courierList',
                 bradge: this.favorWaitPassCount
               }
             ]

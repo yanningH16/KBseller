@@ -1,46 +1,46 @@
-const auditOrder = (resolve) => {
-  import('@/components/order/auditOrder').then((module) => {
+const BatchOrder = (resolve) => {
+  import('@/components/order/batchOrder').then((module) => {
     resolve(module)
   })
 }
-const editEvlate = (resolve) => {
-  import('@/components/order/editEvlate').then((module) => {
+const TaskList = (resolve) => {
+  import('@/components/order/taskList').then((module) => {
     resolve(module)
   })
 }
-const appraiseOrder = (resolve) => {
-  import('@/components/order/appraiseOrder').then((module) => {
+const CourierList = (resolve) => {
+  import('@/components/order/courierList').then((module) => {
     resolve(module)
   })
 }
-const allege = (resolve) => {
-  import('@/components/order/allege').then((module) => {
+const Pay = (resolve) => {
+  import('@/components/order/pay').then((module) => {
     resolve(module)
   })
 }
 const order = [{
-  path: 'order/auditOrder',
-  component: auditOrder,
-  name: 'auditOrder',
+  path: 'order/batchOrder',
+  component: BatchOrder,
+  name: 'batchOrder',
   meta: { title: '批量发货' }
 },
 {
-  path: 'order/editEvlate',
-  component: editEvlate,
-  name: 'editEvlate',
+  path: 'order/taskList',
+  component: TaskList,
+  name: 'taskList',
   meta: { title: '任务列表' }
 },
 {
-  path: 'order/appraiseOrder',
-  component: appraiseOrder,
-  name: 'appraiseOrder',
+  path: 'order/courierList',
+  component: CourierList,
+  name: 'courierList',
   meta: { title: '快递单列表' }
 },
 {
-  path: 'order/allege',
-  component: allege,
-  name: 'allege',
-  meta: { title: '订单管理-申述' }
+  path: 'order/pay',
+  component: Pay,
+  name: 'pay',
+  meta: { title: '支付' }
 }
 ]
 export default order
