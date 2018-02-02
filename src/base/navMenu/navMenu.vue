@@ -61,7 +61,7 @@ export default {
             routerHead: 'order',
             lines: [
               {
-                text: '批量发货',
+                text: '下单',
                 link: 'batchOrder',
                 bradge: this.orderWaitPassCount
               },
@@ -98,11 +98,11 @@ export default {
           },
           {
             icon: 'el-icon-menu',
-            header: '店铺管理',
+            header: '地址管理',
             routerHead: 'storeAdmin',
             lines: [
               {
-                text: '店铺管理',
+                text: '地址管理',
                 link: 'shopAdminList'
               }
             ]

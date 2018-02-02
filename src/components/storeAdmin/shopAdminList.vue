@@ -1,8 +1,7 @@
 <template>
   <div class="wrap">
-    <div class="shop">
-      <em class="gray">其他管理</em>>店铺管理</div>
     <div class="content">
+      <h2>地址列表</h2>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
         <el-tab-pane label="京东" name="first">
           <table class="border" v-for="(item,index) in shopList" :key="index">
@@ -61,6 +60,62 @@
           </table>
         </el-tab-pane>
         <el-tab-pane label='天猫' name="three">
+          <table class="border" v-for="(item,index) in shopList" :key="index">
+            <div class="icon">
+            </div>
+            <tr>
+              <i style="margin-left:20px">店铺名称:
+                <em>{{item.shopName}}</em>
+                <span class="right">状态 :
+                  <em>{{item.status}}</em>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                </span>
+              </i>
+            </tr>
+            <tr>
+              <i style="margin-left:20px">店铺链接:
+                <em>{{item.shopHomePageUrl}}</em>
+              </i>
+            </tr>
+            <tr>
+              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
+                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
+                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
+                <em>{{item.contactQQ}}</em>
+              </i>
+            </tr>
+          </table>
+        </el-tab-pane>
+        <el-tab-pane label='拼多多' name="four">
+          <table class="border" v-for="(item,index) in shopList" :key="index">
+            <div class="icon">
+            </div>
+            <tr>
+              <i style="margin-left:20px">店铺名称:
+                <em>{{item.shopName}}</em>
+                <span class="right">状态 :
+                  <em>{{item.status}}</em>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                </span>
+              </i>
+            </tr>
+            <tr>
+              <i style="margin-left:20px">店铺链接:
+                <em>{{item.shopHomePageUrl}}</em>
+              </i>
+            </tr>
+            <tr>
+              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
+                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
+                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
+                <em>{{item.contactQQ}}</em>
+              </i>
+            </tr>
+          </table>
+        </el-tab-pane>
+        <el-tab-pane label='其它' name="five">
           <table class="border" v-for="(item,index) in shopList" :key="index">
             <div class="icon">
             </div>
@@ -247,6 +302,12 @@ export default {
     margin-top 24px
     padding 0 0 336px
     position relative
+    h2
+      font-size 14px
+      color #444444
+      padding 20px 0px 16px 22px
+      border-bottom 1px solid #E5E5E5
+      margin-bottom 20px
     .border
       border 1px solid rgba(204, 204, 204, 1)
       width 100%

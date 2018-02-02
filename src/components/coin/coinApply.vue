@@ -1,27 +1,20 @@
 <template>
   <div class="wrap coinApply">
-    <div class="shop">
-      <em class="gray">资金管理</em>>资金记录
-    </div>
     <div class="contentShop">
       <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
-        <el-tab-pane label="消费明细" name="first">
+        <el-tab-pane label="交易流水" name="first">
           <ul>
             <li>
-              时间:
+              交易时间:
               <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd'>
               </el-date-picker>
             </li>
             <li>
-              类型:
+              交易内容:
               <el-select v-model="value" placeholder="请选择">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
-            </li>
-            <li>
-              订单编号:
-              <el-input v-model="input" placeholder="请输入内容"></el-input>
             </li>
             <li>
               <button class="btn" @click="search">查询</button>
@@ -30,53 +23,17 @@
           <div class="actTab">
             <noCont v-if="tableData.length===0"></noCont>
             <el-table :data="tableData" style="width: 100%" v-if="tableData.length!==0">
-              <el-table-column prop="sureTime" align="center" label="确认时间">
+              <el-table-column prop="number" align="center" label="流水号">
+              </el-table-column>
+              <el-table-column prop="remark" align="center" label="交易内容">
               </el-table-column>
               <el-table-column prop="revenue" align="center" label="入款">
               </el-table-column>
               <el-table-column prop="deduct" align="center" label="扣款">
               </el-table-column>
-              <el-table-column prop="type" align="center" label="类型">
-              </el-table-column>
               <el-table-column prop="balance" align="center" label="结余">
               </el-table-column>
-              <el-table-column prop="number" align="center" label="编号">
-              </el-table-column>
-              <el-table-column prop="remark" align="center" label="备注">
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="充值提现" name="second">
-          <ul>
-            <li>
-              时间:
-              <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd'>
-              </el-date-picker>
-            </li>
-            <li>
-              类型:
-              <el-select v-model="value" placeholder="请选择">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </li>
-            <li>
-              <button class="btn" @click="search_1">查询</button>
-            </li>
-          </ul>
-          <div class="actTab">
-            <noCont v-if="tableData_1.length===0"></noCont>
-            <el-table :data="tableData_1" style="width: 100%" v-if="tableData_1.length!==0">
-              <el-table-column prop="number" align="center" label="流水编号">
-              </el-table-column>
-              <el-table-column prop="pay" align="center" label="充值">
-              </el-table-column>
-              <el-table-column prop="cash" align="center" label="提现">
-              </el-table-column>
-              <el-table-column prop="type" align="center" label="类型">
-              </el-table-column>
-              <el-table-column prop="balance" align="center" label="结余">
+              <el-table-column prop="type" align="center" label="状态">
               </el-table-column>
               <el-table-column prop="sureTime" align="center" label="确认时间">
               </el-table-column>
@@ -167,9 +124,6 @@ export default {
     search () {
       this.sercherOne(1, this.pageSize)
     },
-    search_1 () {
-      this.sellerRecord(1, this.pageSize)
-    },
     sercherOne (pageNo, pageSize) {
       this.$ajax.post('/api/userFund/getSellerFundFlowsByUsageType', {
         usageType: ['0'],
@@ -199,44 +153,6 @@ export default {
             arr.push(goods)
           }
           this.tableData = arr
-        } else {
-          this.$message({
-            message: res.message,
-            type: 'warning'
-          })
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，刷新下试试')
-      })
-    },
-    sellerRecord (pageNo, pageSize) {
-      this.$ajax.post('/api/userFund/getSellerFundFlowsByUsageType', {
-        usageType: ['1', '2'],
-        pageNo: pageNo,
-        pageSize: pageSize,
-        sellerUserAccountId: this.userInfo.sellerUserId,
-        startDate: this.value3 ? this.value3[0] : '',
-        endDate: this.value3 ? this.value3[1] : '',
-        fundsFlowType: this.value
-      }).then((data) => {
-        // console.log(data)
-        let res = data.data
-        this.totalCount = res.data.totalCount
-        if (res.code === '200') {
-          let arr = []
-          for (let word of res.data.fundsFlows) {
-            let goods = {
-              sureTime: word.gmtModify,
-              pay: word.income || '--',
-              cash: word.pay || '--',
-              type: word.fundsFlowType === 'TYP_SELLER_CAPITAL_CHARGE' ? '本金' : word.fundsFlowType === 'TYP_SELLER_CAPITAL_FREEZE' ? '本金' : word.fundsFlowType === 'TYP_SELLER_CAPITAL_PAY' ? '本金' : '佣金',
-              balance: word.availableCapital || word.availableCommission,
-              number: word.fundsFlowId,
-              remark: word.content
-            }
-            arr.push(goods)
-          }
-          this.tableData_1 = arr
         } else {
           this.$message({
             message: res.message,

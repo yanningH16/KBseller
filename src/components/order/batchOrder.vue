@@ -28,11 +28,11 @@
           </el-select>
         </li>
         <li class="radio">
-          <el-radio v-model="radio" label="1">批量发货</el-radio>
-          <el-radio v-model="radio" label="2">手工发货</el-radio>
+          <el-radio v-model="radio" label="1" @change="allDelively">批量下单(表格)</el-radio>
+          <el-radio v-model="radio" label="2" @change="handDelively">手工单条下单</el-radio>
         </li>
         <!-- 批量发货 -->
-        <li class="text" v-show="flase">
+        <li class="text" v-show="all">
           <em>上传订单信息</em>
           <span>1、支持淘宝、京东、天猫、拼多多导出的订单直接上传，点击
             <i>查看帮助</i>
@@ -47,7 +47,8 @@
           </p>
         </li>
         <!-- 手工发货 -->
-        <li class="hand">
+        <li class="hand" v-show="hand">
+          <p style="font-size:12px;color:#ff3341;margin-left:100px;padding-bottom:10px">示例：浙江省杭州市萧山区xxxxx（必须包含省市区信息，不得含有空格、逗号及其他特殊字符）</p>
           <p>
             <em>填写订单信息</em>
             <input type="text" placeholder="订单编号">
@@ -66,7 +67,7 @@
             <input type="text" placeholder="手机号"></p>
           <p class="go" @click="add()">+继续添加</p>
         </li>
-        <li class="handText">
+        <li class="handText" v-show="hand">
           <p class="kg">物品重量 <input type="number">&nbsp; kg&nbsp;&nbsp;- &nbsp;&nbsp;<input type="number">&nbsp;&nbsp;kg</p>
           <p class="text">系统自动会给每个订单在您设置范围内随机生成一个重量，如需固定重要，则填写一致即可</p>
         </li>
@@ -77,6 +78,7 @@
             <em>40KG</em>
           </p>
         </li>
+        <!-- 上传CSV成功后显示 -->
         <li class="forList" v-show="flase">
           <p>1.商品名称:
             <span>女装外套</span>
@@ -103,59 +105,33 @@ export default {
       company: [{
         value: '选项1',
         label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
       }],
       value: '',
       shop: [{
         value1: '选项1',
         label: '黄金糕'
-      }, {
-        value1: '选项2',
-        label: '双皮奶'
-      }, {
-        value1: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value1: '选项4',
-        label: '龙须面'
-      }, {
-        value1: '选项5',
-        label: '北京烤鸭'
       }],
       value1: '',
       address: [{
         value2: '选项1',
         label: '黄金糕'
-      }, {
-        value2: '选项2',
-        label: '双皮奶'
-      }, {
-        value2: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value2: '选项4',
-        label: '龙须面'
-      }, {
-        value2: '选项5',
-        label: '北京烤鸭'
       }],
-      value2: ''
+      value2: '',
+      all: true,
+      hand: false
     }
   },
   methods: {
     add () {
       this.inputArr.push(this.item)
+    },
+    allDelively () {
+      this.all = true
+      this.hand = false
+    },
+    handDelively () {
+      this.all = false
+      this.hand = true
     }
   }
 }

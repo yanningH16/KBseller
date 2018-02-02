@@ -18,6 +18,11 @@ const Pay = (resolve) => {
     resolve(module)
   })
 }
+const TaskListDetails = (resolve) => {
+  import('@/components/order/waitingPay').then((module) => {
+    resolve(module)
+  })
+}
 const order = [{
   path: 'order/batchOrder',
   component: BatchOrder,
@@ -29,6 +34,12 @@ const order = [{
   component: TaskList,
   name: 'taskList',
   meta: { title: '任务列表' }
+},
+{
+  path: 'order/waitingPay',
+  component: TaskListDetails,
+  name: 'waitingPay',
+  meta: { title: '待支付详情' }
 },
 {
   path: 'order/courierList',

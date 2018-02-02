@@ -116,7 +116,7 @@ export default {
     justify-content space-around
     align-content center
     height calc(100% - 200px)
-    background red
+    background url('../../assets/image/timg.jpg')
     .text
       align-self center
       font-size 24px

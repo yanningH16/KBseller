@@ -2,7 +2,26 @@
   <div class="wrapBg">
     <div class="bg">
       <div class="title">
-        <h2>确认支付</h2>
+        <h2>任务详情</h2>
+        <p>待支付</p>
+      </div>
+      <div class="carDate">
+        <p>
+          <span class="rw">金额:
+            <i> 20.00</i>
+          </span>
+          <span>任务编号:
+            <i>rw546546546546</i>
+          </span>
+        </p>
+        <p class="second">
+          <span class="rh">电商平台:
+            <i>淘宝-品胜店铺</i>
+          </span>
+          <span>发货地址:
+            <i>张三 15868152366 浙江省杭州市余杭区向往街乐富海邦园0001幢</i>
+          </span>
+        </p>
       </div>
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
@@ -62,12 +81,24 @@ export default {
     .title
       font-size 16px
       color #444
-      border-bottom 1px solid #e5e5e5
       padding-bottom 18px
       p
         float right
-        color #ff2933
+        color #377AFE
         font-size 14px
+    .carDate
+      border 1px solid #DEDEDE
+      padding 31px 0px 34px 83px
+      font-size 14px
+      color #9B9B9B
+      i
+        color #444444
+      .second
+        margin-top 20px
+      .rw
+        margin-right 258px
+      .rh
+        margin-right 178px
     .table
       border 1px solid #DEDEDE
       margin-top 24px

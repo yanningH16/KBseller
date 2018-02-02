@@ -6,8 +6,13 @@
       <h3>商家绑定店铺</h3>
       <div class="line"></div>
       <ul class="content_info">
+        <li style="margin-bottom:20px">
+          <span>所属平台&nbsp;&nbsp;</span>
+          <!-- <span>{{this.$route.query.number===2?'天猫':'京东'}}</span> -->
+          <el-input v-model="input8" placeholder="请输入内容" style="width:384px"></el-input>
+        </li>
         <li class="site">
-          <span>店铺首页网址&nbsp;&nbsp;</span>
+          <span>店铺首页链接&nbsp;&nbsp;</span>
           <el-input v-model="input" placeholder="请输入内容" style="width:384px"></el-input>
           <span class="shopInfo" @click="getShopInfo">读取店铺信息</span>
         </li>
@@ -15,23 +20,8 @@
           <span>店铺名称&nbsp;&nbsp;</span>
           <el-input v-model="input1" placeholder="请输入内容" style="width:384px"></el-input>
         </li>
-        <li class="wangwang" v-show="this.$route.query.number!==0">
-          <span>店铺旺旺ID&nbsp;&nbsp;</span>
-          <el-input v-model="input2" placeholder="请输入内容" style="width:384px"></el-input>
-        </li>
-        <li class="type">
-          <span>商品所属分类&nbsp;&nbsp;</span>
-          <el-select v-model="value" placeholder="请选择" @change="valueChange">
-            <el-option v-for="item in shopType" :key="item.value" :label="item.className" :value="item">
-            </el-option>
-          </el-select>
-        </li>
-        <li class="pic">
-          <span class="pic_admin">管理后台截图</span>
-          <el-upload class="avatar-uploader" :show-file-list="false" :http-request="uploadImg" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" ref="upload" action="">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" width="182px" height="182" style="border-right:1px solid #D4D5D8; border-bottom:1px solid #D4D5D8">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+        <li class="addTititle">发货地址
+          <span>请真实填写发货地址（与淘宝／京东等渠道后台的发货地址一致），否则无法正常匹配揽件公司</span>
         </li>
         <li class="addContent" v-for="(item,index) in addArr" :key='index'>
           <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i>
@@ -59,32 +49,33 @@
                 <el-option v-for="(item,index) in zone" :key="index" :label="item.name" :value="item"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="街道地址">
-              <el-input v-model="jieName" style="width:384px"></el-input>
+            <el-form-item label="发货人姓名">
+              <el-input v-model="sendName" style="width:384px"></el-input>
             </el-form-item>
             <el-form-item label="发货电话">
               <el-input v-model="phone" style="width:384px"></el-input>
+            </el-form-item>
+            <el-form-item label="街道地址">
+              <el-input v-model="jieName" style="width:384px"></el-input>
+              <p style="font-size:12px;color:#FF2933;margin-left:20px">添加后无法修改，一个店铺地址最多绑定5个，您还可以绑定3个</p>
             </el-form-item>
           </el-form>
           <button class="btn" @click="save">保存</button>
         </li>
         <li class="addAddress">
           <i class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
+          <em class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer">从已有地址添加</em>
         </li>
-        <li>
-          <div class="line"></div>
-          <p class="person">此店铺与平台对接人</p>
+        <li class="accountTab">
+          <el-table :data="getAddressList" style="width: 100%" @select="handSelect" @select-all="selectAll" border="true">
+            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column prop="address" align="center" label="已添加的地址">
+            </el-table-column>
+          </el-table>
         </li>
-        <li class="personInfo">
-          姓名&nbsp;&nbsp;
-          <el-input v-model="input4" placeholder="请输入内容" style="width:384px"></el-input><br>
-          <span style="margin-left:-10px">手机号&nbsp;&nbsp;</span>
-          <el-input v-model="input5" placeholder="请输入内容" style="width:384px;margin-top:20px"></el-input><br>
-          <span>QQ号&nbsp;&nbsp;</span>
-          <el-input v-model="input6" placeholder="请输入内容" style="width:384px;margin-top:20px"></el-input>
-        </li>
-        <li>
+        <li class="clickBtn">
           <button class=" btn" style="margin-bottom:60px" @click="addSure">确认绑定</button>
+          <button class=" btnBlack" style="margin-bottom:60px" @click="cancel">取消</button>
         </li>
       </ul>
     </div>
@@ -92,11 +83,11 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters, mapActions } from 'vuex'
-import { getImgSize, uploadFile, uploadPromise } from '../../assets/js/upload'
 export default {
   name: 'shopAdmin',
   data () {
     return {
+      input8: this.$route.query.number === 2 ? '天猫' : '京东',
       // 判断按钮是否可用
       disable: false,
       // 判断是否有这个类名的存在
@@ -114,26 +105,18 @@ export default {
       zoneCode: '',
       jieName: '',
       phone: '',
+      sendName: '',
       input: '',
       input1: '',
-      input2: '',
-      input4: '',
-      input5: '',
-      input6: '',
       value: '',
       className: '',
       valueCode: '',
-      imageUrl: '',
-      pull: true,
+      pull: false,
       addArr: [],
-      addContent: false
-    }
-  },
-  watch: {
-    isCanUpload (val) {
-      if (val) {
-        this.$refs.upload.submit()
-      }
+      getAddressList: [
+        { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' },
+        { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' }
+      ]
     }
   },
   computed: {
@@ -142,7 +125,6 @@ export default {
     ])
   },
   created () {
-    this.shopFirst()
     this.Provinces()
   },
   methods: {
@@ -163,7 +145,6 @@ export default {
         let res = data.data
         if (res.code === '200') {
           this.input1 = res.data.title
-          this.input2 = res.data.wanwangId
           if (res.data.title === '' || res.data.wangwangId === '') {
             this.$message({
               message: '暂无无法读取店铺信息,请手动填写',
@@ -180,44 +161,6 @@ export default {
         console.log(err)
         this.$message.error('服务器错误！')
       })
-    },
-    handleAvatarSuccess (res, file) {
-      // this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    uploadImg (img) {
-      if (!this.isCanUpload) {
-        return false
-      }
-      uploadPromise.then((res) => {
-        if (res.statusText === 'OK') {
-          uploadFile(res.data, img.file).then((res) => {
-            // this.imageUrl = res.url
-            this.imageUrl = res
-          }).catch(() => {
-            this.$message.error('网络错误，请刷新试试')
-          })
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，请刷新试试')
-      })
-    },
-    beforeAvatarUpload (file) {
-      const isJPG = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif')
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG/PNG/GIF 格式!')
-        this.isCanUpload = false
-        return false
-      } else if (!isLt1M) {
-        this.$message.error('上传头像图片大小不能超过 1MB!')
-        this.isCanUpload = false
-        return false
-      } else {
-        getImgSize(file).then((img) => {
-          this.isCanUpload = true
-        })
-      }
     },
     add () {
       this.pull = !this.pull
@@ -255,21 +198,13 @@ export default {
         this.jieName = ''
         this.phone = ''
       }
-      this.addContent = true
       this.pull = false
     },
     // 当点击确认绑定的时候做的请求
     addSure () {
-      if (this.input === '' || this.input1 === '' || this.value === '' || this.addArr.length === 0 || this.input4 === '' || this.input5 === '' || this.input6 === '') {
+      if (this.input === '' || this.input1 === '' || this.value === '' || this.addArr.length === 0) {
         this.$message({
           message: '请正确填写所有内容,不能留空哦...',
-          type: 'warning'
-        })
-        return false
-      }
-      if (!(/^1[34578]\d{9}$/.test(this.input5))) {
-        this.$message({
-          message: '手机号格式错误,请重新填写',
           type: 'warning'
         })
         return false
@@ -294,9 +229,6 @@ export default {
         productClassId: this.valueCode,
         screenShot: this.imageUrl,
         postAddressList: JSON.stringify(shopArr),
-        concatName: this.input4,
-        concatTelephone: this.input5,
-        concatQQ: this.input6,
         shopType: this.$route.query.number,
         productClassDetail: this.className
       }).then((data) => {
@@ -348,32 +280,6 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
-    // 商品所属的一级分类
-    shopFirst () {
-      this.$ajax.post('/api/config/productClass/getJDFirstClass', {
-      }).then((data) => {
-        let res = data.data
-        if (res.code === '200') {
-          let arr = []
-          for (let word of res.data) {
-            let goods = {
-              id: word.id,
-              className: word.className
-            }
-            arr.push(goods)
-          }
-          this.shopType = arr
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error('服务器错误！')
-      })
-    },
     // 检测当省份发生变化出发的改变事件
     provinceChange () {
       this.getCity()
@@ -413,7 +319,7 @@ export default {
             }
             arr.push(goods)
           }
-          this.provinces = arr
+          // this.provinces = arr
         } else {
           this.$message({
             message: data.data.message,
@@ -486,6 +392,14 @@ export default {
     remove (index) {
       this.addArr.splice(index, 1)
     },
+    cancel () {
+    },
+    handSelect () {
+
+    },
+    selectAll () {
+
+    },
     ...mapActions([
       'setUserInfo'
     ])
@@ -529,9 +443,12 @@ export default {
         margin-left 154px
       .shopName
         margin-top 20px
-      .wangwang
+      .addTititle
         margin-top 20px
-        margin-left -11px
+        margin-left 120px
+        span
+          color #FF2933
+          font-size 12px
       .type
         margin-top 20px
         margin-left -22px
@@ -564,7 +481,16 @@ export default {
           line-height 180px
       .addAddress
         margin-top 25px
-        margin-left -300px
+        margin-left -50px
+        em
+          margin-left 200px
+      .accountTab
+        border 1px solid #d9d9d9
+        width 50%
+        margin-left 28%
+        margin-top 20px
+      .clickBtn
+        margin-top 50px
       .pullDown
         width 480px
         margin-top 20px

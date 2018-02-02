@@ -1,25 +1,30 @@
 <template>
   <div class="overView">
     <img class="guide" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291795730&di=6f65b2e18c0ec24c646336f70f121c64&imgtype=0&src=http%3A%2F%2Fimg.warting.com%2Fallimg%2F2016%2F0219%2Ffowr1rkr3gq-320.jpg" alt="">
-    <div class="moneyList">
-      <ul class="leftMoney">
-        <li>
-          <img src="../../assets/image/benjin.png" alt="">
-          <div>
-            <h3>账户余额
-              <span>充值</span>
-            </h3>
-            <h2 style="color:#ff3341;">100</h2>
-          </div>
-        </li>
-        <li>
-          <img src="../../assets/image/yongjin.png" alt="">
-          <div>
-            <h3 style="line-height:70px">正在努力开发中......</h3>
-          </div>
-        </li>
-      </ul>
-    </div>
+    <ul class="leftMoney">
+      <li>
+        <h3>我的账户</h3>
+        <div class="first">
+          <p>¥36.00</p>
+          <p>皇冠用户</p>
+          <p>2.8元/单</p>
+          <p>86</p>
+        </div>
+        <div class="second">
+          <p>余额
+            <span>充值</span>
+          </p>
+          <p>用户等级</p>
+          <p>圆通成本</p>
+          <p>预计放单数</p>
+        </div>
+      </li>
+      <li class="carAddress">
+        <h3>我的发货地址</h3>
+        <p>黄军 15000176546 浙江省杭州市一行情康东京菲菲</p>
+        <p class="more">查到更多</p>
+      </li>
+    </ul>
     <div class="contentShop">
       <el-tabs v-model="activeName" @tab-click="handleClick" type="border-card">
         <el-tab-pane label="任务查询" name="first">
@@ -185,56 +190,53 @@ export default {
     width 100%
     height 70px
     display inline-block
-  .red
-    color #FF2933
-  .blue
-    color #1C95FF
-    cursor pointer
-  .nav
-    background #ffffff
-    padding 12px 16px
-    padding-right 16px
-    margin-bottom 24px
-    border-radius 4px
-  .moneyList
-    margin-bottom 20px
-    height 145px
+  .leftMoney
+    width 100%
     display flex
     justify-content space-between
-    .leftMoney
-      flex 1
-      display flex
-      margin-right 20px
-      li
-        flex 1
+    li
+      width 50%
+      background #ffffff
+      height 150px
+      // border 1px solid red
+      box-shadow 0px 0px 15px rgba(0, 0, 0, 0.07)
+      div
         display flex
-        flex-direction row
-        max-width 400px
-        min-width 220px
-        background #ffffff
-        margin-right 16px
-        padding 20px
-        border-radius 4px
-        border 1px solid #dedede
-        box-shadow 0 0 15px rgba(0, 0, 0, 0.07)
-        img
-          width 68px
-          height 68px
-          border-radius 50%
-          align-self center
-        >div
-          flex 2
-          padding-top 14px
-          margin-left 24px
-          h3
-            font-size 16px
-            line-height 36px
-            span
-              color #377AFE
-              margin-left 40px
-          h2
-            font-size 24px
-            line-height 44px
+        justify-content space-around
+        margin-top 26px
+      h3
+        color #444444
+        font-size 16px
+        padding 16px 0px 16px 21px
+        border-bottom 1px solid #E5E5E5
+      .first
+        font-size 20px
+        color #F5A623
+      .second
+        color #444
+        font-size 12px
+        span
+          display inline-block
+          width 40px
+          height 18px
+          border 1px solid #4a90e2
+          color #4a90e2
+          border-radius 4px
+          line-height 18px
+          text-align center
+          margin-left 10px
+    .carAddress
+      p
+        color #444
+        font-size 14px
+        margin-top 18px
+        margin-left 43px
+      .more
+        float right
+        margin-right 27px
+        color #377AFE
+        font-size 14px
+        cursor pointer
   .contentShop
     background #fff
     margin-top 24px

@@ -65,45 +65,34 @@
         </div>
       </div>
     </div>
-    <!-- 弹框部分 -->
-    <el-dialog title="生产充值单" :visible.sync="dialogVisible" width="600px" :modal-append-to-body='false'>
-      <p style="font-size:16px;color:#333">请使用尾号
-        <span style="color:#ff0020">{{objDate.sellerBankCardNo |bankCard}}</span>的
-        <span style="color:#ff0020">{{objDate.sellerBankName }}
-        </span>网银账户向以下银行账户转账,
-        <span style="color:#ff0020">禁止使用支付宝!</span>请在24小时内付款,否则系统将自动取消充值单</p>
-      <p style="font-size:16px;color:#ff8a22">财务审核时间为9:00-20:00</p>
-      <ul>
-        <li class="detali">
-          收款账户名&nbsp;&nbsp;
-          <span>{{objDate.platformCardUserName}}</span>
-        </li>
-        <li class="detali">
-          银行卡号&nbsp;&nbsp;
-          <span>{{objDate.platformCardNo}}</span>
-          <span class="blue copy" :data-clipboard-text='objDate.platformCardNo' @click="doCopy">复制</span>
-        </li>
-        <li class="detali">
-          所属银行&nbsp;&nbsp;
-          <span>{{objDate.platformCardBankCardName}}</span>
-        </li>
-        <li class="detali">
-          收款金额&nbsp;&nbsp;
-          <span>{{objDate.chargeAmount}}</span>
-          <p style="margin-left:70px">为了汇款安全快速到账,请按添加小数点后金额汇款.如果金额不匹配会造成汇款到账延迟</p>
-        </li>
-        <li class="detali">
-          备注/附言/摘要&nbsp;&nbsp;
-          <span>{{objDate.memo}}</span>
-          <span class="blue copy" :data-clipboard-text='objDate.memo' @click="doCopy">复制</span>
-          <p style="margin-left:100px">请在备注/附言/摘要中严格要求填写<br>不要填写除此以外的其他字符(刷单,SD等),否则不能正确到账</p>
-        </li>
-      </ul>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="transferMoney">确认转账</el-button>
-        <el-button @click="dialogVisible = false">先不转</el-button>
-      </span>
-    </el-dialog>
+    <!-- 生产虫子单弹框部分 -->
+    <div class="payWrap">
+      <el-dialog title="生产充值单" :visible.sync="dialogVisible" width="600px" :modal-append-to-body='false'>
+        <p>
+          <span style="margin-left:22px">请用您的这张银行卡</span>
+          <el-input v-model="input"></el-input>
+        </p>
+        <p>
+          <span style="margin-left:64px">向这张银行卡</span>
+          <el-input v-model="input1"></el-input>
+        </p>
+        <p>
+          <span style="margin-left:120px">转款</span>
+          <el-input v-model="input2"></el-input>元
+        </p>
+        <p>
+          <span>转款备注/附言/摘要填写</span>
+          <el-input v-model="input3"></el-input>
+          <span class="star">*必填</span>
+          <span class="blue copy" :data-clipboard-text='input3' @click="doCopy">复制</span>
+        </p>
+        <p style="margin-top:20px">1.备注/附言/摘要中严格要求填写,每一次充值的编码都会变更,请核对后填写<br>2.支付宝不予审核<br>3.审核时间:周一至周五9:00-18:00 如遇节假日顺延,请合理安排充值时间<br>4.转款后无需私聊,工作日,30分钟内即可到款</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="transferMoney">确认转账</el-button>
+          <el-button @click="dialogVisible = false">先不转</el-button>
+        </span>
+      </el-dialog>
+    </div>
     <!-- 充值单详情的弹窗 -->
     <el-dialog title="充值单详情" :visible.sync="toview" width="600px" :modal-append-to-body='false'>
       <div class="line"></div>
@@ -164,6 +153,10 @@ export default {
   data () {
     return {
       input4: '',
+      input: '',
+      input1: '',
+      input2: '',
+      input3: '',
       currentPage: 1,
       pageSize: 5,
       dialogVisible: false,
@@ -265,6 +258,9 @@ export default {
             sellerBankCardUserName: res.data.sellerBankCardUserName
           }
           this.objDate = goods
+          this.input1 = goods.platformCardUserName + ' ' + goods.platformCardNo + ' ' + goods.platformCardBankCardName
+          this.input = goods.sellerBankCardUserName + ' ' + goods.sellerBankCardNo + ' ' + goods.sellerBankName
+          this.input2 = goods.chargeAmount
           this.platformCardBankCardName = goods.platformCardBankCardName
           this.memo = goods.memo
           this.platformCardNo = goods.platformCardNo
@@ -479,4 +475,8 @@ export default {
     span
       color #444444
       font-weight 600
+  .payWrap p
+    margin-bottom 10px
+    .star
+      color #ff3341
 </style>
