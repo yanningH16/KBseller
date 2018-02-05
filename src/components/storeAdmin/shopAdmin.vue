@@ -63,10 +63,10 @@
           <button class="btn" @click="save">保存</button>
         </li>
         <li class="addAddress">
-          <i class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
-          <em class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer">从已有地址添加</em>
+          <i :class='{"activeColor":pull}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
+          <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从已有地址添加</em>
         </li>
-        <li class="accountTab">
+        <li class="accountTab" v-show="haveAdd">
           <el-table :data="getAddressList" style="width: 100%" @select="handSelect" @select-all="selectAll" border="true">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column prop="address" align="center" label="已添加的地址">
@@ -111,12 +111,15 @@ export default {
       value: '',
       className: '',
       valueCode: '',
-      pull: false,
       addArr: [],
       getAddressList: [
         { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' },
         { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' }
-      ]
+      ],
+      // 已有地址
+      haveAdd: false,
+      // 添加新的地址
+      pull: false
     }
   },
   computed: {
@@ -163,7 +166,13 @@ export default {
       })
     },
     add () {
-      this.pull = !this.pull
+      this.pull = true
+      this.haveAdd = false
+    },
+    getAdd () {
+      this.pull = false
+      this.haveAdd = true
+      this.addArr = []
     },
     // 当点击保存的时候进行收货地的保存
     save () {
@@ -319,7 +328,7 @@ export default {
             }
             arr.push(goods)
           }
-          // this.provinces = arr
+          this.provinces = arr
         } else {
           this.$message({
             message: data.data.message,
@@ -484,6 +493,9 @@ export default {
         margin-left -50px
         em
           margin-left 200px
+        .activeColor
+          background rgba(0, 0, 0, 0.1)
+          border-radius 5px
       .accountTab
         border 1px solid #d9d9d9
         width 50%

@@ -17,7 +17,7 @@ const storeAdmin = [{
   path: 'storeAdmin/shopAdminList',
   component: shopAdminList,
   name: 'shopAdminList',
-  meta: { title: '其它管理-店铺列表' }
+  meta: { title: '店铺列表' }
 },
 {
   path: 'storeAdmin/changeShop',
@@ -29,7 +29,7 @@ const storeAdmin = [{
   path: 'storeAdmin/shopAdmin',
   component: shopAdmin,
   name: 'shopAdmin',
-  meta: { title: '其它管理-店铺管理' }
+  meta: { title: '添加地址' }
 }
 ]
 export default storeAdmin

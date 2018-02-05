@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../../assets/image/logob.png" alt="logo">
+      <h1>包裹网</h1>
     </div>
     <div class="cont">
       <div class="board">
@@ -164,7 +164,7 @@ export default {
   height 100%
   background #f8f8f8
   .logo
-    color #ffffff
+    font-size 30px
     height 75px
     padding 26px 45px
     overflow hidden
@@ -182,6 +182,7 @@ export default {
     justify-content space-around
     align-content center
     height calc(100% - 200px)
+    background url('../../assets/image/timg.jpg')
     .text
       align-self center
       font-size 24px

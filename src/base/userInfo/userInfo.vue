@@ -3,12 +3,12 @@
     <div class="cont">
       <div class="record">
         <span>余额:¥30.00</span>
-        <span>等级:代理商</span>
-        <span>圆通:¥0.28/单</span>
+        <span>等级:{{this.userInfo.levelDetail}}</span>
+        <span>圆通:¥{{this.userInfo.price}}/单</span>
       </div>
       <div class="info" @click="showInfo=!showInfo">
         <img src="../../assets/image/huaxia.png" alt="">
-        <span>15037183341</span>
+        <span>{{this.userInfo.telephone}}</span>
         <a class="el-icon-caret-bottom"></a>
         <transition :name="showInfo ? 'el-fade-in-linear' : 'el-fade-in'">
           <ul class="operate" :class="{ 'fadeIn': showInfo, 'fadeOut': !showInfo }" v-show="showInfo">
@@ -79,11 +79,11 @@ export default {
       })
     },
     fixPass () {
-      this.$ajax.post('/api/user/changePwd', {
-        telephone: this.userInfo.telephone,
+      this.$ajax.post('/api/seller/changePwd', {
+        sellerAccoountId: this.userInfo.sellerAccountId,
         oldPwd: md5(this.fixPassObj.oldpass),
         newPwd: md5(this.fixPassObj.newpass1),
-        repeatPwd: md5(this.fixPassObj.newpass2)
+        rePwd: md5(this.fixPassObj.newpass2)
       }).then((data) => {
         if (data.data.code === '200') {
           this.$message({

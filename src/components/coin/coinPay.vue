@@ -47,9 +47,14 @@
           </el-table-column>
           <el-table-column prop="remark" align="center" label="备注">
           </el-table-column>
-          <el-table-column align="center" label="充值状态">
+          <el-table-column prop="JDStatus" align="center" label="充值状态">
             <template slot-scope="scope">
-              <span class="tipSmall" :class="scope.row.JDStatus==='成功' ? 'tipSuccess' : scope.row.JDStatus==='失败' ? 'tipError' : scope.row.JDStatus==='进行中'?'tipDoing':'--'">{{scope.row.JDStatus}}</span>
+              <span class="tipDoing" v-if="scope.row.JDStatus==='1'">等待付款</span>
+              <span class="tipDoing" v-if="scope.row.JDStatus==='2'">等待收货</span>
+              <span class="tipSuccess" v-if="scope.row.JDStatus==='3'">等待收款</span>
+              <span class="tipError" v-if="scope.row.JDStatus==='4'">充值失败</span>
+              <span class="tipDoing" v-if="scope.row.JDStatus==='5'">订单取消</span>
+              <span class="tipSuccess" v-if="scope.row.JDStatus==='6'">充值完成</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">
@@ -99,7 +104,7 @@
       <ul class="payPar">
         <li>
           充值账户名&nbsp;&nbsp;
-          <span>{{lookData.sellerBankCardUserName}}</span>
+          <span>{{lookData.sellerUserName}}</span>
         </li>
         <li>
           充值账户&nbsp;&nbsp;
@@ -113,16 +118,12 @@
         <li class="lines"></li>
         <li>
           收款账户名
-          <span>{{lookData.platformBankCardUserName}}</span>
+          <span>{{lookData.receiptUserName}}</span>
         </li>
         <li>
           银行卡号&nbsp;&nbsp;
           <span>{{lookData.platformBankCardNo}}</span>
           <span class="blue copy" :data-clipboard-text='lookData.platformBankCardNo' @click="doCopy">复制</span>
-        </li>
-        <li>
-          收款账户详情&nbsp;&nbsp;
-          <span>{{lookData.platformBankCardName}}</span>
         </li>
         <li>
           收款金额&nbsp;&nbsp;
@@ -164,20 +165,11 @@ export default {
       pointNum: 0,
       objDate: {},
       lookData: {},
-      // 平台端银行卡名字
-      platformCardBankCardName: '',
-      // 备注
-      memo: '',
-      // 运营人员的卡号
-      platformCardNo: '',
-      // 商家的银行卡卡号
-      sellerBankCardNo: '',
-      platformCardUserName: '',
-      sellerBankCardUserName: '',
+      recipet: {},
       tableData: [],
       options: [],
       item: '',
-      apiUrl: '/api/sellerorder/getChargeApplysBySellerUserId'
+      apiUrl: '/api/seller/recharge/getRechargeListBySellerAccount'
     }
   },
   created () {
@@ -185,14 +177,14 @@ export default {
     this.pointNum = Math.round(Math.random() * 99)
   },
   mounted () {
-    this.getMoney()
+    // this.getMoney()
   },
   computed: {
     params () {
       return {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        sellerUserId: this.userInfo.sellerUserId
+        sellerAccountId: this.userInfo.sellerAccountId
       }
     },
     ...mapGetters([
@@ -238,35 +230,21 @@ export default {
         return false
       }
       this.dialogVisible = true
-      this.$ajax.post('/api/sellerAccout/getChargeInfo', {
-        sellerUserId: this.userInfo.sellerUserId,
-        sellerBankCardId: this.item.value,
-        chargeAmount: this.input4 + '.' + this.pointNum
+      this.$ajax.post('/api/seller/recharge/getSubstationRecipetContent', {
+        sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
-          let goods = {
-            chargeAmount: res.data.chargeAmount,
-            memo: res.data.memo,
-            platformCardBankCardName: res.data.platformCardBankName,
-            platformCardBankName: res.data.platformCardBankName,
-            platformCardNo: res.data.platformCardNo,
-            platformCardUserName: res.data.platformCardUserName,
-            sellerBankCardNo: res.data.sellerBankCardNo,
-            sellerBankName: res.data.sellerBankName,
-            sellerBankCardUserName: res.data.sellerBankCardUserName
+          this.recipet = {
+            name: res.data.name,
+            bankName: res.data.bankName,
+            account: res.data.account
           }
-          this.objDate = goods
-          this.input1 = goods.platformCardUserName + ' ' + goods.platformCardNo + ' ' + goods.platformCardBankCardName
-          this.input = goods.sellerBankCardUserName + ' ' + goods.sellerBankCardNo + ' ' + goods.sellerBankName
-          this.input2 = goods.chargeAmount
-          this.platformCardBankCardName = goods.platformCardBankCardName
-          this.memo = goods.memo
-          this.platformCardNo = goods.platformCardNo
-          this.sellerBankCardNo = goods.sellerBankCardNo
-          this.platformCardUserName = goods.platformCardUserName
-          this.sellerBankCardUserName = goods.sellerBankCardUserName
+          this.input = this.item.label + ' ' + this.item.bankCardNo
+          this.input1 = res.data.name + ' ' + res.data.account
+          this.input2 = this.input4 + '.' + this.pointNum
+          this.input3 = res.data.random6
         } else {
           this.$message({
             message: data.data.message,
@@ -280,58 +258,71 @@ export default {
     },
     // 当点击生确认转账的时候触发的事件
     transferMoney () {
-      this.$ajax.post('/api/sellerorder/createApply', {
-        sellerUserId: this.userInfo.sellerUserId,
-        sellerBankCardId: this.item.value,
-        chargeAmount: this.input4 + '.' + this.pointNum,
-        sellerBankCardName: this.item.label,
-        platformBankCardId: this.userInfo.platformChargeBankCardId,
-        platformBankCardName: this.platformCardBankCardName,
-        memo: this.memo,
-        sellerTelephone: this.userInfo.telephone,
-        sellerUserName: '',
-        sellerBankCardNo: this.sellerBankCardNo,
-        platformBankCardNo: this.platformCardNo,
-        sellerBankCardUserName: this.sellerBankCardUserName,
-        platformBankCardUserName: this.platformCardUserName
+      this.$ajax.post('/api/seller/recharge/addRechargeSheet', {
+        userId: this.userInfo.sellerAccountId,
+        payingBankName: this.item.label,
+        payingUserName: this.item.userName,
+        payingCardNo: this.item.bankCardNo,
+        recipetBankName: this.recipet.bankName,
+        recipetUserName: this.recipet.name,
+        recipetCardNo: this.recipet.account,
+        comment: this.input3,
+        money: this.input4 + '.' + this.pointNum
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
-          this.$message({
-            message: '充值成功',
-            type: 'success'
+          this.$ajax.post('/api/seller/recharge/confirmAlreadyPaid', {
+            rechargeId: res.data.rechargeId
+          }).then((data) => {
+            console.log(data)
+            let res = data.data
+            if (res.code === '200') {
+              this.$message({
+                message: '充值成功',
+                type: 'success'
+              })
+              this.dialogVisible = false
+              this.getTask(1, this.pageSize)
+            } else {
+              this.$message({
+                message: data.data.message,
+                type: 'error'
+              })
+            }
+          }).catch((err) => {
+            console.log(err)
+            this.$message.error('未知错误！')
           })
-          this.dialogVisible = false
-          // if (this.$route.query.toPay) {
-          //   window.history.go(-1)
-          // } else {
-          this.getTask(1, this.pageSize)
-          // }
         } else {
           this.$message({
             message: data.data.message,
             type: 'error'
           })
+          return false
         }
       }).catch((err) => {
         console.log(err)
         this.$message.error('未知错误！')
       })
     },
+    // 获取已添加的银行卡列表
     addBank () {
-      this.$ajax.post('/api/sellerAccout/getSellerBankCardList', {
-        sellerUserId: this.userInfo.sellerUserId
+      this.$ajax.post('/api/seller/bankCard/getBankCardPagingListBySellerAccountId', {
+        sellerAccountId: this.userInfo.sellerAccountId,
+        pageNo: 1,
+        pageSize: 20
       }).then((data) => {
         let res = data.data
         if (res.code === '200') {
           let arr = []
-          for (let word of res.data) {
+          for (let word of res.data.datas) {
             let goods = {
               label: word.bankName,
-              value: word.sellerBankCardId,
-              bankCardNo: word.bankCardNo,
-              isDefault: word.isDefault
+              value: word.bankCardId,
+              bankCardNo: word.cardNo,
+              isDefault: word.isDefaul,
+              userName: word.userName
             }
             arr.push(goods)
           }
@@ -351,16 +342,15 @@ export default {
     // 待处理充值的列表
     setList (data) {
       let arr = []
-      for (let word of data.chargeApplys) {
+      for (let word of data) {
         let goods = {
-          payWater: word.chargeApplyId,
+          payWater: word.rechargeId,
           creatTime: word.gmtCreate,
-          collectionBank: word.sellerBankCardNo,
-          moneyBank: word.platformBankCardNo,
-          payNum: word.chargeAmount,
-          remark: word.memo,
-          JDStatus: word.status === '0' ? '进行中' : word.status === '1' ? '成功' : '失败',
-          chargeApplyId: word.chargeApplyId
+          collectionBank: word.payingCardNo,
+          moneyBank: word.receiptCardNo,
+          payNum: word.money,
+          remark: word.comment,
+          JDStatus: word.status
         }
         arr.push(goods)
       }
@@ -368,26 +358,24 @@ export default {
     },
     // 点点击查看充值单触发的信息
     handleClick (index, data) {
-      // console.log(index, data)
+      console.log(index, data)
       this.toview = true
-      this.$ajax.post('/api/sellerorder/getChargeApplyByApplyId', {
-        chargeApplyId: this.tableData[index].chargeApplyId
+      this.$ajax.post('/api/seller/recharge/getRechargeSheetByRechargeId', {
+        rechargeId: this.tableData[index].payWater
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let goods = {
-            sellerUserName: res.data.sellerUserName || '暂无数据',
-            sellerBankCardNo: res.data.sellerBankCardNo,
-            sellerBankCardName: res.data.sellerBankCardName,
+            sellerUserName: res.data.payingUserName || '暂无数据',
+            sellerBankCardNo: res.data.payingCardNo,
+            sellerBankCardName: res.data.payingBankName,
             // 收款账户名
             // 银行卡号
-            platformBankCardNo: res.data.platformBankCardNo,
-            platformBankCardName: res.data.platformBankCardName,
-            chargeAmount: res.data.chargeAmount,
-            memo: res.data.memo,
-            platformBankCardUserName: res.data.platformBankCardUserName,
-            sellerBankCardUserName: res.data.sellerBankCardUserName
+            platformBankCardNo: res.data.receiptCardNo,
+            receiptUserName: res.data.receiptUserName,
+            chargeAmount: res.data.money,
+            memo: res.data.comment
           }
           this.lookData = goods
         } else {

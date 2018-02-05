@@ -11,7 +11,7 @@
           <p class="acquiescence">{{item.isDefault}}</p>
           <p class="name">{{item.userName}}</p>
           <p class="number">{{item.bankCardNo|bankCard}}</p>
-          <p class="work" @click="bianji(index)">编辑</p>
+          <p class="work" @click="bianji(bankCardList[index])">编辑</p>
         </li>
         <li class="add" @click="addBank">
           <span>+</span>
@@ -47,19 +47,20 @@
       <el-dialog title="查看银行卡" :visible.sync="dialogFormVisible" :modal-append-to-body='false' width="40%">
         <el-form>
           <el-form-item label="银行">
-            <el-input v-model="this.bankInfo.bankName" disabled></el-input>
+            <el-input v-model="getBank" disabled></el-input>
           </el-form-item>
           <el-form-item label="姓名">
-            <el-input v-model="this.bankInfo.userName" disabled></el-input>
+            <el-input v-model="getName" disabled></el-input>
           </el-form-item>
           <el-form-item label="卡号">
-            <el-input v-model="this.bankInfo.bankCardNo" disabled></el-input>
+            <el-input v-model="getCarNo" disabled></el-input>
           </el-form-item>
         </el-form>
         <el-checkbox v-model="checked" style="margin-left:40px">设为默认银行卡</el-checkbox>
         <div slot="footer" class="dialog-footer">
           <el-button type="danger" @click="change">确认</el-button>
-          <el-button @click="bankDele()">删除银行卡</el-button>
+          <!-- <el-button @click="bankDele()">删除银行卡</el-button> -->
+          <el-button @click="dialogFormVisible=false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -96,7 +97,11 @@ export default {
       personname: '',
       Card: '',
       item: '',
-      bankInfo: {},
+      bankInfoId: '',
+      // 获取银行卡信息接口
+      getBank: '',
+      getName: '',
+      getCarNo: '',
       bankImg: [{ name: '中国银行', bgUrl: Zhongguo },
       { name: '中国建设银行', bgUrl: Jianshe }, { name: '渤海银行', bgUrl: Bohai },
       { name: '中国工商银行', bgUrl: Gongshang }, { name: '广发银行', bgUrl: Guangfa }, { name: '恒丰银行', bgUrl: Hengfeng },
@@ -116,14 +121,14 @@ export default {
     this.bankCard()
   },
   methods: {
-    // 添加银行卡的时候获取银行卡列表
+    // 添加银行卡的时候获取银行列表
     addBank () {
       this.addbank = true
       this.item = ''
       this.personname = ''
       this.Card = ''
       this.$ajax.post('/api/config/bankCard/getBankInfoList', {
-        sellerUserId: this.userInfo.sellerUserId
+        // sellerUserId: this.userInfo.sellerUserId
       }).then((data) => {
         // console.log(data)
         let res = data.data
@@ -148,16 +153,17 @@ export default {
         this.$message.error('未知错误！')
       })
     },
+    // 点击确认触发添加银行卡的接口
     addSure () {
-      this.$ajax.post('/api/sellerAccout/addSellerBankCard', {
-        sellerUserId: this.userInfo.sellerUserId,
+      this.$ajax.post('/api/seller/bankCard/addBankCard', {
+        sellerAccountId: this.userInfo.sellerAccountId,
         bankName: this.item.bankName,
-        bankNameId: this.item.id,
+        // bankNameId: this.item.id,
         userName: this.personname,
-        bankCardNo: this.Card,
+        cardNo: this.Card,
         isDefault: this.checked === true ? '1' : '0'
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$message({
@@ -179,20 +185,22 @@ export default {
     },
     // 获取银行卡列表
     bankCard () {
-      this.$ajax.post('/api/sellerAccout/getSellerBankCardList', {
-        sellerUserId: this.userInfo.sellerUserId
+      this.$ajax.post('/api/seller/bankCard/getBankCardPagingListBySellerAccountId', {
+        sellerAccountId: this.userInfo.sellerAccountId,
+        pageNo: 1,
+        pageSize: 20
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
-          for (let word of res.data) {
+          for (let word of res.data.datas) {
             let goods = {
-              bankCardNo: word.bankCardNo,
+              bankCardNo: word.cardNo,
               bankName: word.bankName,
               isDefault: word.isDefault === '1' ? '默认银行卡' : '',
               userName: word.userName,
-              sellerBankCardId: word.sellerBankCardId
+              sellerBankCardId: word.bankCardId
             }
             for (let i of this.bankImg) {
               if (i.name === word.bankName) {
@@ -214,75 +222,50 @@ export default {
       })
     },
     // 获取银行卡信息
-    bianji (index) {
-      let that = this
-      let BankCrarId = this.bankCardList[index].sellerBankCardId
+    bianji (val) {
+      console.log(val)
+      this.getBank = val.bankName
+      this.getName = val.userName
+      this.getCarNo = val.bankCardNo
+      this.bankInfoId = val.sellerBankCardId
+      this.checked = val.isDefault === '' ? '0' : true
       this.dialogFormVisible = true
-      this.$ajax.post('/api/sellerAccout/getBankCardInfo', {
-        sellerBankCardId: BankCrarId
-      }).then((data) => {
-        // console.log(data)
-        let res = data.data
-        if (res.code === '200') {
-          let obj = {
-            bankName: res.data.bankName,
-            userName: res.data.userName,
-            bankCardNo: res.data.bankCardNo,
-            sellerBankCardId: res.data.sellerBankCardId,
-            isDefault: res.data.isDefault === '1' ? (that.checked = true) : (that.checked = false)
-          }
-          this.bankInfo = obj
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error('未知错误！')
-      })
     },
-    bankDele () {
-      let cardId = this.bankInfo.sellerBankCardId
-      this.$ajax.post('/api/sellerAccout/deleteBankCard', {
-        sellerBankCardId: cardId
-      }).then((data) => {
-        let res = data.data
-        if (res.code === '200') {
-          this.$message({
-            message: '银行卡删除成功',
-            type: 'success'
-          })
-          this.bankCard()
-          this.dialogFormVisible = false
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error('未知错误！')
-      })
-    },
+    // bankDele () {
+    //   let cardId = this.bankInfo.sellerBankCardId
+    //   this.$ajax.post('/api/sellerAccout/deleteBankCard', {
+    //     sellerBankCardId: cardId
+    //   }).then((data) => {
+    //     let res = data.data
+    //     if (res.code === '200') {
+    //       this.$message({
+    //         message: '银行卡删除成功',
+    //         type: 'success'
+    //       })
+    //       this.bankCard()
+    //       this.dialogFormVisible = false
+    //     } else {
+    //       this.$message({
+    //         message: data.data.message,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   }).catch((err) => {
+    //     console.log(err)
+    //     this.$message.error('未知错误！')
+    //   })
+    // },
     change () {
-      let cardId = this.bankInfo.sellerBankCardId
-      this.$ajax.post('/api/sellerAccout/changeBankCard', {
-        sellerBankCardId: cardId,
-        bankName: this.bankInfo.bankName,
-        userName: this.bankInfo.userName,
-        bankCardNo: this.bankInfo.bankCardNo,
+      this.$ajax.post('/api/seller/bankCard/setDefaultBankCard', {
+        bankCardId: this.bankInfoId,
         isDefault: this.checked === true ? '1' : '0',
-        sellerUserId: this.userInfo.sellerUserId,
-        bankNameId: '1'
+        sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
         // console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$message({
-            message: '银行卡信息成功',
+            message: '设置默认成功',
             type: 'success'
           })
           this.bankCard()

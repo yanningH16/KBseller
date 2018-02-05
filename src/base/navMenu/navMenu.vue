@@ -1,8 +1,8 @@
 <template>
   <div class="menu" @dblclick="copyText">
     <div class="logo">
-      <img src="../../assets/image/logow.png" alt="Logo" class="img">
-      <!-- <span style="color:#FF2933;line-height:80px;font-size:18px;">红商会</span> -->
+      <!-- <img src="../../assets/image/logow.png" alt="Logo" class="img"> -->
+      <span style="color:#ffffff;line-height:80px;font-size:18px;">包裹网</span>
     </div>
     <div class="router">
       <div class="routerBox" v-for="(item,index) in menus" :key="index" ref="routerBox" @click="setRouterActive">
@@ -37,7 +37,7 @@ export default {
     }
   },
   created () {
-    this.pointNum()
+    // this.pointNum()
   },
   computed: {
     menus: {
@@ -50,8 +50,8 @@ export default {
             lines: [
               {
                 text: '总览',
-                link: 'overView',
-                bradge: this.notPassTaskCount
+                link: 'overView'
+                // bradge: this.notPassTaskCount
               }
             ]
           },
@@ -62,18 +62,18 @@ export default {
             lines: [
               {
                 text: '下单',
-                link: 'batchOrder',
-                bradge: this.orderWaitPassCount
+                link: 'batchOrder'
+                // bradge: this.orderWaitPassCount
               },
               {
                 text: '任务列表',
-                link: 'taskList',
-                bradge: this.toAddFavorCount
+                link: 'taskList'
+                // bradge: this.toAddFavorCount
               },
               {
                 text: '快递单列表',
-                link: 'courierList',
-                bradge: this.favorWaitPassCount
+                link: 'courierList'
+                // bradge: this.favorWaitPassCount
               }
             ]
           },
@@ -135,31 +135,31 @@ export default {
   },
   watch: {
     $route () {
-      this.pointNum()
+      // this.pointNum()
     }
   },
   methods: {
-    pointNum () {
-      this.$ajax.post('/api/order/search/sellerStatistics', {
-        sellerUserId: this.userInfo.sellerUserId
-      }).then((data) => {
-        // console.log(data)
-        let res = data.data
-        if (res.code === '200') {
-          this.notPassTaskCount = res.data.notPassTaskCount
-          this.orderWaitPassCount = res.data.orderWaitPassCount
-          this.favorWaitPassCount = res.data.favorWaitPassCount
-          this.toAddFavorCount = res.data.toAddFavorCount
-        } else {
-          this.$message({
-            message: res.message,
-            type: 'warning'
-          })
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，刷新下试试')
-      })
-    },
+    // pointNum () {
+    //   this.$ajax.post('/api/order/search/sellerStatistics', {
+    //     sellerUserId: this.userInfo.sellerUserId
+    //   }).then((data) => {
+    //     console.log(data)
+    //     let res = data.data
+    //     if (res.code === '200') {
+    //       this.notPassTaskCount = res.data.notPassTaskCount
+    //       this.orderWaitPassCount = res.data.orderWaitPassCount
+    //       this.favorWaitPassCount = res.data.favorWaitPassCount
+    //       this.toAddFavorCount = res.data.toAddFavorCount
+    //     } else {
+    //       this.$message({
+    //         message: res.message,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   }).catch(() => {
+    //     this.$message.error('网络错误，刷新下试试')
+    //   })
+    // },
     setRouterActive () {
       this.$nextTick(() => {
         let activeRouter = this.$route.path
@@ -178,7 +178,7 @@ export default {
       this.pull = !this.pull
     },
     copyText () {
-      this.pointNum()
+      // this.pointNum()
     }
   }
 }

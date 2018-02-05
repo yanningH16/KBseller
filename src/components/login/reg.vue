@@ -5,9 +5,6 @@
       <!-- <span>抱 一 云 信</span> -->
     </div>
     <div class="cont">
-      <div class="text">
-        <h1>数 据 智 能&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;驱 动 未 来</h1>
-      </div>
       <div class="board">
         <h2>注册账号</h2>
         <div class="inputCont">
@@ -36,9 +33,9 @@
             <img src="../../assets/image/password.png" alt="">
             <input type="password" placeholder="再次输入密码" v-model="agpass" @focus="focusWords=true" @blur="focusWords=false">
           </div>
-          <div>
-            <el-checkbox v-model="checked">阅读并接受</el-checkbox>
-            <a style="font-size:14px;color:#3EAFFF">《抱一云信用户协议》</a>
+          <div class="input" :class="{'actives':focusWordss}">
+            <img src="../../assets/image/password.png" alt="">
+            <input type="text" placeholder="请输入邀请码" v-model="intervalCode" @focus="focusWordss=true" @blur="focusWordss=false">
           </div>
           <button @click="submit">下一步</button>
           <h3>
@@ -63,6 +60,7 @@ export default {
       newpass: '',
       agpass: '',
       code: '',
+      intervalCode: '',
       picPassword: '',
       show: true,
       time: 60,
@@ -72,15 +70,10 @@ export default {
       focusWords: false,
       focusWordss: false,
       isSendMsg: true,
-      checked: true,
       numberArr: ''
     }
   },
   methods: {
-    chanage () {
-      this.canvas()
-      // this.numberArr = ''
-    },
     isCanUse () {
       console.log(this.picPassword)
       if (/^1[34578]\d{9}$/.test(this.phoneNum)) {
@@ -123,7 +116,7 @@ export default {
       })
     },
     submit () {
-      if (this.phoneNum === '' || this.code === '' || this.newpass === '' || this.agpass === '') {
+      if (this.phoneNum === '' || this.code === '' || this.newpass === '' || this.agpass === '' || this.intervalCode === '') {
         this.$message({
           message: '请正确填写注册信息!!!',
           type: 'warning'
@@ -137,19 +130,13 @@ export default {
         })
         return false
       }
-      if (this.checked === false) {
-        this.$message({
-          message: '请先勾选用户协议',
-          type: 'warning'
-        })
-        return false
-      }
-      this.$ajax.post('/api/user/registerOut', {
+      this.$ajax.post('/api/seller/register', {
         telephone: this.phoneNum,
         code: this.code,
         password: md5(this.newpass),
-        repeatPassword: md5(this.agpass),
-        type: 1
+        rePassword: md5(this.agpass),
+        type: 1,
+        inviteCode: this.intervalCode
       }).then((data) => {
         console.log(data)
         if (data.data.code === '200') {
@@ -157,7 +144,7 @@ export default {
             message: '注册成功',
             type: 'success'
           })
-          this.$ajax.post('/api/user/login', {
+          this.$ajax.post('/api/seller/login', {
             telephone: data.data.data.telephone,
             password: md5(this.newpass)
           }).then(data => {
@@ -169,7 +156,7 @@ export default {
                 message: '页面跳转中...',
                 type: 'success',
                 onClose: () => {
-                  this.$router.push({ name: 'certification' })
+                  this.$router.push({ name: 'overView' })
                 }
               })
             } else {
@@ -229,6 +216,7 @@ export default {
     justify-content space-around
     align-content center
     height calc(100% - 200px)
+    background url('../../assets/image/timg.jpg')
     .text
       align-self center
       font-size 24px

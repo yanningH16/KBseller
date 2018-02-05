@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../../assets/image/logob.png" alt="logo">
+      <h2>包裹网 </h2>
     </div>
     <div class="cont">
       <div class="board">
@@ -56,7 +56,7 @@ export default {
         return false
       } else {
         // 登录
-        this.$ajax.post('/api/sellerAccout/login', {
+        this.$ajax.post('/apiseller/login', {
           telephone: this.username,
           password: md5(this.password)
         }).then((data) => {
@@ -98,7 +98,7 @@ export default {
   height 100%
   background #f8f8f8
   .logo
-    color #ffffff
+    font-size 30px
     height 75px
     padding 26px 45px
     overflow hidden

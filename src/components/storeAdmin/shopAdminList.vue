@@ -185,42 +185,42 @@ export default {
       this.shoplist()
     },
     // 删除店铺的操作
-    open2 (index) {
-      // console.log(this.shopList[index])
-      this.$confirm('此操作将永久删除该店铺, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$ajax.post('/api/seller/shop/deleteShop', {
-          sellerShopId: this.shopList[index].shopId
-        }).then((data) => {
-          let res = data.data
-          if (res.code === '200') {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            // this.refresh()
-            this.shoplist()
-          } else {
-            this.shoplist()
-            this.$message({
-              message: data.data.message,
-              type: 'warning'
-            })
-          }
-        }).catch((err) => {
-          console.log(err)
-          this.$message.error('未知错误！')
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
+    // open2 (index) {
+    //   console.log(this.shopList[index])
+    //   this.$confirm('此操作将永久删除该店铺, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     this.$ajax.post('/api/seller/shop/deleteShop', {
+    //       sellerShopId: this.shopList[index].shopId
+    //     }).then((data) => {
+    //       let res = data.data
+    //       if (res.code === '200') {
+    //         this.$message({
+    //           type: 'success',
+    //           message: '删除成功!'
+    //         })
+    //         // this.refresh()
+    //         this.shoplist()
+    //       } else {
+    //         this.shoplist()
+    //         this.$message({
+    //           message: data.data.message,
+    //           type: 'warning'
+    //         })
+    //       }
+    //     }).catch((err) => {
+    //       console.log(err)
+    //       this.$message.error('未知错误！')
+    //     })
+    //   }).catch(() => {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '已取消删除'
+    //     })
+    //   })
+    // },
     // 刷新本地用户信息
     refresh () {
       this.$ajax.post('/api/buyerAccount/refresh', {
