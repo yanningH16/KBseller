@@ -48,7 +48,7 @@ const order = [{
   meta: { title: '快递单列表' }
 },
 {
-  path: 'order/pay',
+  path: 'order/batchOrder/pay',
   component: Pay,
   name: 'pay',
   meta: { title: '支付' }

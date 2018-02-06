@@ -35,20 +35,29 @@ export default {
   name: 'pay',
   data () {
     return {
-      tableData: [{
-        taskNum: '54646464646',
-        taskType: '批量',
-        price: '5',
-        orderNum: '5',
-        totalNum: '25'
-      }, {
-        taskNum: '54646464646',
-        taskType: '批量',
-        price: '5',
-        orderNum: '5',
-        totalNum: '25'
-      }]
+      tableData: []
     }
+  },
+  methods: {
+    getTaskList () {
+      this.$ajax.post('/api/order/search/getSellerTaskByCondition', {
+        sellerTaskId: this.$route.query.sellerTaskId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.tableData = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    }
+  },
+  mounted () {
+    this.getTaskList()
   }
 }
 </script>

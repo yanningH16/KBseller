@@ -145,6 +145,7 @@ export default {
         box-shadow 0 2px 4px rgba(82, 95, 117, 0.18)
         li
           height 50px
+          line-height 50px
           font-size 14px
           color #525F75
           i
