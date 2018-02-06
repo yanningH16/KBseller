@@ -12,8 +12,8 @@
                 <em>{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
@@ -22,11 +22,10 @@
                 <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
-            <tr>
-              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
-                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
-                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
-                <em>{{item.contactQQ}}</em>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <!-- <span></span> -->
               </i>
             </tr>
           </table>
@@ -40,8 +39,8 @@
                 <em>{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
@@ -50,11 +49,10 @@
                 <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
-            <tr>
-              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
-                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
-                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
-                <em>{{item.contactQQ}}</em>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <!-- <span></span> -->
               </i>
             </tr>
           </table>
@@ -68,8 +66,8 @@
                 <em>{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
@@ -78,11 +76,10 @@
                 <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
-            <tr>
-              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
-                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
-                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
-                <em>{{item.contactQQ}}</em>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <!-- <span></span> -->
               </i>
             </tr>
           </table>
@@ -96,8 +93,8 @@
                 <em>{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
@@ -106,11 +103,10 @@
                 <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
-            <tr>
-              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
-                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
-                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
-                <em>{{item.contactQQ}}</em>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <!-- <span></span> -->
               </i>
             </tr>
           </table>
@@ -124,8 +120,8 @@
                 <em>{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i>
+                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
@@ -134,11 +130,10 @@
                 <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
-            <tr>
-              <i style="margin-left:20px">联系人方式:&nbsp;&nbsp; 姓名:
-                <em>{{item.contactName}}&nbsp;&nbsp;</em> 手机:
-                <em>{{item.contactTelephone}}&nbsp;&nbsp;</em>QQ:
-                <em>{{item.contactQQ}}</em>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <!-- <span></span> -->
               </i>
             </tr>
           </table>
@@ -155,7 +150,8 @@ export default {
   data () {
     return {
       activeName: 'first',
-      shopList: []
+      shopList: [],
+      addList: []
     }
   },
   computed: {
@@ -170,6 +166,10 @@ export default {
       this.activeName = 'two'
     } else if (this.$route.query.activeName === 'three') {
       this.activeName = 'three'
+    } else if (this.$route.query.activeName === 'four') {
+      this.activeName = 'four'
+    } else if (this.$route.query.activeName === 'five') {
+      this.activeName = 'five'
     } else {
       this.activeName = 'first'
     }
@@ -178,7 +178,7 @@ export default {
   methods: {
     // 点击添加店铺进行相应的跳转
     addShop () {
-      this.$router.push({ name: 'shopAdmin', query: { number: this.activeName === 'first' ? 0 : this.activeName === 'two' ? 1 : 2 } })
+      this.$router.push({ name: 'shopAdmin', query: { number: this.activeName === 'first' ? 3 : this.activeName === 'two' ? 1 : this.activeName === 'three' ? 2 : this.activeName === 'four' ? 4 : 5 } })
     },
     // 点击切换进行相应的请求
     handleClick () {
@@ -242,29 +242,31 @@ export default {
     },
     // 获取店铺列表的接口
     shoplist () {
-      this.$ajax.post('/api/seller/shop/getShopListBySellerUserId', {
-        sellerUserId: this.userInfo.sellerUserId,
-        shopType: this.activeName === 'first' ? 0 : this.activeName === 'two' ? 1 : 2
+      this.$ajax.post('/api/seller/shopAddress/getShopDetailList', {
+        sellerAccountId: this.userInfo.sellerAccountId,
+        type: this.activeName === 'first' ? 3 : this.activeName === 'two' ? 1 : this.activeName === 'three' ? 2 : this.activeName === 'four' ? 4 : 5
       }).then((data) => {
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
+          let arr1 = []
           // 用来判断是否存在res.data
           if (res.data) {
             for (let word of res.data) {
               let goods = {
                 shopName: word.shopName,
-                shopHomePageUrl: word.shopHomePageUrl,
-                contactQQ: word.contactQQ,
-                contactName: word.contactName,
-                contactTelephone: word.contactTelephone,
+                shopHomePageUrl: word.shopUrl,
                 status: word.status === '1' ? '已审核' : '未审核',
-                shopId: word.shopId
+                shopId: word.shopId,
+                addressId: word.list
               }
               arr.push(goods)
+              arr1.push(goods.addressId)
             }
           }
           this.shopList = arr
+          this.addList = arr1
         } else {
           this.$message({
             message: data.data.message,

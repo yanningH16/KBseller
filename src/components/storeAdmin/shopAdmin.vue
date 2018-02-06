@@ -24,9 +24,12 @@
           <span>请真实填写发货地址（与淘宝／京东等渠道后台的发货地址一致），否则无法正常匹配揽件公司</span>
         </li>
         <li class="addContent" v-for="(item,index) in addArr" :key='index'>
-          <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i>
+          <!-- <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i> -->
           <div>发货地址:
             <span>{{item.itemCode+' '+item.itemCity+' '+item.itemZone}}</span>
+          </div>
+          <div style="margin-top:10px">发货人姓名:
+            <span>{{item.sendName}}</span>
           </div>
           <div style="margin-top:10px">街道地址:
             <span>{{item.jieName}}</span>
@@ -67,7 +70,7 @@
           <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从已有地址添加</em>
         </li>
         <li class="accountTab" v-show="haveAdd">
-          <el-table :data="getAddressList" style="width: 100%" @select="handSelect" @select-all="selectAll" border="true">
+          <el-table :data="getAddressList" @selection-change="handSelect" style="width: 100%" @select-all="selectAll" border="true">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column prop="address" align="center" label="已添加的地址">
             </el-table-column>
@@ -87,7 +90,7 @@ export default {
   name: 'shopAdmin',
   data () {
     return {
-      input8: this.$route.query.number === 2 ? '天猫' : '京东',
+      input8: this.$route.query.number === 3 ? '京东' : this.$route.query.number === 1 ? '淘宝' : this.$route.query.number === 2 ? '天猫' : this.$route.query.number === 4 ? '拼多多' : '其它',
       // 判断按钮是否可用
       disable: false,
       // 判断是否有这个类名的存在
@@ -112,6 +115,8 @@ export default {
       className: '',
       valueCode: '',
       addArr: [],
+      // 存放地址的id
+      saveAddressId: [],
       getAddressList: [
         { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' },
         { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' }
@@ -140,7 +145,7 @@ export default {
         })
         return false
       }
-      this.$ajax.post('/api/seller/shop/getShopUrlInfo', {
+      this.$ajax.post('/api/seller/shopAddress/getShopUrlInfo', {
         shopUrl: this.input,
         shopType: this.$route.query.number
       }).then((data) => {
@@ -169,10 +174,38 @@ export default {
       this.pull = true
       this.haveAdd = false
     },
+    // 获取店铺地址
     getAdd () {
       this.pull = false
       this.haveAdd = true
       this.addArr = []
+      this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (let word of res.data) {
+            let obj = {
+              address: word.senderName + ' ' + word.senderPhone + ' ' + word.province + ' ' + word.city + ' ' + word.region + ' ' + word.address,
+              shipAddressId: word.shipAddressId
+            }
+            arr.push(obj)
+          }
+          this.getAddressList = arr
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          message: '网络错误,刷新试试',
+          type: 'error'
+        })
+      })
     },
     // 当点击保存的时候进行收货地的保存
     save () {
@@ -183,21 +216,52 @@ export default {
       //   })
       //   return false
       // }
-      if (this.itemCode === '' || this.itemCity === '' || this.itemZone === '' || this.jieName === '' || this.phone === '') {
+      if (this.itemCode === '' || this.itemCity === '' || this.itemZone === '' || this.jieName === '' || this.phone === '' || this.sendName === '') {
         this.$message({
           message: '请正确填写信息',
           type: 'warning'
         })
         return false
       } else {
-        this.$message({
-          message: '添加成功',
-          type: 'success'
+        this.$ajax.post('/api/seller/shopAddress/addAddress', {
+          sellerAccountId: this.userInfo.sellerAccountId,
+          senderName: this.sendName,
+          senderTelephone: this.phone,
+          province: this.itemCode,
+          provinceCode: this.provincesCode,
+          city: this.itemCity,
+          cityCode: this.cityCode,
+          region: this.itemZone,
+          regionCode: this.zoneCode,
+          address: this.jieName
+        }).then((data) => {
+          console.log(data)
+          let res = data.data
+          if (res.code === '200') {
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.saveAddressId.push(res.data.shipAddressId)
+            console.log(this.saveAddressId)
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        }).catch(() => {
+          this.$message({
+            message: '网络错误,刷新试试',
+            type: 'error'
+          })
         })
+
         this.addArr.push({
           itemCode: this.itemCode,
           itemCity: this.itemCity,
           itemZone: this.itemZone,
+          sendName: this.sendName,
           jieName: this.jieName,
           phone: this.phone,
           pCode: this.provincesCode,
@@ -211,35 +275,33 @@ export default {
     },
     // 当点击确认绑定的时候做的请求
     addSure () {
-      if (this.input === '' || this.input1 === '' || this.value === '' || this.addArr.length === 0) {
+      if (this.input === '' || this.input1 === '' || this.saveAddressId.length === 0) {
         this.$message({
           message: '请正确填写所有内容,不能留空哦...',
           type: 'warning'
         })
         return false
       }
-      let shopArr = []
-      for (let i of this.addArr) {
-        shopArr.push({
-          province: i.itemCode,
-          provinceCode: i.pCode,
-          city: i.itemCity,
-          cityCode: i.cCode,
-          region: i.itemZone,
-          regionCode: i.zCode,
-          telephone: i.phone,
-          address: i.jieName
-        })
-      }
-      this.$ajax.post('/api/seller/shop/addShop', {
-        sellerUserId: this.userInfo.sellerUserId,
-        shopHomePage: this.input,
-        shopName: this.input1,
-        productClassId: this.valueCode,
-        screenShot: this.imageUrl,
-        postAddressList: JSON.stringify(shopArr),
+      // let shopArr = []
+      // for (let i of this.addArr) {
+      //   shopArr.push({
+      //     province: i.itemCode,
+      //     provinceCode: i.pCode,
+      //     city: i.itemCity,
+      //     cityCode: i.cCode,
+      //     region: i.itemZone,
+      //     regionCode: i.zCode,
+      //     telephone: i.phone,
+      //     address: i.jieName
+      //   })
+      // }
+      this.$ajax.post('/api/seller/shopAddress/addShop', {
+        sellerAccountId: this.userInfo.sellerAccountId,
         shopType: this.$route.query.number,
-        productClassDetail: this.className
+        shopName: this.input1,
+        shopTyeDetail: this.input8,
+        productUrl: this.input,
+        shipAddressIds: (this.saveAddressId).join(',')
       }).then((data) => {
         let res = data.data
         if (res.code === '200') {
@@ -247,16 +309,20 @@ export default {
             message: '店铺添加成功',
             type: 'success'
           })
-          // this.refresh()
+          this.refresh()
           if (this.$route.query.toBindShop) {
             window.history.go(-1)
           } else {
-            if (this.$route.query.number === 0) {
+            if (this.$route.query.number === 3) {
               this.$router.push({ name: 'shopAdminList', query: { activeName: 'first' } })
             } else if (this.$route.query.number === 1) {
               this.$router.push({ name: 'shopAdminList', query: { activeName: 'two' } })
             } else if (this.$route.query.number === 2) {
               this.$router.push({ name: 'shopAdminList', query: { activeName: 'three' } })
+            } else if (this.$route.query.number === 4) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'four' } })
+            } else if (this.$route.query.number === 5) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'five' } })
             }
           }
         } else {
@@ -403,8 +469,17 @@ export default {
     },
     cancel () {
     },
-    handSelect () {
-
+    // 单选地址的按钮
+    handSelect (val) {
+      let arr = []
+      for (let i = 0; i < val.length; i++) {
+        let obj = {
+          shop: val[i].shipAddressId
+        }
+        arr.push(obj.shop)
+      }
+      this.saveAddressId = arr
+      console.log(this.saveAddressId.join(','))
     },
     selectAll () {
 

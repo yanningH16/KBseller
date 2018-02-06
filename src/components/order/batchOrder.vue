@@ -42,7 +42,7 @@
           </p>
           <p>3、单次上次最多上传500条记录</p>
           <button class="btn">上传CSV文件</button>
-          <p class="prompt">总共350条订单，上传成功340条，共4条SKU 下载失败订单
+          <p class="prompt" v-if="false">总共350条订单，上传成功340条，共4条SKU 下载失败订单
             <i class="el-icon-circle-close fontIcon"></i>
           </p>
         </li>
