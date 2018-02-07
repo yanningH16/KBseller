@@ -8,31 +8,31 @@
       <ul>
         <li>
           <span>快递公司</span>
-          <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in company" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="postCompant" placeholder="请选择">
+            <el-option label="圆通" value="1">
             </el-option>
           </el-select>
         </li>
         <li>
           <span>发货店铺</span>
-          <el-select v-model="value1" placeholder="请选择">
-            <el-option v-for="item in shop" :key="item.value1" :label="item.label" :value="item.value1">
+          <el-select v-model="postShop" @change="getPostAddress" value-key="sellerShopId" placeholder="请选择">
+            <el-option v-for="(item,index) in shopListArr" :key="index" :label="item.shopTypeName + '-' + item.shopName" :value="item">
             </el-option>
           </el-select>
         </li>
         <li>
           <span>发货地址</span>
-          <el-select v-model="value2" placeholder="请选择">
-            <el-option v-for="item in address" :key="item.value2" :label="item.label" :value="item.value2">
+          <el-select v-model="postAddress" value-key="id" placeholder="请选择">
+            <el-option v-for="(item,index) in postAddressArr" :key="index" :label="item.senderName + ' ' + item.senderPhone + ' ' + item.province+item.city+item.region" :value="item">
             </el-option>
           </el-select>
         </li>
         <li class="radio">
-          <el-radio v-model="radio" label="1" @change="allDelively">批量下单(表格)</el-radio>
-          <el-radio v-model="radio" label="2" @change="handDelively">手工单条下单</el-radio>
+          <el-radio v-model="postOrderType" label="1">批量下单(表格)</el-radio>
+          <el-radio v-model="postOrderType" label="2">手工单条下单</el-radio>
         </li>
         <!-- 批量发货 -->
-        <li class="text" v-show="all">
+        <li class="text" v-if="postOrderType==1">
           <em>上传订单信息</em>
           <span>1、支持淘宝、京东、天猫、拼多多导出的订单直接上传，点击
             <i>查看帮助</i>
@@ -41,97 +41,275 @@
             <i>下载模板</i>
           </p>
           <p>3、单次上次最多上传500条记录</p>
-          <button class="btn">上传CSV文件</button>
-          <p class="prompt" v-if="false">总共350条订单，上传成功340条，共4条SKU 下载失败订单
+          <el-upload accept=".csv" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="/api/task/uploadFile" :data="uploadParams" :headers="headers">
+            <button class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传CSV文件</button>
+          </el-upload>
+          <p class="prompt" v-if="uploadSuccessObj.isSuccess">总共{{ uploadSuccessObj.totalNum }}条订单，上传成功{{ uploadSuccessObj.realNum }}条，共{{ uploadSuccessObj.data ? uploadSuccessObj.data.length : 0 }}条SKU
+            <span class="link" @click="downFail">下载失败列表</span>
             <i class="el-icon-circle-close fontIcon"></i>
           </p>
         </li>
         <!-- 手工发货 -->
-        <li class="hand" v-show="hand">
+        <li class="hand" v-if="postOrderType==2">
           <p style="font-size:12px;color:#ff3341;margin-left:100px;padding-bottom:10px">示例：浙江省杭州市萧山区xxxxx（必须包含省市区信息，不得含有空格、逗号及其他特殊字符）</p>
-          <p>
-            <em>填写订单信息</em>
-            <input type="text" placeholder="订单编号">
-            <input type="text" placeholder="姓名">
-            <input type="text" class="first" placeholder="地址">
-            <input type="text" placeholder="手机号"></p>
-          <p class="info">
-            <input type="text" placeholder="订单编号">
-            <input type="text" placeholder="姓名">
-            <input type="text" class="first" placeholder="地址">
-            <input type="text" placeholder="手机号"></p>
           <p class="info" v-for="(item,index) in inputArr" :key="index">
-            <input type="text" placeholder="订单编号">
-            <input type="text" placeholder="姓名">
-            <input type="text" class="first" placeholder="地址">
-            <input type="text" placeholder="手机号"></p>
-          <p class="go" @click="add()">+继续添加</p>
+            <input type="text" v-model="item.thirdOrder" placeholder="订单编号">
+            <input type="text" v-model="item.reciverName" placeholder="姓名">
+            <input type="text" v-model="item.telephone" placeholder="手机号">
+            <br />
+            <input type="text" v-model="item.province" placeholder="省">
+            <input type="text" v-model="item.city" placeholder="市">
+            <input type="text" v-model="item.region" placeholder="区">
+            <input type="text" v-model="item.address" placeholder="地址">
+          </p>
+          <p class="go" @click="add">+继续添加</p>
         </li>
-        <li class="handText" v-show="hand">
-          <p class="kg">物品重量 <input type="number">&nbsp; kg&nbsp;&nbsp;- &nbsp;&nbsp;<input type="number">&nbsp;&nbsp;kg</p>
+        <li class="handText" v-if="postOrderType==2">
+          <p class="kg">
+            物品重量
+            <el-input v-model="handObj.minWeight" @blur="remberHistory(1, handObj.minWeight)" style="width:75px;" type="number" placeholder="请输入内容"></el-input>&nbsp; kg&nbsp;&nbsp;- &nbsp;&nbsp;
+            <el-input v-model="handObj.maxWeight" @blur="remberHistory(2, handObj.maxWeight)" style="width:75px;" type="number" placeholder="请输入内容"></el-input>&nbsp;&nbsp;kg
+          </p>
           <p class="text">系统自动会给每个订单在您设置范围内随机生成一个重量，如需固定重要，则填写一致即可</p>
         </li>
-        <li class="weight">
+        <li class="weight" v-if="postOrderType==1">
           <p>1、包裹重量随机生成，范围在最小和最大重量之间，如果不需要随机把最大和最小重量值设置成一样即可</p>
           <p>2、最小重量不能低于
-            <em>0.05KG</em>最小重量不能低于
+            <em>0.05KG</em>最大重量不能高于
             <em>40KG</em>
           </p>
         </li>
         <!-- 上传CSV成功后显示 -->
-        <li class="forList" v-show="flase">
-          <p>1.商品名称:
-            <span>女装外套</span>
-          </p>
-          <p class="kg">物品重量 <input type="number">&nbsp; kg&nbsp;&nbsp;- &nbsp;&nbsp;<input type="number">&nbsp;&nbsp;kg</p>
+        <li class="forList" v-if="uploadSuccessObj.isSuccess && postOrderType==1">
+          <div v-for="(item, index) in uploadSuccessObj.data" :key="index">
+            <p style="margin: 10px 0">{{ index+1 }}.商品名称:
+              <span>{{ item.productName }}</span>
+            </p>
+            <p style="margin-bottom:20px;">
+              物品重量
+              <el-input v-model="item.minWeight" style="width:75px;" type="number" placeholder="请输入内容"></el-input>&nbsp; kg&nbsp;&nbsp;- &nbsp;&nbsp;
+              <el-input v-model="item.maxWeight" style="width:75px;" type="number" placeholder="请输入内容"></el-input>&nbsp;&nbsp;kg
+            </p>
+          </div>
         </li>
         <li class="creatTask">
-          <router-link :to="{name:'pay'}">
-            <button class="btn">创建任务</button>
-          </router-link>
+          <button class="btn" @click="sureToBuildTask">创建任务</button>
         </li>
       </ul>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
+import md5 from 'md5'
 export default {
   name: 'batchOrder',
   data () {
     return {
-      inputArr: [],
-      item: '',
-      radio: '1',
-      company: [{
-        value: '选项1',
-        label: '黄金糕'
+      uploadSuccessObj: {
+        isSuccess: false,
+        data: ''
+      },
+      postCompant: '',
+      postShop: '',
+      shopListArr: [],
+      postAddress: '',
+      postAddressArr: [],
+      postOrderType: '1',
+      inputArr: [{
+        thirdOrder: '',
+        reciverName: '',
+        province: '',
+        city: '',
+        region: '',
+        address: '',
+        telephone: ''
       }],
-      value: '',
-      shop: [{
-        value1: '选项1',
-        label: '黄金糕'
-      }],
-      value1: '',
-      address: [{
-        value2: '选项1',
-        label: '黄金糕'
-      }],
-      value2: '',
-      all: true,
-      hand: false
+      handObj: {
+        minWeight: '',
+        maxWeight: ''
+      }
     }
+  },
+  computed: {
+    uploadFileName: function (val) {
+      if (val) {
+        return val
+      } else {
+        return ''
+      }
+    },
+    uploadParams: function (val) {
+      let obj = {
+        oldFileName: this.uploadFileName,
+        shopType: this.postShop.shopType
+      }
+      return obj
+    },
+    headers () {
+      return {
+        accesstoken: this.userToken,
+        userAccountId: this.userInfo.sellerAccountId
+      }
+    },
+    canUpload () { // 是否可以上传文件
+      if (this.postCompant === '' || this.postShop === '' || this.postAddress === '') {
+        return true
+      } else {
+        return false
+      }
+    },
+    ...mapGetters([
+      'userInfo',
+      'userToken'
+    ])
   },
   methods: {
     add () {
-      this.inputArr.push(this.item)
+      this.inputArr.push({
+        thirdOrder: '',
+        reciverName: '',
+        province: '',
+        city: '',
+        region: '',
+        address: '',
+        telephone: ''
+      })
     },
-    allDelively () {
-      this.all = true
-      this.hand = false
+    // 上传之前
+    getFileName (file) {
+      let name = md5(file.name) + '.csv'
+      this.uploadFileName = name
     },
-    handDelively () {
-      this.all = false
-      this.hand = true
+    // 上传成功
+    uploadSuccess (res, file, fileList) {
+      console.log(this.uploadFileName)
+      if (res.code === '200') {
+        let arr = []
+        for (let m of res.data.productNames) {
+          arr.push({
+            productName: m,
+            minWeight: '',
+            maxWeight: ''
+          })
+        }
+        this.uploadSuccessObj.data = arr
+        this.uploadSuccessObj.totalNum = res.data.totalNum
+        this.uploadSuccessObj.realNum = res.data.realNum
+        this.uploadSuccessObj.uploadFileName = res.data.uploadFileName
+        this.uploadSuccessObj.isSuccess = true
+      } else {
+        this.$message({
+          message: res.message,
+          type: 'warning'
+        })
+      }
+    },
+    // 记住设置的重量
+    remberHistory (index, val) {
+      if (index === 1) {
+        sessionStorage.setItem('__minWeight__', val)
+      } else if (index === 2) {
+        sessionStorage.setItem('__maxWeight__', val)
+      }
+    },
+    // 下载失败列表
+    downFail () {
+      window.open('/api/task/downloadErrorOrderIds?fileName=' + this.uploadSuccessObj.uploadFileName)
+    },
+    // 创建任务按钮
+    sureToBuildTask () {
+      if (parseInt(this.postOrderType) === 1) {
+        this.$ajax.post('/api/task/parseFile', {
+          uploadFileName: this.uploadSuccessObj.uploadFileName,
+          shopType: this.postShop.shopType,
+          logisticsType: this.postCompant,
+          sellerShipAddressId: this.postAddress.shipAddressId,
+          sellerAccountId: this.postAddress.sellerAccountId,
+          sellerShopId: this.postShop.sellerShopId,
+          shopName: this.postShop.shopName,
+          realNum: this.uploadSuccessObj.realNum,
+          totalNum: this.uploadSuccessObj.totalNum,
+          productNames: this.uploadSuccessObj.data
+        }).then((data) => {
+          if (data.data.code === '200') {
+            this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
+          } else {
+            this.$message({
+              message: data.data.message,
+              type: 'warning'
+            })
+          }
+        }).catch(() => {
+          this.$message.error('服务器错误！')
+        })
+      } else if (parseInt(this.postOrderType) === 2) {
+        this.$ajax.post('/api/task/createTaskByHand', {
+          shopType: this.postShop.shopType,
+          logisticsType: this.postCompant,
+          sellerShipAddressId: this.postAddress.shipAddressId,
+          sellerAccountId: this.postAddress.sellerAccountId,
+          sellerShopId: this.postShop.sellerShopId,
+          shopName: this.postShop.shopName,
+          minWeight: this.handObj.minWeight,
+          maxWeight: this.handObj.maxWeight,
+          orders: this.inputArr
+        }).then((data) => {
+          if (data.data.code === '200') {
+            this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
+          } else {
+            this.$message({
+              message: data.data.message,
+              type: 'warning'
+            })
+          }
+        }).catch(() => {
+          this.$message.error('服务器错误！')
+        })
+      }
+    },
+    // 获取店铺地址
+    getShopList () {
+      this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.shopListArr = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 获取发货地址列表
+    getPostAddress (val) {
+      this.$ajax.post('/api/seller/shopAddress/getAddressListByShopId', {
+        shopId: val.sellerShopId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.postAddressArr = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    }
+  },
+  mounted () {
+    this.getShopList()
+    if (sessionStorage.getItem('__minWeight__')) {
+      this.handObj.minWeight = sessionStorage.getItem('__minWeight__')
+    }
+    if (sessionStorage.getItem('__maxWeight__')) {
+      this.handObj.maxWeight = sessionStorage.getItem('__maxWeight__')
     }
   }
 }
@@ -139,6 +317,11 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .wrapBg
   padding 20px
+  .link
+    color #ff3341
+    cursor pointer
+  .disabled
+    cursor not-allowed
   .bg
     background #ffffff
     padding 20px
@@ -172,7 +355,7 @@ export default {
           margin-top 12px
           margin-left 101px
         .prompt
-          width 400px
+          width 420px
           height 32px
           border-radius 15px
           background #222039
@@ -210,6 +393,7 @@ export default {
           border 1px solid #DEDEDE
           outline none
           margin-left 10px
+          margin-bottom 18px
           border-radius 2px
           padding-left 5px
         .first
@@ -218,7 +402,7 @@ export default {
         margin-top 12px
         margin-left 88px
       .hand .go
-        margin-left 839px
+        margin-left 680px
         font-size 12px
         color #198AFF
         margin-top 5px
