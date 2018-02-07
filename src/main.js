@@ -20,11 +20,21 @@ Vue.filter('bankCard', function (value) {
   let reg = /^(\d{4})[\d]*(\d{4})$/
   return value.replace(reg, '$2')
 })
+Vue.filter('intater', function (value) {
+  if (!value) {
+    return false
+  }
+  // let reg = /^(\d{4})[\d]*(\d{4})$/
+  let reg = Math.floor(value)
+  return reg
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: {
+    App
+  }
 })

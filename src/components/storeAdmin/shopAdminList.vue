@@ -3,40 +3,13 @@
     <div class="content">
       <h2>地址列表</h2>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-        <el-tab-pane label="京东" name="first">
-          <table class="border" v-for="(item,index) in shopList" :key="index">
-            <div class="icon">
-            </div>
-            <tr>
-              <i style="margin-left:20px">店铺名称:
-                <em>{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
-                </span>
-              </i>
-            </tr>
-            <tr>
-              <i style="margin-left:20px">店铺链接:
-                <em>{{item.shopHomePageUrl}}</em>
-              </i>
-            </tr>
-            <tr v-for="(itemOne,index) in item.addressId" :key="index">
-              <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <!-- <span></span> -->
-              </i>
-            </tr>
-          </table>
-        </el-tab-pane>
         <el-tab-pane label="淘宝" name="two">
           <table class="border" v-for="(item,index) in shopList" :key="index">
             <div class="icon">
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em>{{item.shopName}}</em>
+                <em style="font-size:16px">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
                   <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
@@ -52,7 +25,8 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <!-- <span></span> -->
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
           </table>
@@ -63,7 +37,7 @@
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em>{{item.shopName}}</em>
+                <em style="font-size:16px">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
                   <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
@@ -79,7 +53,8 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <!-- <span></span> -->
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
           </table>
@@ -90,7 +65,7 @@
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em>{{item.shopName}}</em>
+                <em style="font-size:16px">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
                   <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
@@ -106,7 +81,8 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <!-- <span></span> -->
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
           </table>
@@ -117,7 +93,7 @@
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em>{{item.shopName}}</em>
+                <em style="font-size:16px">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
                   <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
@@ -133,7 +109,36 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <!-- <span></span> -->
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
+              </i>
+            </tr>
+          </table>
+        </el-tab-pane>
+        <el-tab-pane label="京东" name="first">
+          <table class="border" v-for="(item,index) in shopList" :key="index">
+            <div class="icon">
+            </div>
+            <tr>
+              <i style="margin-left:20px">店铺名称:
+                <em style="font-size:16px">{{item.shopName}}</em>
+                <span class="right">状态 :
+                  <em>{{item.status}}</em>
+                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
+                </span>
+              </i>
+            </tr>
+            <!-- <tr>
+              <i style="margin-left:20px">店铺链接:
+                <em>{{item.shopHomePageUrl}}</em>
+              </i>
+            </tr> -->
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
           </table>
@@ -149,7 +154,7 @@ export default {
   name: 'shopAdminList',
   data () {
     return {
-      activeName: 'first',
+      activeName: 'two',
       shopList: [],
       addList: []
     }
@@ -171,7 +176,7 @@ export default {
     } else if (this.$route.query.activeName === 'five') {
       this.activeName = 'five'
     } else {
-      this.activeName = 'first'
+      this.activeName = 'two'
     }
     this.shoplist()
   },
@@ -183,6 +188,24 @@ export default {
     // 点击切换进行相应的请求
     handleClick () {
       this.shoplist()
+    },
+    // 设置默认地址
+    setAddress (val, id) {
+      console.log(val, id)
+      this.$ajax.post('/api/seller/shopAddress/setDefaultShopAddress', {
+        shopId: id.shopId,
+        shipAddressId: val.shipAddressId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          this.$message({
+            message: data.data.data,
+            type: 'success'
+          })
+          this.shoplist()
+        }
+      })
     },
     // 删除店铺的操作
     // open2 (index) {
@@ -257,9 +280,10 @@ export default {
               let goods = {
                 shopName: word.shopName,
                 shopHomePageUrl: word.shopUrl,
-                status: word.status === '1' ? '已审核' : '未审核',
-                shopId: word.shopId,
-                addressId: word.list
+                status: word.status === '1' ? '已审核' : '已审核',
+                shopId: word.sellerShopId,
+                addressId: word.list,
+                defaultAddressId: word.defaultAddressId
               }
               arr.push(goods)
               arr1.push(goods.addressId)
@@ -327,4 +351,10 @@ export default {
       position absolute
       bottom 110px
       left 50%
+    .setAddress
+      margin-left 10px
+      color #ff3341
+    .color
+      cursor pointer
+      color black
 </style>

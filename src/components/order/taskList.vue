@@ -5,7 +5,7 @@
         <el-tab-pane label="任务列表" name="first">
           <ul>
             <li>
-              平台:
+              物流平台:
               <el-select v-model="value" placeholder="请选择">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -38,7 +38,7 @@
               <el-input v-model="input" placeholder="请输入编号"></el-input>
             </li>
             <li>
-              <button class="btn">查询</button>
+              <button class="btn" @click="search">查询</button>
             </li>
             <li>
               <button class="btnBlack">发布任务</button>
@@ -46,27 +46,40 @@
           </ul>
           <div class="actTab">
             <el-table :data="tableData" style="width: 100%">
-              <el-table-column prop="taskNumber" align="center" label="任务编号">
+              <el-table-column prop="sellerTaskId" align="center" label="任务编号">
               </el-table-column>
-              <el-table-column prop="platform" align="center" label="平台">
+              <el-table-column prop="logisticsType" align="center" label="平台">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.logisticsType==='1'">圆通</span>
+                </template>
               </el-table-column>
               <el-table-column prop="shopName" align="center" label="店铺名称">
               </el-table-column>
-              <el-table-column prop="TaskType" align="center" label="任务类型">
+              <el-table-column prop="taskType" align="center" label="任务类型">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.taskType==='1'">手工任务</span>
+                  <span v-if="scope.row.taskType==='2'">批量任务</span>
+                </template>
               </el-table-column>
-              <el-table-column prop="orderNum" align="center" label="订单数量">
+              <el-table-column prop="importTotalNum" align="center" label="订单数量">
               </el-table-column>
-              <el-table-column prop="money" align="center" label="金额">
+              <el-table-column prop="actualCost" align="center" label="金额">
               </el-table-column>
-              <el-table-column prop="state" align="center" label="状态">
+              <el-table-column prop="status" align="center" label="状态">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.status==='0'">未支付</span>
+                  <span v-if="scope.row.status==='1'">支付成功</span>
+                  <span v-if="scope.row.status==='2'">任务删除</span>
+                </template>
               </el-table-column>
-              <el-table-column prop="creatTime" align="center" label="创建时间">
+              <el-table-column prop="gmtCreate" align="center" label="创建时间">
               </el-table-column>
               <el-table-column align="center" label="操作" prop="state1">
                 <template slot-scope="scope">
                   <div>
-                    <el-button @click="handleClicklook(scope.row)" type="text" size="small">查看</el-button>
-                    <el-button @click="handleClickDel(scope.row)" type="text" size="small">撤销</el-button>
+                    <el-button v-if="scope.row.status==='1'" @click="handleClicklook(scope.row)" type="text" size="small">查看</el-button>
+                    <el-button v-if="scope.row.status==='0'" @click="handleClickGo(scope.row)" type="text" size="small">去支付</el-button>
+                    <el-button v-if="scope.row.status==='0'" @click="handleClickDel(scope.row)" type="text" size="small">撤销</el-button>
                   </div>
                 </template>
               </el-table-column>
@@ -79,6 +92,14 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog title="提示" :visible.sync="centerDialogVisible" width="30%" center :modal-append-to-body='false'>
+      <span>确定要删除这个{{sellerTaskId}}这个任务么?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sure">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -97,15 +118,14 @@ export default {
       currentPage: 1,
       restaurants: [],
       shopNameArr: [],
-      apiUrl: '',
-      tableData: [{
-        taskNumber: '546546546546',
-        platform: '京东'
-      }
-      ],
+      ceshiData: '',
+      apiUrl: '/api/order/search/getSellerTaskByCondition',
+      tableData: [],
       pageSize: 5,
       input: '',
       value3: '',
+      centerDialogVisible: false,
+      sellerTaskId: '',
       options: [{
         value: '1',
         label: '圆通'
@@ -113,14 +133,14 @@ export default {
       value: '',
       value1: '',
       taskState: [{
-        value2: '选项2',
-        label: '双皮奶'
+        value2: '0',
+        label: '未支付'
       }, {
-        value2: '选项3',
-        label: '蚵仔煎'
+        value2: '1',
+        label: '支付成功'
       }, {
-        value2: '选项4',
-        label: '龙须面'
+        value2: '2',
+        label: '任务删除'
       }],
       value2: ''
     }
@@ -128,9 +148,14 @@ export default {
   computed: {
     params () {
       return {
-        channelId: this.userInfo.channelId,
-        pageNo: this.pageNo,
-        pageSize: this.pageSize
+        currPageNo: this.pageNo,
+        limit: this.pageSize,
+        startTime: this.value3 ? this.value3[0] : null,
+        endTime: this.value3 ? this.value3[1] : null,
+        logisticsType: this.value,
+        sellerShopId: this.ceshiData,
+        sellerTaskId: this.input,
+        status: this.value2
       }
     },
     ...mapGetters([
@@ -144,10 +169,39 @@ export default {
     setList (data) {
       this.tableData = data
     },
+    search () {
+      this.getTask()
+    },
     handleClick () {
     },
-    handleClicklook () {
-      this.$router.push({ name: 'pay' })
+    handleClicklook (val) {
+      this.$router.push({ name: 'courierList', query: { sellerTaskId: val.sellerTaskId } })
+    },
+    // 当点击删除进行删除操作
+    handleClickDel (val) {
+      console.log(val)
+      this.sellerTaskId = val.sellerTaskId
+      this.centerDialogVisible = true
+    },
+    sure () {
+      this.$ajax.post('/api/order/operate/deleteTaskByTaskId', {
+        sellerTaskId: this.sellerTaskId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.$message({
+            type: 'success',
+            message: '任务已删除'
+          })
+          this.centerDialogVisible = false
+          this.getTask()
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.data.message
+          })
+        }
+      }).catch(() => {
+      })
     },
     getShopList () {
       this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
@@ -159,7 +213,8 @@ export default {
           let arr = []
           for (let word of res.data) {
             let obj = {
-              value: word.shopName
+              value: word.shopName,
+              sellerShopId: word.sellerShopId
             }
             arr.push(obj)
           }
@@ -187,7 +242,8 @@ export default {
       }
     },
     handleSelect (item) {
-      this.shopNameId = item.shopNameId
+      console.log(item)
+      this.ceshiData = item.sellerShopId
     }
   },
   mounted () {

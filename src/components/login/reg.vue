@@ -60,7 +60,7 @@ export default {
       newpass: '',
       agpass: '',
       code: '',
-      intervalCode: '',
+      intervalCode: this.$route.query.inviteCode || '',
       picPassword: '',
       show: true,
       time: 60,
@@ -130,34 +130,49 @@ export default {
         })
         return false
       }
-      this.$ajax.post('/api/seller/register', {
+      this.$ajax.post('/api/config/sms/vertify', {
         telephone: this.phoneNum,
-        code: this.code,
-        password: md5(this.newpass),
-        rePassword: md5(this.agpass),
         type: 1,
-        inviteCode: this.intervalCode
+        code: this.code
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
-          this.$message({
-            message: '注册成功',
-            type: 'success'
-          })
-          this.$ajax.post('/api/seller/login', {
-            telephone: data.data.data.telephone,
-            password: md5(this.newpass)
-          }).then(data => {
+          this.$ajax.post('/api/seller/register', {
+            telephone: this.phoneNum,
+            code: this.code,
+            password: md5(this.newpass),
+            rePassword: md5(this.agpass),
+            type: 1,
+            inviteCode: this.intervalCode
+          }).then((data) => {
             console.log(data)
             if (data.data.code === '200') {
-              this.setUserInfo(data.data.data)
-              this.setUserToken(data.headers.accesstoken)
               this.$message({
-                message: '页面跳转中...',
-                type: 'success',
-                onClose: () => {
-                  this.$router.push({ name: 'overView' })
+                message: '注册成功',
+                type: 'success'
+              })
+              this.$ajax.post('/api/seller/login', {
+                telephone: data.data.data.telephone,
+                password: md5(this.newpass)
+              }).then(data => {
+                console.log(data)
+                if (data.data.code === '200') {
+                  this.setUserInfo(data.data.data)
+                  this.setUserToken(data.headers.accesstoken)
+                  this.$message({
+                    message: '注册成功,正在登陆中...',
+                    type: 'success',
+                    onClose: () => {
+                      this.$router.push({ name: 'overView' })
+                    }
+                  })
+                } else {
+                  this.$message({
+                    message: data.data.message,
+                    type: 'warning'
+                  })
                 }
+              }).catch(() => {
+                this.$message.error('服务器错误！')
               })
             } else {
               this.$message({
@@ -165,8 +180,9 @@ export default {
                 type: 'warning'
               })
             }
-          }).catch(() => {
-            this.$message.error('服务器错误！')
+          }).catch((error) => {
+            this.$message.error(error)
+            console.log(error)
           })
         } else {
           this.$message({
@@ -174,9 +190,7 @@ export default {
             type: 'warning'
           })
         }
-      }).catch((error) => {
-        this.$message.error(error)
-        console.log(error)
+      }).catch(() => {
       })
     },
     ...mapActions([

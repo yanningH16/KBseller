@@ -9,7 +9,7 @@
         <li style="margin-bottom:20px">
           <span>所属平台&nbsp;&nbsp;</span>
           <!-- <span>{{this.$route.query.number===2?'天猫':'京东'}}</span> -->
-          <el-input v-model="input8" placeholder="请输入内容" style="width:384px"></el-input>
+          <el-input disabled v-model="input8" placeholder="请输入内容" style="width:384px"></el-input>
         </li>
         <li class="site">
           <span>店铺首页链接&nbsp;&nbsp;</span>
@@ -22,6 +22,10 @@
         </li>
         <li class="addTititle">发货地址
           <span>请真实填写发货地址（与淘宝／京东等渠道后台的发货地址一致），否则无法正常匹配揽件公司</span>
+        </li>
+        <li class="addAddress">
+          <i :class='{"activeColor":pull}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
+          <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从地址库选择</em>
         </li>
         <li class="addContent" v-for="(item,index) in addArr" :key='index'>
           <!-- <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i> -->
@@ -60,25 +64,29 @@
             </el-form-item>
             <el-form-item label="街道地址">
               <el-input v-model="jieName" style="width:384px"></el-input>
-              <p style="font-size:12px;color:#FF2933;margin-left:20px">添加后无法修改，一个店铺地址最多绑定5个，您还可以绑定3个</p>
+              <!-- <p style="font-size:12px;color:#FF2933;margin-left:20px">添加后无法修改，一个店铺地址最多绑定5个，您还可以绑定3个</p> -->
             </el-form-item>
           </el-form>
           <button class="btn" @click="save">保存</button>
         </li>
-        <li class="addAddress">
-          <i :class='{"activeColor":pull}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
-          <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从已有地址添加</em>
-        </li>
+
         <li class="accountTab" v-show="haveAdd">
           <el-table :data="getAddressList" @selection-change="handSelect" style="width: 100%" @select-all="selectAll" border="true">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column prop="address" align="center" label="已添加的地址">
             </el-table-column>
+            <!-- <el-table-column prop="setdef" align="center" label="是否设为默认地址">
+              <template slot-scope="scope">
+                <el-button @click="handleClicklook(scope.row)" type="text" size="small">设为默认</el-button>
+              </template>
+            </el-table-column> -->
           </el-table>
         </li>
         <li class="clickBtn">
           <button class=" btn" style="margin-bottom:60px" @click="addSure">确认绑定</button>
-          <button class=" btnBlack" style="margin-bottom:60px" @click="cancel">取消</button>
+          <router-link :to="{name:'shopAdminList'}">
+            <button class=" btnBlack" style="margin-bottom:60px">取消</button>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -124,7 +132,8 @@ export default {
       // 已有地址
       haveAdd: false,
       // 添加新的地址
-      pull: false
+      pull: false,
+      shopArd: ''
     }
   },
   computed: {

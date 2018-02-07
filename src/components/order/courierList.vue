@@ -58,45 +58,57 @@
               </el-date-picker>
             </li>
             <li>
-              <button class="btn">查询</button>
+              <button class="btn" @click="search">查询</button>
             </li>
           </ul>
           <div class="actTab">
             <el-table :data="tableData" style="width: 100%" border='true'>
-              <el-table-column prop="creatTime" align="center" label="创建时间">
+              <el-table-column prop="gmtCreate" align="center" label="创建时间">
               </el-table-column>
-              <el-table-column prop="compay" align="center" label="快递公司">
-              </el-table-column>
-              <el-table-column prop="platform" align="center" label="平台">
-              </el-table-column>
-              <el-table-column prop="sendInfo" align="center" label="发货信息">
+              <el-table-column prop="logisticsType" align="center" label="快递公司">
                 <template slot-scope="scope">
-                  <p>发货人姓名:黄军</p>
-                  <p>发货人电话：15700177632</p>
-                  <p>发货人手机：15700177632</p>
-                  <p>物品质量：2.1kg</p>
-                  <p>发货人地址：浙江省杭州市 点点滴滴点点滴滴</p>
+                  <span v-if="scope.row.logisticsType==='1'">圆通</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="shopName" align="center" label="收货信息">
+              <el-table-column prop="shopType" align="center" label="平台">
                 <template slot-scope="scope">
-                  <p>收货人姓名:黄军</p>
-                  <p>发货人电话：15700177632</p>
-                  <p>发货人手机：15700177632</p>
-                  <p>物品质量：2.1kg</p>
-                  <p>发货人地址：浙江省杭州市 点点滴滴点点滴滴</p>
+                  <span v-if="scope.row.shopType==='1'">淘宝</span>
+                  <span v-if="scope.row.shopType==='2'">天猫</span>
+                  <span v-if="scope.row.shopType==='3'">京东</span>
+                  <span v-if="scope.row.shopType==='4'">平多多</span>
+                  <span v-if="scope.row.shopType==='5'">其它</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="orderInfo" align="center" label="订单信息">
+              <el-table-column prop="senderName" align="center" label="发货信息">
                 <template slot-scope="scope">
-                  <p>平台订单号:4646546156156</p>
-                  <p>快递单号:465465948546156</p>
+                  <p>发货人姓名:{{scope.row.senderName}}</p>
+                  <p>发货人电话：{{scope.row.senderTelephone}}</p>
+                  <p>发货人手机：{{scope.row.senderTelephone}}</p>
+                  <p>物品质量：{{scope.row.weight}}kg</p>
+                  <p>发货人地址：{{scope.row.senderProvince+scope.row.senderCity+scope.row.senderRegion+scope.row.senderAddress}}</p>
                 </template>
               </el-table-column>
-              <el-table-column prop="state" align="center" label="状态">
+              <el-table-column prop="receiveName" align="center" label="收货信息">
                 <template slot-scope="scope">
-                  <p>是否付款： 已付款</p>
-                  <p>快递单： 获取成功</p>
+                  <p>收货人姓名:{{scope.row.receiveName}}</p>
+                  <p>发货人电话：{{scope.row.userName}}</p>
+                  <p>发货人手机：{{scope.row.userName}}</p>
+                  <p>物品质量：{{scope.row.weight}}kg</p>
+                  <p>发货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+scope.row.receiveRegion+scope.row.receiveAddress}}</p>
+                </template>
+              </el-table-column>
+              <el-table-column prop="logisticsOrderId" align="center" label="订单信息">
+                <template slot-scope="scope">
+                  <p>平台订单号:{{scope.row.thirdOrderId||'--'}}</p>
+                  <p>快递单号:{{scope.row.logisticsOrderId}}</p>
+                </template>
+              </el-table-column>
+              <el-table-column prop="status" align="center" label="状态">
+                <template slot-scope="scope">
+                  <p v-if="scope.row.status==='0'">是否付款： 未付款</p>
+                  <p v-if="scope.row.status==='1'">是否付款： 已付款</p>
+                  <p v-if="scope.row.status==='2'">任务已撤销</p>
+                  <p v-if="scope.row.status==='1'">快递单： 获取成功</p>
                 </template>
               </el-table-column>
             </el-table>
@@ -104,7 +116,7 @@
         </el-tab-pane>
       </el-tabs>
       <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
@@ -113,8 +125,10 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import NoCont from '../../base/noCont/noCont'
+import { pageCommon } from '../../assets/js/mixin'
 export default {
   name: 'overView',
+  mixins: [pageCommon],
   components: {
     NoCont
   },
@@ -122,19 +136,10 @@ export default {
     return {
       activeName: 'first',
       currentPage: 1,
-      tableData: [{
-        creatTime: '2018-04-11',
-        compay: '圆通',
-        platform: '京东'
-      }, {
-        creatTime: '2018-04-11',
-        compay: '圆通',
-        platform: '京东'
-      }
-      ],
+      tableData: [],
       pageSize: 5,
       input: '',
-      input1: '',
+      input1: this.$route.query.sellerTaskId || '',
       input2: '',
       value3: '',
       restaurants: [],
@@ -168,10 +173,27 @@ export default {
         value5: '2',
         label: '任务取消'
       }],
-      value5: ''
+      value5: '',
+      apiUrl: '/api/order/search/getSellerOrderByCondition'
     }
   },
   computed: {
+    params () {
+      return {
+        currPageNo: this.pageNo,
+        limit: this.pageSize,
+        startTime: this.value3 ? this.value3[0] : null,
+        endTime: this.value3 ? this.value3[1] : null,
+        // logisticsOrderId: this.input,
+        sellerShipAddressId: this.value4,
+        logisticsType: this.value,
+        payStatus: this.value5,
+        orderStatus: this.value2,
+        receiveTelephone: this.input2,
+        sellerTaskId: this.input1,
+        sellerOrderId: this.input
+      }
+    },
     ...mapGetters([
       'userInfo'
     ])
@@ -182,6 +204,12 @@ export default {
     this.restaurants = this.shopNameArr
   },
   methods: {
+    search () {
+      this.getTask()
+    },
+    setList (data) {
+      this.tableData = data
+    },
     handleClick () {
     },
     // 获取所有地址列表
