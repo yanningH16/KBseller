@@ -9,13 +9,13 @@
               <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd'>
               </el-date-picker>
             </li>
-            <li>
+            <!-- <li>
               交易内容:
               <el-select v-model="value" placeholder="请选择">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
-            </li>
+            </li> -->
             <li>
               <button class="btn" @click="search">查询</button>
             </li>
@@ -27,15 +27,13 @@
               </el-table-column>
               <el-table-column prop="remark" align="center" label="交易内容">
               </el-table-column>
-              <el-table-column prop="revenue" align="center" label="入款">
+              <el-table-column prop="revenue" align="center" label="交易金额">
               </el-table-column>
-              <el-table-column prop="deduct" align="center" label="扣款">
-              </el-table-column>
-              <el-table-column prop="balance" align="center" label="结余">
+              <el-table-column prop="balance" align="center" label="余额">
               </el-table-column>
               <el-table-column prop="type" align="center" label="状态">
               </el-table-column>
-              <el-table-column prop="sureTime" align="center" label="确认时间">
+              <el-table-column prop="sureTime" align="center" label="交易时间">
               </el-table-column>
               <el-table-column prop="remark" align="center" label="备注">
               </el-table-column>
@@ -66,26 +64,12 @@ export default {
       currentPage: 1,
       totalCount: 0,
       pageSize: 5,
-      tableData: [],
-      tableData_1: [],
-      options: [{
-        value: [],
-        label: '全部'
-      }, {
-        value: ['TYP_SELLER_CAPITAL_CHARGE', 'TYP_SELLER_CAPITAL_FREEZE', 'TYP_SELLER_CAPITAL_PAY'],
-        label: '本金'
-      }, {
-        value: ['TYP_SELLER_COMMISSION_UNFREEZE', 'TYP_SELLER_COMMISSION_CHARGE', 'TYP_SELLER_COMMISSION_FREEZE', 'TYP_SELLER_COMMISSION_PAY', 'TYP_SELLER_COMMISSION_UNFREEZE'],
-        label: '佣金'
-      }],
-      value: []
+      tableData: []
     }
   },
   computed: {
     showPager: function () {
       if (this.activeName === 'first' && this.tableData.length !== 0) {
-        return true
-      } else if (this.activeName === 'second' && this.tableData_1.length !== 0) {
         return true
       } else {
         return false
@@ -100,55 +84,39 @@ export default {
     this.sercherOne(1, this.pageSize)
   },
   methods: {
-    handleClick (tab, event) {
-      if (this.activeName === 'first') {
-        this.sercherOne(1, this.pageSize)
-      } else if (this.activeName === 'second') {
-        this.sellerRecord(1, this.pageSize)
-      }
-    },
+    // handleClick (tab, event) {
+    //   this.sercherOne(1, this.pageSize)
+    // },
     handleSizeChange (val) {
-      if (this.activeName === 'first') {
-        this.sercherOne(1, val)
-      } else if (this.activeName === 'second') {
-        this.sellerRecord(1, val)
-      }
+      this.sercherOne(1, val)
     },
     handleCurrentChange (val) {
-      if (this.activeName === 'first') {
-        this.sercherOne(val, this.pageSize)
-      } else if (this.activeName === 'second') {
-        this.sellerRecord(val, this.pageSize)
-      }
+      this.sercherOne(val, this.pageSize)
     },
     search () {
       this.sercherOne(1, this.pageSize)
     },
     sercherOne (pageNo, pageSize) {
-      this.$ajax.post('/api/userFund/getSellerFundFlowsByUsageType', {
-        usageType: ['0'],
+      this.$ajax.post('/api/seller/recharge/getFundFlowBySellerAccountId', {
         pageNo: pageNo,
         pageSize: pageSize,
-        sellerUserAccountId: this.userInfo.sellerUserId,
+        sellerAccountId: this.userInfo.sellerAccountId,
         startDate: this.value3 ? this.value3[0] : '',
-        endDate: this.value3 ? this.value3[1] : '',
-        orderId: this.input,
-        fundsFlowType: this.value
+        endDate: this.value3 ? this.value3[1] : ''
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
-        this.totalCount = res.data.totalCount
+        this.totalCount = res.data.total
         if (res.code === '200') {
           let arr = []
-          for (let word of res.data.fundsFlows) {
+          for (let word of res.data.datas) {
             let goods = {
               sureTime: word.gmtModify,
-              revenue: word.income || '--',
-              deduct: word.pay || '--',
-              type: word.fundsFlowType === 'TYP_SELLER_CAPITAL_CHARGE' ? '本金' : word.fundsFlowType === 'TYP_SELLER_CAPITAL_FREEZE' ? '本金' : word.fundsFlowType === 'TYP_SELLER_CAPITAL_PAY' ? '本金' : '佣金',
-              balance: word.availableCapital || word.availableCommission,
-              number: word.orderId,
-              remark: word.content
+              revenue: (word.afterMoney - word.beforMoney).toFixed(2) || '--',
+              type: word.statusDetail,
+              balance: word.money,
+              number: word.sellerFundFlowId,
+              remark: word.flowTypeDetail
             }
             arr.push(goods)
           }
@@ -159,8 +127,9 @@ export default {
             type: 'warning'
           })
         }
-      }).catch(() => {
-        this.$message.error('网络错误，刷新下试试')
+      }).catch((error) => {
+        console.log(error)
+        // this.$message.error('网络错误，刷新下试试')
       })
     }
   }

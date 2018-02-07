@@ -13,17 +13,14 @@
             </li>
             <li>
               发货地址:
-              <el-select v-model="value4" placeholder="请选择">
-                <el-option v-for="item in address" :key="item.value4" :label="item.label" :value="item.value4">
+              <el-select v-model="value4" placeholder="请选择" value-key="value">
+                <el-option v-for="(item,index) in shopAdressArr" :key="index" :label="item.valueName" :value="item.value">
                 </el-option>
               </el-select>
             </li>
             <li>
               发货店铺:
-              <el-select v-model="value1" placeholder="请选择">
-                <el-option v-for="item in optionshop" :key="item.value1" :label="item.label" :value="item.value1">
-                </el-option>
-              </el-select>
+              <el-autocomplete style="windth:240px;height:32px" class="inline-input" v-model="value1" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
             </li>
           </ul>
           <ul style="margin-top:20px">
@@ -114,7 +111,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-// import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import NoCont from '../../base/noCont/noCont'
 export default {
   name: 'overView',
@@ -140,85 +137,123 @@ export default {
       input1: '',
       input2: '',
       value3: '',
+      restaurants: [],
+      shopNameArr: [],
+      shopAdressArr: [],
       options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
+        value: '1',
+        label: '圆通'
       }],
       value: '',
-      optionshop: [{
-        value1: '选项1',
-        label: '黄金糕'
-      }, {
-        value1: '选项2',
-        label: '双皮奶'
-      }, {
-        value1: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value1: '选项4',
-        label: '龙须面'
-      }, {
-        value1: '选项5',
-        label: '北京烤鸭'
-      }],
       value1: '',
       orderState: [{
-        value2: '选项2',
-        label: '双皮奶'
+        value2: '0',
+        label: '未获取运单'
       }, {
-        value2: '选项3',
-        label: '蚵仔煎'
+        value2: '1',
+        label: '已获取运单'
       }, {
-        value2: '选项4',
-        label: '龙须面'
+        value2: '2',
+        label: '订单取消'
       }],
       value2: '',
-      address: [{
-        value4: '选项2',
-        label: '双皮奶'
-      }, {
-        value4: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value4: '选项4',
-        label: '龙须面'
-      }],
       value4: '',
       isPay: [{
-        value5: '选项2',
-        label: '双皮奶'
+        value5: '0',
+        label: '未付款'
       }, {
-        value5: '选项3',
-        label: '蚵仔煎'
+        value5: '1',
+        label: '已付款'
       }, {
-        value5: '选项4',
-        label: '龙须面'
+        value5: '2',
+        label: '任务取消'
       }],
       value5: ''
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  mounted () {
+    this.getShopList()
+    this.getShopAddress()
+    this.restaurants = this.shopNameArr
+  },
   methods: {
     handleClick () {
+    },
+    // 获取所有地址列表
+    getShopAddress () {
+      this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (let word of res.data) {
+            let obj = {
+              valueName: word.province + ' ' + word.city + ' ' + word.region + ' ' + word.address,
+              value: word.shipAddressId
+            }
+            arr.push(obj)
+          }
+          this.shopAdressArr = arr
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          })
+        }
+      }).catch((err) => {
+        this.$message.error(err)
+      })
+    },
+    // 获取店铺列表
+    getShopList () {
+      this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (let word of res.data) {
+            let obj = {
+              value: word.shopName
+            }
+            arr.push(obj)
+          }
+          this.shopNameArr = arr
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          })
+        }
+      }).catch((err) => {
+        this.$message.error(err)
+      })
+    },
+    // 店铺的名称的一个筛选
+    querySearch (queryString, cb) {
+      var restaurants = this.shopNameArr
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter (queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
+      }
+    },
+    handleSelect (item) {
+      this.shopNameId = item.shopNameId
     }
   }
-  // computed: {
-  //   ...mapGetters([
-  //     'userInfo',
-  //     'userMoney'
-  //   ])
-  // }
+
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>

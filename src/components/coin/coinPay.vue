@@ -30,7 +30,7 @@
     <div class="contentDelit">
       <h3>待处理充值
         <span class="balance">您的押金账户余额:
-          <em style="color:rgba(255,51,65,1)">{{ userMoney.availableCapitalAmount }}</em>元</span>
+          <em style="color:rgba(255,51,65,1)">{{ getMon }}</em>元</span>
       </h3>
       <div class="line"></div>
       <div class="actTab">
@@ -168,6 +168,7 @@ export default {
       recipet: {},
       tableData: [],
       options: [],
+      getMon: '',
       item: '',
       apiUrl: '/api/seller/recharge/getRechargeListBySellerAccount'
     }
@@ -177,7 +178,7 @@ export default {
     this.pointNum = Math.round(Math.random() * 99)
   },
   mounted () {
-    // this.getMoney()
+    this.getMoney()
   },
   computed: {
     params () {
@@ -195,12 +196,11 @@ export default {
   methods: {
     // 获取资金
     getMoney () {
-      this.$ajax.post('/api/userFund/getSellerUserFund', {
-        sellerUserAccountId: this.userInfo.sellerUserId
+      this.$ajax.post('/api/seller/getBalance', {
+        sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
         if (data.data.code === '200') {
-          let res = data.data.data
-          this.setUserMoney(res)
+          this.getMon = data.data.data.balance
         } else {
           this.$message({
             type: 'warning',

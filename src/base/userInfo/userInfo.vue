@@ -2,7 +2,7 @@
   <div class="userTitle">
     <div class="cont">
       <div class="record">
-        <span>余额:¥30.00</span>
+        <span>余额:¥{{getMon}}</span>
         <span>等级:{{this.userInfo.levelDetail}}</span>
         <span>圆通:¥{{this.userInfo.price}}/单</span>
       </div>
@@ -54,6 +54,7 @@ export default {
       showPass: false,
       showInfo: false,
       task: false,
+      getMon: '',
       fixPassObj: {
         oldpass: '',
         newpass1: '',
@@ -65,6 +66,9 @@ export default {
     ...mapGetters([
       'userInfo'
     ])
+  },
+  mounted () {
+    this.getMoney()
   },
   methods: {
     logout () {
@@ -99,6 +103,23 @@ export default {
         }
       }).catch(() => {
         this.$message.error('服务器错误！')
+      })
+    },
+    // 获取资金
+    getMoney () {
+      this.$ajax.post('/api/seller/getBalance', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.getMon = data.data.data.balance
+        } else {
+          this.$message({
+            type: 'warning',
+            message: data.data.message
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
       })
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="reports">
-    公告
+    这是公告
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -23,4 +23,6 @@ export default {
   padding-left 20px
   padding-right 20px
   margin-top 200px
+  text-align center
+  font-size 50px
 </style>

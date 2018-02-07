@@ -5,14 +5,16 @@
       <li>
         <h3>我的账户</h3>
         <div class="first">
-          <p>¥36.00</p>
-          <p>皇冠用户</p>
-          <p>2.8元/单</p>
+          <p>¥{{getMon}}</p>
+          <p>{{userInfo.levelDetail}}</p>
+          <p>{{userInfo.price}}元/单</p>
           <p>86</p>
         </div>
         <div class="second">
           <p>余额
-            <span>充值</span>
+            <router-link :to="{name:'coinPay'}">
+              <span>充值</span>
+            </router-link>
           </p>
           <p>用户等级</p>
           <p>圆通成本</p>
@@ -21,8 +23,11 @@
       </li>
       <li class="carAddress">
         <h3>我的发货地址</h3>
-        <p>黄军 15000176546 浙江省杭州市一行情康东京菲菲</p>
-        <p class="more">查到更多</p>
+        <p>共计:
+          <span style="color:#ff3341;font-size:20px">{{userInfo.shipAddressSum}}</span> 个</p>
+        <router-link :to="{name:'shopAdminList'}">
+          <p class="more">查看详情</p>
+        </router-link>
       </li>
     </ul>
     <div class="contentShop">
@@ -35,7 +40,7 @@
             </li>
             <li>
               时间:
-              <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd'>
+              <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd' format='yyyy-MM-dd'>
               </el-date-picker>
             </li>
             <li>
@@ -49,10 +54,11 @@
           <ul class="ulTow">
             <li>
               店铺名称:
-              <el-select v-model="value1" placeholder="请选择">
+              <!-- <el-select v-model="value1" placeholder="请选择">
                 <el-option v-for="item in optionshop" :key="item.value1" :label="item.label" :value="item.value1">
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-autocomplete style="windth:240px;height:32px" class="inline-input" v-model="value1" :fetch-suggestions="querySearch" placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect"></el-autocomplete>
             </li>
             <li>
               任务状态:
@@ -99,17 +105,19 @@
         </el-tab-pane>
       </el-tabs>
       <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="pageSizeArray" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="pageTotal">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-// import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import NoCont from '../../base/noCont/noCont'
+import { pageCommon } from '../../assets/js/mixin'
 export default {
   name: 'overView',
+  mixins: [pageCommon],
   components: {
     NoCont
   },
@@ -121,39 +129,15 @@ export default {
       pageSize: 5,
       input: '',
       value3: '',
+      getMon: '',
+      restaurants: [],
+      shopNameArr: [],
+      apiUrl: '',
       options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
+        value: '1',
+        label: '圆通'
       }],
       value: '',
-      optionshop: [{
-        value1: '选项1',
-        label: '黄金糕'
-      }, {
-        value1: '选项2',
-        label: '双皮奶'
-      }, {
-        value1: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value1: '选项4',
-        label: '龙须面'
-      }, {
-        value1: '选项5',
-        label: '北京烤鸭'
-      }],
       value1: '',
       taskState: [{
         value2: '选项2',
@@ -168,16 +152,89 @@ export default {
       value2: ''
     }
   },
+  computed: {
+    params () {
+      return {
+        channelId: this.userInfo.channelId,
+        pageNo: this.pageNo,
+        pageSize: this.pageSize
+      }
+    },
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
+  mounted () {
+    this.getMoney()
+    this.getShopList()
+    this.restaurants = this.shopNameArr
+  },
   methods: {
+    setList (data) {
+      this.tableData = data
+    },
     handleClick () {
+    },
+    // 获取店铺列表
+    getShopList () {
+      this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (let word of res.data) {
+            let obj = {
+              value: word.shopName
+            }
+            arr.push(obj)
+          }
+          this.shopNameArr = arr
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message
+          })
+        }
+      }).catch((err) => {
+        this.$message.error(err)
+      })
+    },
+    // 店铺的名称的一个筛选
+    querySearch (queryString, cb) {
+      var restaurants = this.shopNameArr
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+      // 调用 callback 返回建议列表的数据
+      cb(results)
+    },
+    createFilter (queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) >= 0)
+      }
+    },
+    handleSelect (item) {
+      this.shopNameId = item.shopNameId
+    },
+    // 获取资金
+    getMoney () {
+      this.$ajax.post('/api/seller/getBalance', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.getMon = data.data.data.balance
+        } else {
+          this.$message({
+            type: 'warning',
+            message: data.data.message
+          })
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
-  // computed: {
-  //   ...mapGetters([
-  //     'userInfo',
-  //     'userMoney'
-  //   ])
-  // }
+
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus" scoped>
