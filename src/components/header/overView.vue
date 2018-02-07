@@ -196,11 +196,13 @@ export default {
       'userInfo'
     ])
   },
+  created () {
+    this.getAllShop()
+  },
   mounted () {
     this.getMoney()
     this.getShopList()
     this.restaurants = this.shopNameArr
-    this.getAllShop()
   },
   methods: {
     // 当点击删除进行删除操作
@@ -247,7 +249,9 @@ export default {
       this.getTask()
     },
     // 当点击导出的时候进行导出
-    handleClickUpload () {
+    handleClickUpload (val) {
+      // console.log(val)
+      window.open('/api/task/downloadSellerOrdersBySellerTaskId?sellerTaskId=' + val.sellerTaskId)
     },
     // 获取所有地址
     getAllShop () {

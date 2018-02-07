@@ -91,10 +91,10 @@
               <el-table-column prop="receiveName" align="center" label="收货信息">
                 <template slot-scope="scope">
                   <p>收货人姓名:{{scope.row.receiveName}}</p>
-                  <p>发货人电话：{{scope.row.userName}}</p>
-                  <p>发货人手机：{{scope.row.userName}}</p>
+                  <p>收货人电话：{{scope.row.receiveTelephone}}</p>
+                  <p>收货人手机：{{scope.row.receiveTelephone}}</p>
                   <p>物品质量：{{scope.row.weight}}kg</p>
-                  <p>发货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+scope.row.receiveRegion+scope.row.receiveAddress}}</p>
+                  <p>收货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+scope.row.receiveRegion+scope.row.receiveAddress}}</p>
                 </template>
               </el-table-column>
               <el-table-column prop="logisticsOrderId" align="center" label="订单信息">
@@ -108,7 +108,7 @@
                   <p v-if="scope.row.status==='0'">是否付款： 未付款</p>
                   <p v-if="scope.row.status==='1'">是否付款： 已付款</p>
                   <p v-if="scope.row.status==='2'">任务已撤销</p>
-                  <p v-if="scope.row.status==='1'">快递单： 获取成功</p>
+                  <p v-if="scope.row.payStatus==='1'">快递单： 获取成功</p>
                 </template>
               </el-table-column>
             </el-table>
