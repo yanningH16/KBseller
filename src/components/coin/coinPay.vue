@@ -72,7 +72,7 @@
     </div>
     <!-- 生产虫子单弹框部分 -->
     <div class="payWrap">
-      <el-dialog title="生产充值单" :visible.sync="dialogVisible" width="600px" :modal-append-to-body='false'>
+      <el-dialog title="充值单" :visible.sync="dialogVisible" width="600px" :modal-append-to-body='false' center>
         <p>
           <span style="margin-left:22px">请用您的这张银行卡</span>
           <el-input v-model="input" disabled></el-input>
@@ -469,8 +469,14 @@ export default {
     span
       color #444444
       font-weight 600
-  .payWrap p
-    margin-bottom 10px
-    .star
-      color #ff3341
+  .payWrap
+    color black
+    font-size 15px
+    p
+      margin-bottom 10px
+      font-size 14px
+      span
+        font-weight 600
+      .star
+        color #ff3341
 </style>

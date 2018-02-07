@@ -6,6 +6,7 @@
     <div class="personBank">
       <h3>银行卡管理</h3>
       <p class="affirms">该绑定的银行卡将用于提现,请认真核实好银行卡信息,确保信息准确无误</p>
+      <div class="text">为什么要绑定银行卡?因平台有大量的相同金额充值,绑定转账卡后,平台能更快速准确帮您处理充值</div>
       <ul class="addBank">
         <li class="pic" :style="{background:'url('+item.bankBg+')'}" v-for="(item,index) in bankCardList" :key="index">
           <p class="acquiescence">{{item.isDefault}}</p>
@@ -315,6 +316,11 @@ export default {
       color #ff2933
       float right
       margin-top -20px
+    .text
+      color #ff3341
+      font-size 14px
+      text-align center
+      margin-top 50px
     .addBank
       width 710px
       // border 1px solid red
