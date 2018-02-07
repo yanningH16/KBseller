@@ -41,7 +41,9 @@
               <button class="btn" @click="search">查询</button>
             </li>
             <li>
-              <button class="btnBlack">发布任务</button>
+              <router-link :to="{name:'batchOrder'}">
+                <button class="btnBlack">发布任务</button>
+              </router-link>
             </li>
           </ul>
           <div class="actTab">
@@ -171,6 +173,11 @@ export default {
     },
     search () {
       this.getTask()
+    },
+    // 当点击去支付
+    handleClickGo (val) {
+      // console.log(val)
+      this.$router.push({ name: 'pay', query: { sellerTaskId: val.sellerTaskId } })
     },
     handleClick () {
     },

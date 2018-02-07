@@ -130,49 +130,34 @@ export default {
         })
         return false
       }
-      this.$ajax.post('/api/config/sms/vertify', {
+      this.$ajax.post('/api/seller/register', {
         telephone: this.phoneNum,
+        code: this.code,
+        password: md5(this.newpass),
+        rePassword: md5(this.agpass),
         type: 1,
-        code: this.code
+        inviteCode: this.intervalCode
       }).then((data) => {
+        console.log(data)
         if (data.data.code === '200') {
-          this.$ajax.post('/api/seller/register', {
-            telephone: this.phoneNum,
-            code: this.code,
-            password: md5(this.newpass),
-            rePassword: md5(this.agpass),
-            type: 1,
-            inviteCode: this.intervalCode
-          }).then((data) => {
+          this.$message({
+            message: '注册成功',
+            type: 'success'
+          })
+          this.$ajax.post('/api/seller/login', {
+            telephone: data.data.data.telephone,
+            password: md5(this.newpass)
+          }).then(data => {
             console.log(data)
             if (data.data.code === '200') {
+              this.setUserInfo(data.data.data)
+              this.setUserToken(data.headers.accesstoken)
               this.$message({
-                message: '注册成功',
-                type: 'success'
-              })
-              this.$ajax.post('/api/seller/login', {
-                telephone: data.data.data.telephone,
-                password: md5(this.newpass)
-              }).then(data => {
-                console.log(data)
-                if (data.data.code === '200') {
-                  this.setUserInfo(data.data.data)
-                  this.setUserToken(data.headers.accesstoken)
-                  this.$message({
-                    message: '注册成功,正在登陆中...',
-                    type: 'success',
-                    onClose: () => {
-                      this.$router.push({ name: 'overView' })
-                    }
-                  })
-                } else {
-                  this.$message({
-                    message: data.data.message,
-                    type: 'warning'
-                  })
+                message: '注册成功,正在登陆中...',
+                type: 'success',
+                onClose: () => {
+                  this.$router.push({ name: 'overView' })
                 }
-              }).catch(() => {
-                this.$message.error('服务器错误！')
               })
             } else {
               this.$message({
@@ -180,9 +165,8 @@ export default {
                 type: 'warning'
               })
             }
-          }).catch((error) => {
-            this.$message.error(error)
-            console.log(error)
+          }).catch(() => {
+            this.$message.error('服务器错误！')
           })
         } else {
           this.$message({
@@ -190,7 +174,9 @@ export default {
             type: 'warning'
           })
         }
-      }).catch(() => {
+      }).catch((error) => {
+        this.$message.error(error)
+        console.log(error)
       })
     },
     ...mapActions([

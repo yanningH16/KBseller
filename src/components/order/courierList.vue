@@ -75,7 +75,7 @@
                   <span v-if="scope.row.shopType==='1'">淘宝</span>
                   <span v-if="scope.row.shopType==='2'">天猫</span>
                   <span v-if="scope.row.shopType==='3'">京东</span>
-                  <span v-if="scope.row.shopType==='4'">平多多</span>
+                  <span v-if="scope.row.shopType==='4'">拼多多</span>
                   <span v-if="scope.row.shopType==='5'">其它</span>
                 </template>
               </el-table-column>
@@ -83,7 +83,6 @@
                 <template slot-scope="scope">
                   <p>发货人姓名:{{scope.row.senderName}}</p>
                   <p>发货人电话：{{scope.row.senderTelephone}}</p>
-                  <p>发货人手机：{{scope.row.senderTelephone}}</p>
                   <p>物品质量：{{scope.row.weight}}kg</p>
                   <p>发货人地址：{{scope.row.senderProvince+scope.row.senderCity+scope.row.senderRegion+scope.row.senderAddress}}</p>
                 </template>
@@ -92,7 +91,6 @@
                 <template slot-scope="scope">
                   <p>收货人姓名:{{scope.row.receiveName}}</p>
                   <p>收货人电话：{{scope.row.receiveTelephone}}</p>
-                  <p>收货人手机：{{scope.row.receiveTelephone}}</p>
                   <p>物品质量：{{scope.row.weight}}kg</p>
                   <p>收货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+scope.row.receiveRegion+scope.row.receiveAddress}}</p>
                 </template>
@@ -105,10 +103,11 @@
               </el-table-column>
               <el-table-column prop="status" align="center" label="状态">
                 <template slot-scope="scope">
-                  <p v-if="scope.row.status==='0'">是否付款： 未付款</p>
-                  <p v-if="scope.row.status==='1'">是否付款： 已付款</p>
-                  <p v-if="scope.row.status==='2'">任务已撤销</p>
-                  <p v-if="scope.row.payStatus==='1'">快递单： 获取成功</p>
+                  <p v-if="scope.row.payStatus==='0'">是否付款： 未付款</p>
+                  <p v-if="scope.row.payStatus==='1'">是否付款： 已付款</p>
+                  <p v-if="scope.row.payStatus==='2'">任务已撤销</p>
+                  <p v-if="scope.row.status==='1'">快递单： 获取成功</p>
+                  <p v-if="scope.row.status==='0'">快递单： 获取失败</p>
                 </template>
               </el-table-column>
             </el-table>
