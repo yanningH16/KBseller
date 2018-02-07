@@ -157,7 +157,8 @@ export default {
         logisticsType: this.value,
         sellerShopId: this.ceshiData,
         sellerTaskId: this.input,
-        status: this.value2
+        status: this.value2,
+        sellerAccountId: this.userInfo.sellerAccountId
       }
     },
     ...mapGetters([

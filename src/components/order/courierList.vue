@@ -190,7 +190,8 @@ export default {
         orderStatus: this.value2,
         receiveTelephone: this.input2,
         sellerTaskId: this.input1,
-        sellerOrderId: this.input
+        sellerOrderId: this.input,
+        sellerAccountId: this.userInfo.sellerAccountId
       }
     },
     ...mapGetters([

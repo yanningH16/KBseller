@@ -1,128 +1,140 @@
 <template>
   <div class="wrap">
-    <div class="shop">
-      <em class="gray">其他管理</em>>店铺管理</div>
+    <!-- <div class="shop">
+      <em class="gray">其他管理</em>>店铺管理</div> -->
     <div class="content">
-      <h3>商家绑定店铺</h3>
+      <h3>更新店铺地址</h3>
       <div class="line"></div>
       <ul class="content_info">
+        <li style="margin-bottom:20px">
+          <span>所属平台&nbsp;&nbsp;</span>
+          <!-- <span>{{this.$route.query.number===2?'天猫':'京东'}}</span> -->
+          <el-input disabled v-model="input8" placeholder="请输入内容" style="width:384px"></el-input>
+        </li>
         <li class="site">
-          <span>店铺首页网址&nbsp;&nbsp;</span>
-          <el-input v-model="this.GetShopInfo.shopHomePageUrl" placeholder="请输入内容" style="width:384px" disabled></el-input>
-          <!-- <span class="shopInfo">读取店铺信息</span> -->
+          <span>店铺首页链接&nbsp;&nbsp;</span>
+          <el-input v-model="input" placeholder="请输入内容" style="width:384px"></el-input>
+          <span class="shopInfo" @click="getShopInfo">读取店铺信息</span>
         </li>
         <li class="shopName">
           <span>店铺名称&nbsp;&nbsp;</span>
-          <el-input v-model="this.GetShopInfo.shopName" placeholder="请输入内容" style="width:384px" disabled></el-input>
+          <el-input v-model="input1" placeholder="请输入内容" style="width:384px"></el-input>
         </li>
-        <li class="wangwang">
-          <span>店铺旺旺ID&nbsp;&nbsp;</span>
-          <el-input v-model="this.GetShopInfo.productFirstClassId" placeholder="请输入内容" style="width:384px" disabled></el-input>
+        <li class="addTititle">发货地址
+          <span>请真实填写发货地址（与淘宝／京东等渠道后台的发货地址一致），否则无法正常匹配揽件公司</span>
         </li>
-        <li class="type">
-          <span>商品所属分类&nbsp;&nbsp;</span>
-          <el-select v-model="this.GetShopInfo.productFirstClassDetail" placeholder="请选择" disabled>
-            <el-option v-for="item in shopType" :key="item.value" :label="item.className" :value="item">
-            </el-option>
-          </el-select>
+        <li class="addAddress">
+          <i :class='{"activeColor":pull}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
+          <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从地址库选择</em>
         </li>
-        <li class="pic">
-          <span class="pic_admin">管理后台截图</span>
-          <el-upload disabled class="avatar-uploader" :show-file-list="false" :http-request="uploadImg" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" ref="upload" action="">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" width="182px" height="182px">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </li>
-        <!-- 发货地址显示部分 -->
         <li class="addContent" v-for="(item,index) in addArr" :key='index'>
-          <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i>
+          <!-- <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i> -->
           <div>发货地址:
-            <span>{{item.province+' '+item.city+' '+item.region}}</span>
+            <span>{{item.itemCode+' '+item.itemCity+' '+item.itemZone}}</span>
+          </div>
+          <div style="margin-top:10px">发货人姓名:
+            <span>{{item.sendName}}</span>
           </div>
           <div style="margin-top:10px">街道地址:
-            <span>{{item.address}}</span>
+            <span>{{item.jieName}}</span>
           </div>
           <div style="margin-top:10px">发货电话:
-            <span>{{item.telephone}}</span>
+            <span>{{item.phone}}</span>
           </div>
           <div class="line"></div>
         </li>
         <li class="pullDown" v-show="pull">
           <el-form>
-            <el-form-item label="发货地址">
-              <el-select v-model="itemPro" placeholder="省份" @change="provinceChange" value-key='code'>
-                <el-option v-for="(itemPro,index) in provinces" :key="index" :label="itemPro.name" :value="itemPro"></el-option>
-              </el-select>
-              <el-select v-model="itemCity" placeholder="市" style="margin-left:12px;margin-right:12px" @change="cityChange" value-key='code'>
-                <el-option v-for="(itemCity,index) in city" :key="index" :label="itemCity.name" :value="itemCity"></el-option>
-              </el-select>
-              <el-select v-model="itemZone" placeholder="区" value-key='code'>
-                <el-option v-for="(itemZone,index) in zone" :key="index" :label="itemZone.name" :value="itemZone"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="街道地址">
-              <el-input v-model="jieName" style="width:384px"></el-input>
+            <el-form-item label="发货人姓名">
+              <el-input v-model="sendName" style="width:384px"></el-input>
             </el-form-item>
             <el-form-item label="发货电话">
               <el-input v-model="phone" style="width:384px"></el-input>
             </el-form-item>
+            <el-form-item label="发货地址">
+              <el-select v-model="itemCode" placeholder="省份" @change="provinceChange">
+                <el-option v-for="(item,index) in provinces" :key="index" :label="item.name" :value="item"></el-option>
+              </el-select>
+              <el-select v-model="itemCity" placeholder="市" style="margin-left:12px;margin-right:12px" @change="cityChange">
+                <el-option v-for="(item,index) in city" :key="index" :label="item.name" :value="item"></el-option>
+              </el-select>
+              <el-select v-model="itemZone" placeholder="区" @change="zoneChange">
+                <el-option v-for="(item,index) in zone" :key="index" :label="item.name" :value="item"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="街道地址">
+              <el-input v-model="jieName" style="width:384px"></el-input>
+              <!-- <p style="font-size:12px;color:#FF2933;margin-left:20px">添加后无法修改，一个店铺地址最多绑定5个，您还可以绑定3个</p> -->
+            </el-form-item>
           </el-form>
           <button class="btn" @click="save">保存</button>
+          <button class="btn" style="background:gray" @click="cencel">取消</button>
         </li>
-        <li class="addAddress">
-          <i class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
+
+        <li class="accountTab" v-show="haveAdd">
+          <el-table :data="getAddressList" @selection-change="handSelect" style="width: 100%" @select-all="selectAll" border="true">
+            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column prop="address" align="center" label="已添加的地址">
+            </el-table-column>
+            <!-- <el-table-column prop="setdef" align="center" label="是否设为默认地址">
+              <template slot-scope="scope">
+                <el-button @click="handleClicklook(scope.row)" type="text" size="small">设为默认</el-button>
+              </template>
+            </el-table-column> -->
+          </el-table>
         </li>
-        <li>
-          <div class="line"></div>
-          <p class="person">此店铺与平台对接人</p>
-        </li>
-        <li class="personInfo">
-          姓名&nbsp;&nbsp;
-          <el-input v-model="input4" placeholder="请输入内容" style="width:384px"></el-input><br>
-          <span style="margin-left:-10px">手机号&nbsp;&nbsp;</span>
-          <el-input v-model="input5" placeholder="请输入内容" style="width:384px;margin-top:20px"></el-input><br>
-          <span>QQ号&nbsp;&nbsp;</span>
-          <el-input v-model="input6" placeholder="请输入内容" style="width:384px;margin-top:20px"></el-input>
-        </li>
-        <li>
-          <button class=" btn" style="margin-bottom:60px" @click="addSure">确认修改</button>
+        <li class="clickBtn">
+          <button class=" btn" style="margin-bottom:60px" @click="addSure">确认绑定</button>
+          <router-link :to="{name:'shopAdminList'}">
+            <button class=" btnBlack" style="margin-bottom:60px">取消</button>
+          </router-link>
         </li>
       </ul>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { mapGetters } from 'vuex'
-import { getImgSize, uploadFile, uploadPromise } from '../../assets/js/upload'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'shopAdmin',
   data () {
     return {
+      input8: this.$route.query.number === 3 ? '京东' : this.$route.query.number === 1 ? '淘宝' : this.$route.query.number === 2 ? '天猫' : this.$route.query.number === 4 ? '拼多多' : '其它',
       // 判断按钮是否可用
       disable: false,
       // 判断是否有这个类名的存在
       active: true,
-      GetShopInfo: {},
+      isCanUpload: false,
       shopType: [],
       provinces: [],
-      itemPro: null,
+      itemCode: null,
       city: [],
       itemCity: null,
       zone: [],
       itemZone: null,
-      isCanUpload: false,
+      provincesCode: '',
+      cityCode: '',
+      zoneCode: '',
       jieName: '',
       phone: '',
-      input4: '',
-      input5: '',
-      input6: '',
+      sendName: '',
+      input: '',
+      input1: '',
       value: '',
       className: '',
       valueCode: '',
-      imageUrl: '',
-      pull: false,
       addArr: [],
-      addContent: false
+      // 存放地址的id
+      saveAddressId: [],
+      getAddressList: [
+        { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' },
+        { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' }
+      ],
+      // 已有地址
+      haveAdd: false,
+      // 添加新的地址
+      pull: false,
+      shopArd: ''
     }
   },
   computed: {
@@ -131,106 +143,32 @@ export default {
     ])
   },
   created () {
-    // this.Provinces()
-    this.shopInfo()
-    this.addressInfo()
+    this.Provinces()
   },
   methods: {
-    handleAvatarSuccess (res, file) {
-      // this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    uploadImg (img) {
-      if (!this.isCanUpload) {
-        return false
-      }
-      uploadPromise.then((res) => {
-        if (res.statusText === 'OK') {
-          uploadFile(res.data, img.file).then((res) => {
-            // this.imageUrl = res.url
-            this.imageUrl = res
-          }).catch(() => {
-            this.$message.error('网络错误，请刷新试试')
-          })
-        }
-      }).catch(() => {
-        this.$message.error('网络错误，请刷新试试')
-      })
-    },
-    beforeAvatarUpload (file) {
-      const isJPG = (file.type === 'image/jpeg') || (file.type === 'image/png') || (file.type === 'image/gif')
-      const isLt1M = file.size / 1024 / 1024 < 1
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG/PNG/GIF 格式!')
-        this.isCanUpload = false
-        return false
-      } else if (!isLt1M) {
-        this.$message.error('上传头像图片大小不能超过 1MB!')
-        this.isCanUpload = false
-        return false
-      } else {
-        getImgSize(file).then((img) => {
-          this.isCanUpload = true
+    // 当点击读取店铺信息触发的事件
+    getShopInfo () {
+      if (this.input === '') {
+        this.$message({
+          message: '请正确填写店铺链接,不能为空',
+          type: 'warning'
         })
+        return false
       }
-    },
-    // 当进入的时候进行请求数据进行相应的填充
-    shopInfo () {
-      this.$ajax.post('/api/seller/shop/getShopInfoByShopId', {
-        sellerShopId: this.$route.query.sellerShopId
+      this.$ajax.post('/api/seller/shopAddress/getShopUrlInfo', {
+        shopUrl: this.input,
+        shopType: this.$route.query.number
       }).then((data) => {
-        // console.log(data)
+        console.log(data)
         let res = data.data
         if (res.code === '200') {
-          let obj = {
-            shopHomePageUrl: res.data.shopHomePageUrl,
-            shopName: res.data.shopName,
-            productFirstClassId: res.data.productFirstClassId,
-            productFirstClassDetail: res.data.productFirstClassDetail,
-            shopManagePlatformUrls: res.data.shopManagePlatformUrls,
-            contacterName: res.data.contacterName,
-            contacterTelephone: res.data.contacterTelephone,
-            contacterQqNum: res.data.contacterQqNum
+          this.input1 = res.data.title
+          if (res.data.title === '' || res.data.wangwangId === '') {
+            this.$message({
+              message: '暂无无法读取店铺信息,请手动填写',
+              type: 'warning'
+            })
           }
-          this.GetShopInfo = obj
-          this.input4 = obj.contacterName
-          this.input5 = obj.contacterTelephone
-          this.input6 = obj.contacterQqNum
-          this.imageUrl = obj.shopManagePlatformUrls
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error('未知错误！')
-      })
-    },
-    // 当进入页面获取发货地址的信息的填充
-    addressInfo () {
-      this.$ajax.post('/api/seller/shop/getPostLocationListByShopId', {
-        sellerShopId: this.$route.query.sellerShopId
-      }).then((data) => {
-        // console.log(data)
-        let res = data.data
-        if (res.code === '200') {
-          let arr = []
-          for (let word of res.data) {
-            let goods = {
-              province: word.province,
-              city: word.city,
-              region: word.region,
-              address: word.address,
-              telephone: word.telephone,
-              pCode: word.provinceCode,
-              cCode: word.cityCode,
-              zCode: word.regionCode
-            }
-            arr.push(goods)
-          }
-          this.addArr = arr
         } else {
           this.$message({
             message: data.data.message,
@@ -242,89 +180,163 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
-    // 第二部分的修改，当点击添加发货地址的时候触发事件
     add () {
-      this.pull = !this.pull
-      this.Provinces()
+      this.pull = true
+      this.haveAdd = false
+    },
+    cencel () {
+      this.pull = false
+    },
+    // 获取店铺地址
+    getAdd () {
+      this.pull = false
+      this.haveAdd = true
+      // this.addArr = []
+      this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        console.log(data)
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (let word of res.data) {
+            let obj = {
+              address: word.senderName + ' ' + word.senderPhone + ' ' + word.province + ' ' + word.city + ' ' + word.region + ' ' + word.address,
+              shipAddressId: word.shipAddressId
+            }
+            arr.push(obj)
+          }
+          this.getAddressList = arr
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          message: '网络错误,刷新试试',
+          type: 'error'
+        })
+      })
     },
     // 当点击保存的时候进行收货地的保存
     save () {
-      if (this.itemCode === '' || this.itemCity === '' || this.itemZone === '' || this.jieName === '' || this.phone === '') {
+      // else if (!(/^1[34578]\d{9}$/.test(this.phone))) {
+      //   this.$message({
+      //     message: '手机号错误,请重新填写',
+      //     type: 'warning'
+      //   })
+      //   return false
+      // }
+      if (this.itemCode === '' || this.itemCity === '' || this.itemZone === '' || this.jieName === '' || this.phone === '' || this.sendName === '') {
         this.$message({
           message: '请正确填写信息',
           type: 'warning'
         })
         return false
-      } else if (!(/^1[34578]\d{9}$/.test(this.phone))) {
-        this.$message({
-          message: '手机号错误,请重新填写',
-          type: 'warning'
-        })
-        return false
       } else {
-        this.$message({
-          message: '添加成功',
-          type: 'success'
+        this.$ajax.post('/api/seller/shopAddress/addAddress', {
+          sellerAccountId: this.userInfo.sellerAccountId,
+          senderName: this.sendName,
+          senderTelephone: this.phone,
+          province: this.itemCode,
+          provinceCode: this.provincesCode,
+          city: this.itemCity,
+          cityCode: this.cityCode,
+          region: this.itemZone,
+          regionCode: this.zoneCode,
+          address: this.jieName
+        }).then((data) => {
+          console.log(data)
+          let res = data.data
+          if (res.code === '200') {
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.saveAddressId.push(res.data.shipAddressId)
+            console.log(this.saveAddressId)
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        }).catch(() => {
+          this.$message({
+            message: '网络错误,刷新试试',
+            type: 'error'
+          })
         })
+
         this.addArr.push({
-          province: this.itemPro.name,
-          city: this.itemCity.name,
-          region: this.itemZone.name,
-          address: this.jieName,
-          telephone: this.phone,
-          pCode: this.itemPro.code,
-          cCode: this.itemCity.code,
-          zCode: this.itemZone.code
+          itemCode: this.itemCode,
+          itemCity: this.itemCity,
+          itemZone: this.itemZone,
+          sendName: this.sendName,
+          jieName: this.jieName,
+          phone: this.phone,
+          pCode: this.provincesCode,
+          cCode: this.cityCode,
+          zCode: this.zoneCode
         })
+        this.jieName = ''
+        this.phone = ''
       }
-      this.addContent = true
       this.pull = false
     },
     // 当点击确认绑定的时候做的请求
     addSure () {
-      if (this.addArr.length === 0 || this.input4 === '' || this.input5 === '' || this.input6 === '') {
+      if (this.input === '' || this.input1 === '' || this.saveAddressId.length === 0) {
         this.$message({
           message: '请正确填写所有内容,不能留空哦...',
           type: 'warning'
         })
         return false
       }
-      if (!(/^1[34578]\d{9}$/.test(this.input5))) {
-        this.$message({
-          message: '手机号格式错误,请重新填写',
-          type: 'warning'
-        })
-        return false
-      }
-      let shopArr = []
-      for (let i of this.addArr) {
-        shopArr.push({
-          province: i.province,
-          provinceCode: i.pCode,
-          city: i.city,
-          cityCode: i.cCode,
-          region: i.region,
-          regionCode: i.zCode,
-          telephone: i.telephone,
-          address: i.address
-        })
-      }
-      this.$ajax.post('/api/seller/shop/changeShop', {
-        sellerShopId: this.$route.query.sellerShopId,
-        // screenShot: this.imageUrl,
-        postAddressList: JSON.stringify(shopArr),
-        concatName: this.input4,
-        concatTelephone: this.input5,
-        concatQQnum: this.input6
+      // let shopArr = []
+      // for (let i of this.addArr) {
+      //   shopArr.push({
+      //     province: i.itemCode,
+      //     provinceCode: i.pCode,
+      //     city: i.itemCity,
+      //     cityCode: i.cCode,
+      //     region: i.itemZone,
+      //     regionCode: i.zCode,
+      //     telephone: i.phone,
+      //     address: i.jieName
+      //   })
+      // }
+      this.$ajax.post('/api/seller/shopAddress/addShop', {
+        sellerAccountId: this.userInfo.sellerAccountId,
+        shopType: this.$route.query.number,
+        shopName: this.input1,
+        shopTyeDetail: this.input8,
+        productUrl: this.input,
+        shipAddressIds: (this.saveAddressId).join(',')
       }).then((data) => {
-        // console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$message({
-            message: '店铺修改成功',
+            message: '店铺添加成功',
             type: 'success'
           })
-          this.$router.push({ name: 'shopAdminList' })
+          if (this.$route.query.toBindShop) {
+            window.history.go(-1)
+          } else {
+            if (this.$route.query.number === 3) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'first' } })
+            } else if (this.$route.query.number === 1) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'two' } })
+            } else if (this.$route.query.number === 2) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'three' } })
+            } else if (this.$route.query.number === 4) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'four' } })
+            } else if (this.$route.query.number === 5) {
+              this.$router.push({ name: 'shopAdminList', query: { activeName: 'five' } })
+            }
+          }
         } else {
           this.$message({
             message: data.data.message,
@@ -336,22 +348,53 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
+    // 刷新本地用户信息
+    // refresh () {
+    //   this.$ajax.post('/api/buyerAccount/refresh', {
+    //     telephone: this.userInfo.telephone
+    //   }).then((data) => {
+    //     let res = data.data
+    //     if (res.code === '200') {
+    //       this.setUserInfo(res.data)
+    //     } else {
+    //       this.$message({
+    //         message: data.data.message,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   }).catch((err) => {
+    //     console.log(err)
+    //     this.$message.error('服务器错误！')
+    //   })
+    // },
     // 检测当省份发生变化出发的改变事件
     provinceChange () {
-      this.itemCity = ''
-      this.itemZone = ''
-      this.zone = []
       this.getCity()
+      this.provincesCode = this.itemCode.code
+      this.itemCode = this.itemCode.name
+      this.itemCity = null
+      this.itemZone = null
     },
     cityChange () {
       this.getZone()
-      this.itemZone = ''
+      this.cityCode = this.itemCity.code
+      this.itemCity = this.itemCity.name
+      this.itemZone = null
+    },
+    zoneChange () {
+      this.zoneCode = this.itemZone.code
+      this.itemZone = this.itemZone.name
+    },
+    // 检测一级分类变化的时候出发效果
+    valueChange () {
+      this.valueCode = this.value.id
+      this.className = this.value.className
+      this.value = this.value.className
     },
     // 获取省的接口
     Provinces () {
       this.$ajax.post('/api/config/location/getProvinceList', {
       }).then((data) => {
-        // console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -378,9 +421,8 @@ export default {
     // 通过省份获取市
     getCity () {
       this.$ajax.post('/api/config/location/getCityListByProvinceCode', {
-        provinceCode: this.itemPro.code
+        provinceCode: this.itemCode.code
       }).then((data) => {
-        // console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -410,7 +452,6 @@ export default {
       this.$ajax.post('/api/config/location/getAreaListByCityCode', {
         cityCode: this.itemCity.code
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -437,7 +478,27 @@ export default {
     },
     remove (index) {
       this.addArr.splice(index, 1)
-    }
+    },
+    cancel () {
+    },
+    // 单选地址的按钮
+    handSelect (val) {
+      let arr = []
+      for (let i = 0; i < val.length; i++) {
+        let obj = {
+          shop: val[i].shipAddressId
+        }
+        arr.push(obj.shop)
+      }
+      this.saveAddressId = arr
+      console.log(this.saveAddressId.join(','))
+    },
+    selectAll () {
+
+    },
+    ...mapActions([
+      'setUserInfo'
+    ])
   }
 }
 </script>
@@ -475,12 +536,15 @@ export default {
       min-width 800px
       max-width 1100px
       .site
-        margin-left -28px
+        margin-left 154px
       .shopName
         margin-top 20px
-      .wangwang
+      .addTititle
         margin-top 20px
-        margin-left -11px
+        margin-left 120px
+        span
+          color #FF2933
+          font-size 12px
       .type
         margin-top 20px
         margin-left -22px
@@ -488,13 +552,13 @@ export default {
         display inline
         width 164px
         height 36px
-        // border 1px solid rgba(255, 51, 65, 1)
-        color white
+        border 1px solid #FF3341
+        color #FF3341
         padding 10px 40px
         margin-left 12px
+        cursor pointer
       .pic
         margin-top 20px
-        // background rgba(0, 0, 0, 0.5)
         .pic_admin
           margin-left -418px
           margin-top 13px
@@ -513,7 +577,19 @@ export default {
           line-height 180px
       .addAddress
         margin-top 25px
-        margin-left -300px
+        margin-left -50px
+        em
+          margin-left 200px
+        .activeColor
+          background rgba(0, 0, 0, 0.1)
+          border-radius 5px
+      .accountTab
+        border 1px solid #d9d9d9
+        width 50%
+        margin-left 28%
+        margin-top 20px
+      .clickBtn
+        margin-top 50px
       .pullDown
         width 480px
         margin-top 20px

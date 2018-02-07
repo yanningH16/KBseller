@@ -45,6 +45,12 @@
         </li>
         <li class="pullDown" v-show="pull">
           <el-form>
+            <el-form-item label="发货人姓名">
+              <el-input v-model="sendName" style="width:384px"></el-input>
+            </el-form-item>
+            <el-form-item label="发货电话">
+              <el-input v-model="phone" style="width:384px"></el-input>
+            </el-form-item>
             <el-form-item label="发货地址">
               <el-select v-model="itemCode" placeholder="省份" @change="provinceChange">
                 <el-option v-for="(item,index) in provinces" :key="index" :label="item.name" :value="item"></el-option>
@@ -56,18 +62,13 @@
                 <el-option v-for="(item,index) in zone" :key="index" :label="item.name" :value="item"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="发货人姓名">
-              <el-input v-model="sendName" style="width:384px"></el-input>
-            </el-form-item>
-            <el-form-item label="发货电话">
-              <el-input v-model="phone" style="width:384px"></el-input>
-            </el-form-item>
             <el-form-item label="街道地址">
               <el-input v-model="jieName" style="width:384px"></el-input>
               <!-- <p style="font-size:12px;color:#FF2933;margin-left:20px">添加后无法修改，一个店铺地址最多绑定5个，您还可以绑定3个</p> -->
             </el-form-item>
           </el-form>
           <button class="btn" @click="save">保存</button>
+          <button class="btn" style="background:gray" @click="cencel">取消</button>
         </li>
 
         <li class="accountTab" v-show="haveAdd">
@@ -183,11 +184,14 @@ export default {
       this.pull = true
       this.haveAdd = false
     },
+    cencel () {
+      this.pull = false
+    },
     // 获取店铺地址
     getAdd () {
       this.pull = false
       this.haveAdd = true
-      this.addArr = []
+      // this.addArr = []
       this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
@@ -318,7 +322,6 @@ export default {
             message: '店铺添加成功',
             type: 'success'
           })
-          this.refresh()
           if (this.$route.query.toBindShop) {
             window.history.go(-1)
           } else {
@@ -346,24 +349,24 @@ export default {
       })
     },
     // 刷新本地用户信息
-    refresh () {
-      this.$ajax.post('/api/buyerAccount/refresh', {
-        telephone: this.userInfo.telephone
-      }).then((data) => {
-        let res = data.data
-        if (res.code === '200') {
-          this.setUserInfo(res.data)
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch((err) => {
-        console.log(err)
-        this.$message.error('服务器错误！')
-      })
-    },
+    // refresh () {
+    //   this.$ajax.post('/api/buyerAccount/refresh', {
+    //     telephone: this.userInfo.telephone
+    //   }).then((data) => {
+    //     let res = data.data
+    //     if (res.code === '200') {
+    //       this.setUserInfo(res.data)
+    //     } else {
+    //       this.$message({
+    //         message: data.data.message,
+    //         type: 'warning'
+    //       })
+    //     }
+    //   }).catch((err) => {
+    //     console.log(err)
+    //     this.$message.error('服务器错误！')
+    //   })
+    // },
     // 检测当省份发生变化出发的改变事件
     provinceChange () {
       this.getCity()

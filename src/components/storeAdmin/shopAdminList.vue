@@ -9,17 +9,12 @@
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em style="font-size:16px">{{item.shopName}}</em>
+                <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
-              </i>
-            </tr>
-            <tr>
-              <i style="margin-left:20px">店铺链接:
-                <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
@@ -37,73 +32,12 @@
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em style="font-size:16px">{{item.shopName}}</em>
+                <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
-              </i>
-            </tr>
-            <tr>
-              <i style="margin-left:20px">店铺链接:
-                <em>{{item.shopHomePageUrl}}</em>
-              </i>
-            </tr>
-            <tr v-for="(itemOne,index) in item.addressId" :key="index">
-              <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
-                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
-              </i>
-            </tr>
-          </table>
-        </el-tab-pane>
-        <el-tab-pane label='拼多多' name="four">
-          <table class="border" v-for="(item,index) in shopList" :key="index">
-            <div class="icon">
-            </div>
-            <tr>
-              <i style="margin-left:20px">店铺名称:
-                <em style="font-size:16px">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
-                </span>
-              </i>
-            </tr>
-            <tr>
-              <i style="margin-left:20px">店铺链接:
-                <em>{{item.shopHomePageUrl}}</em>
-              </i>
-            </tr>
-            <tr v-for="(itemOne,index) in item.addressId" :key="index">
-              <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
-                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
-              </i>
-            </tr>
-          </table>
-        </el-tab-pane>
-        <el-tab-pane label='其它' name="five">
-          <table class="border" v-for="(item,index) in shopList" :key="index">
-            <div class="icon">
-            </div>
-            <tr>
-              <i style="margin-left:20px">店铺名称:
-                <em style="font-size:16px">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
-                </span>
-              </i>
-            </tr>
-            <tr>
-              <i style="margin-left:20px">店铺链接:
-                <em>{{item.shopHomePageUrl}}</em>
               </i>
             </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
@@ -121,19 +55,60 @@
             </div>
             <tr>
               <i style="margin-left:20px">店铺名称:
-                <em style="font-size:16px">{{item.shopName}}</em>
+                <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <!-- <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
-                  <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
-            <!-- <tr>
-              <i style="margin-left:20px">店铺链接:
-                <em>{{item.shopHomePageUrl}}</em>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
-            </tr> -->
+            </tr>
+          </table>
+        </el-tab-pane>
+        <el-tab-pane label='拼多多' name="four">
+          <table class="border" v-for="(item,index) in shopList" :key="index">
+            <div class="icon">
+            </div>
+            <tr>
+              <i style="margin-left:20px">店铺名称:
+                <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
+                <span class="right">状态 :
+                  <em>{{item.status}}</em>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
+                </span>
+              </i>
+            </tr>
+            <tr v-for="(itemOne,index) in item.addressId" :key="index">
+              <i style="margin-left:20px">
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
+              </i>
+            </tr>
+          </table>
+        </el-tab-pane>
+        <el-tab-pane label='其它' name="five">
+          <table class="border" v-for="(item,index) in shopList" :key="index">
+            <div class="icon">
+            </div>
+            <tr>
+              <i style="margin-left:20px">店铺名称:
+                <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
+                <span class="right">状态 :
+                  <em>{{item.status}}</em>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
+                </span>
+              </i>
+            </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}

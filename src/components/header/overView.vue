@@ -8,7 +8,7 @@
           <p>¥{{getMon}}</p>
           <p>{{userInfo.levelDetail}}</p>
           <p>{{userInfo.price}}元/单</p>
-          <p>{{getMon/userInfo.price|intater}}</p>
+          <p>{{Math.floor(getMon/userInfo.price)}}</p>
         </div>
         <div class="second">
           <p>余额
@@ -189,7 +189,8 @@ export default {
         logisticsType: this.value,
         sellerShopId: this.ceshiData,
         sellerTaskId: this.input,
-        status: this.value2
+        status: this.value2,
+        sellerAccountId: this.userInfo.sellerAccountId
       }
     },
     ...mapGetters([
