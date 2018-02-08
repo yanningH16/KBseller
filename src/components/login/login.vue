@@ -9,7 +9,7 @@
         <div class="inputCont" @keyup.13="login">
           <div class="input">
             <span class="el-icon-edit"></span>
-            <input type="number" placeholder="输入手机号" v-model="username">
+            <input type="text" placeholder="输入账号" v-model="username">
           </div>
           <div class="input">
             <span class="el-icon-edit-outline"></span>

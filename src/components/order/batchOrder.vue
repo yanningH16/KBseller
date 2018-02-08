@@ -3,7 +3,7 @@
     <div class="bg">
       <div class="title">
         <h2>批量发货</h2>
-        <p>收费标准:0.28/单</p>
+        <p>收费标准:{{ userInfo.price }}元/单</p>
       </div>
       <ul>
         <li>
@@ -23,7 +23,7 @@
         <li>
           <span>发货地址</span>
           <el-select v-model="postAddress" value-key="id" placeholder="请选择">
-            <el-option v-for="(item,index) in postAddressArr" :key="index" :label="item.senderName + ' ' + item.senderPhone + ' ' + item.province+item.city+item.region" :value="item">
+            <el-option v-for="(item,index) in postAddressArr" :key="index" :label="item.senderName + ' ' + item.senderPhone + ' ' + item.province+item.city+item.region+item.address" :value="item">
             </el-option>
           </el-select>
         </li>
@@ -51,16 +51,18 @@
         </li>
         <!-- 手工发货 -->
         <li class="hand" v-if="postOrderType==2">
-          <p style="font-size:12px;color:#ff3341;margin-left:100px;padding-bottom:10px">示例：浙江省杭州市萧山区xxxxx（必须包含省市区信息，不得含有空格、逗号及其他特殊字符）</p>
+          <strong style="display:inline-block;width:100px;">收件地址</strong>
+          <p style="font-size:12px;color:#ff3341;padding-bottom:10px;display:inline-block;">地址示例：浙江省杭州市萧山区东三路海神苑K幢678（必须包含省市区信息，不得含有空格、逗号及其他特殊字符）</p>
           <p class="info" v-for="(item,index) in inputArr" :key="index">
             <input type="text" v-model="item.thirdOrder" placeholder="订单编号">
             <input type="text" v-model="item.reciverName" placeholder="姓名">
-            <input type="text" v-model="item.telephone" placeholder="手机号">
-            <br />
-            <input type="text" v-model="item.province" placeholder="省">
-            <input type="text" v-model="item.city" placeholder="市">
-            <input type="text" v-model="item.region" placeholder="区">
-            <input type="text" v-model="item.address" placeholder="地址">
+            <input type="number" v-model="item.telephone" placeholder="手机号">
+            <br v-if="postShop.shopType==4" />
+            <input v-if="postShop.shopType==4" type="text" v-model="item.province" placeholder="省">
+            <input v-if="postShop.shopType==4" type="text" v-model="item.city" placeholder="市">
+            <input v-if="postShop.shopType==4" type="text" v-model="item.region" placeholder="区">
+            <input type="text" v-model="item.address" class="first" placeholder="地址">
+            <span @click="dele(index)" style="cursor:pointer;" class="el-icon-delete">删除</span>
           </p>
           <p class="go" @click="add">+继续添加</p>
         </li>
@@ -110,7 +112,7 @@ export default {
         isSuccess: false,
         data: ''
       },
-      postCompant: '',
+      postCompant: '1',
       postShop: '',
       shopListArr: [],
       postAddress: '',
@@ -176,6 +178,9 @@ export default {
         telephone: ''
       })
     },
+    dele (index) {
+      this.inputArr.splice(index, 1)
+    },
     // 上传之前
     getFileName (file) {
       let name = md5(file.name) + '.csv'
@@ -217,10 +222,22 @@ export default {
     downFail () {
       window.open('/api/task/downloadErrorOrderIds?fileName=' + this.uploadSuccessObj.uploadFileName)
     },
+    // 验证输入的地址格式
+    testAddress (index, val) {
+      if (parseInt(this.postShop.shopType) === 1) { // 淘宝
+
+      } else if (parseInt(this.postShop.shopType) === 2) { // 天猫
+
+      } else if (parseInt(this.postShop.shopType) === 3) { // 京东
+
+      } else if (parseInt(this.postShop.shopType) === 4) { // 拼多多
+
+      }
+    },
     // 创建任务按钮
     sureToBuildTask () {
       if (parseInt(this.postOrderType) === 1) {
-        this.$ajax.post('/api/task/parseFile', {
+        this.$ajax.post('/api/task/parseFile', { // 批量
           uploadFileName: this.uploadSuccessObj.uploadFileName,
           shopType: this.postShop.shopType,
           logisticsType: this.postCompant,
@@ -243,7 +260,7 @@ export default {
         }).catch(() => {
           this.$message.error('服务器错误！')
         })
-      } else if (parseInt(this.postOrderType) === 2) {
+      } else if (parseInt(this.postOrderType) === 2) { // 手动
         this.$ajax.post('/api/task/createTaskByHand', {
           shopType: this.postShop.shopType,
           logisticsType: this.postCompant,
@@ -291,7 +308,9 @@ export default {
         shopId: val.sellerShopId
       }).then((data) => {
         if (data.data.code === '200') {
-          this.postAddressArr = data.data.data
+          let arr = data.data.data.list
+          this.postAddressArr = arr
+          this.postAddress = arr[0] // 默认地址
         } else {
           this.$message({
             message: data.data.message,
@@ -393,19 +412,18 @@ export default {
           border 1px solid #DEDEDE
           outline none
           margin-left 10px
-          margin-bottom 18px
+          margin-bottom 6px
           border-radius 2px
           padding-left 5px
         .first
           width 305px
       .hand .info
-        margin-top 12px
         margin-left 88px
       .hand .go
-        margin-left 680px
+        margin-left 900px
+        margin-top 10px
         font-size 12px
         color #198AFF
-        margin-top 5px
         cursor pointer
       .handText
         margin-left 99px

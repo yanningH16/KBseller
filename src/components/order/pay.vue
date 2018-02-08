@@ -6,45 +6,98 @@
       </div>
       <div class="table">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="taskNum" label="任务编号" align="center">
+          <el-table-column prop="sellerTaskId" label="任务编号" align="center">
           </el-table-column>
           <el-table-column prop="taskType" label="任务类型" align="center">
+            <template slot-scope="scope">
+              <span style="font-size:12px;" v-if="scope.row.taskType==1">手工下单</span>
+              <span style="font-size:12px;" v-if="scope.row.taskType==2">批量下单</span>
+              <span style="font-size:12px;" v-else>--</span>
+            </template>
           </el-table-column>
           <el-table-column prop="price" label="单价/元" align="center">
           </el-table-column>
-          <el-table-column prop="orderNum" label="订单数量/单" align="center">
+          <el-table-column prop="totalNum" label="订单数量/单" align="center">
           </el-table-column>
-          <el-table-column prop="totalNum" label="总费用/元" align="center">
+          <el-table-column prop="actualCost" label="总费用/元" align="center">
           </el-table-column>
         </el-table>
       </div>
       <div class="bottom">
         <p>费用总计:
-          <span>¥36.00</span>
+          <span>¥{{ taskObj.actualCost }}</span>
         </p>
-        <p>余额不足,还需要¥30.00
-          <span class="pay">立即充值</span>
+        <p v-if="moneyObj.balance-taskObj.actualCost<0">余额不足,还需要¥{{ taskObj.actualCost-moneyObj.balance }}
+          <span class="pay" @click="$router.push({name: 'coinPay'})">立即充值</span>
         </p>
-        <button class="btn">确认支付</button>
+        <button class="btn" @click="sureToPay">确认支付</button>
       </div>
     </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 export default {
   name: 'pay',
   data () {
     return {
-      tableData: []
+      tableData: [],
+      taskObj: {},
+      moneyObj: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   },
   methods: {
     getTaskList () {
-      this.$ajax.post('/api/order/search/getSellerTaskByCondition', {
+      this.$ajax.post('/api/order/search/getBySellerTaskId', {
         sellerTaskId: this.$route.query.sellerTaskId
       }).then((data) => {
         if (data.data.code === '200') {
-          this.tableData = data.data.data
+          let obj = data.data.data
+          let arr = [obj]
+          this.tableData = arr
+          this.taskObj = obj
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    getMoney () {
+      this.$ajax.post('/api/seller/getBalance', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.moneyObj = data.data.data
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 确认支付按钮
+    sureToPay () {
+      this.$ajax.post('/api/order/operate/sellerTaskPay', {
+        sellerTaskId: this.$route.query.sellerTaskId
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.$message({
+            message: '支付成功!',
+            type: 'success'
+          })
+          this.$router.push({ name: 'taskList' })
         } else {
           this.$message({
             message: data.data.message,
@@ -58,6 +111,7 @@ export default {
   },
   mounted () {
     this.getTaskList()
+    this.getMoney()
   }
 }
 </script>

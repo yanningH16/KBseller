@@ -1,15 +1,21 @@
 var express = require('express')
 var proxy = require('http-proxy-middleware')
 var history = require('connect-history-api-fallback')
-  // var config = require('./config/index')
 var compression = require('compression')
 var app = express()
 app.use(compression())
 app.use('/api', proxy({
-  target: 'http://182.61.24.42:8089',
+  target: 'http://182.61.29.51:8089',
   changeOrigin: true,
   pathRewrite: {
     '^/api': ''
+  }
+}))
+app.use('/ipApi', proxy({
+  target: 'http://freegeoip.net/json/',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/ipApi': ''
   }
 }))
 app.use(history({
@@ -18,7 +24,7 @@ app.use(history({
 app.use(express.static('./dist'))
   // var port = process.env.PORT || config.build.port
   // 生产环境的端口号
-var port = 8013
+var port = 8023
 module.exports = app.listen(port, function (err) {
   if (err) {
     console.log(err)
