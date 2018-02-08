@@ -25,9 +25,9 @@
       </div>
       <div class="bottom">
         <p>费用总计:
-          <span>¥{{ taskObj.actualCost }}</span>
+          <span>¥{{ (taskObj.actualCost) ? (taskObj.actualCost-0).toFixed(2) : '--' }}</span>
         </p>
-        <p v-if="moneyObj.balance-taskObj.actualCost<0">余额不足,还需要¥{{ taskObj.actualCost-moneyObj.balance }}
+        <p v-if="moneyObj.balance-taskObj.actualCost<0">余额不足,还需要¥{{ (taskObj.actualCost-moneyObj.balance) ? (taskObj.actualCost-moneyObj.balance-0).toFixed(2) : '--' }}
           <span class="pay" @click="$router.push({name: 'coinPay'})">立即充值</span>
         </p>
         <button class="btn" @click="sureToPay">确认支付</button>
