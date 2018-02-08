@@ -6,7 +6,7 @@
           <ul>
             <li>
               交易时间:
-              <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd'>
+              <el-date-picker v-model="value3" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format='yyyy-MM-dd' format='yyyy-MM-dd'>
               </el-date-picker>
             </li>
             <!-- <li>
@@ -101,8 +101,8 @@ export default {
         pageNo: pageNo,
         pageSize: pageSize,
         sellerAccountId: this.userInfo.sellerAccountId,
-        startDate: this.value3 ? this.value3[0] : '',
-        endDate: this.value3 ? this.value3[1] : ''
+        startTime: this.value3 ? this.value3[0] : null,
+        endTime: this.value3 ? this.value3[1] : null
       }).then((data) => {
         console.log(data)
         let res = data.data
