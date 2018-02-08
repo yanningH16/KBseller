@@ -67,6 +67,11 @@ export default {
       'userInfo'
     ])
   },
+  watch: {
+    $route () {
+      this.getMoney()
+    }
+  },
   mounted () {
     this.getMoney()
   },
