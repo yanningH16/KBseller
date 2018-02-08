@@ -28,8 +28,8 @@
           </el-select>
         </li>
         <li class="radio">
-          <el-radio v-model="postOrderType" label="1">批量下单(表格)</el-radio>
-          <el-radio v-model="postOrderType" label="2">手工单条下单</el-radio>
+          <el-radio v-model="postOrderType" @change="testCanCreatTask" label="1">批量下单(表格)</el-radio>
+          <el-radio v-model="postOrderType" @change="testCanCreatTask" label="2">手工单条下单</el-radio>
         </li>
         <!-- 批量发货 -->
         <li class="text" v-if="postOrderType==1">
@@ -38,13 +38,18 @@
             <i>查看帮助</i>
           </span>
           <p>2、支持自定义模板上传数据：
-            <i>下载模板</i>
+            <i style="cursor:pointer;" @click="downModel">下载模板</i>
           </p>
           <p>3、单次上次最多上传500条记录</p>
-          <el-upload accept=".csv" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="/api/task/uploadFile" :data="uploadParams" :headers="headers">
+          <el-upload :accept="'.csv' || '.xls' || '.xlsx'" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="/api/task/uploadFile" :data="uploadParams" :headers="headers">
             <button class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传CSV文件</button>
           </el-upload>
-          <p class="prompt" :class="{ 'short': uploadSuccessObj.totalNum==uploadSuccessObj.realNum }" v-if="uploadSuccessObj.isSuccess">总共{{ uploadSuccessObj.totalNum }}条订单，上传成功{{ uploadSuccessObj.realNum }}条，共{{ uploadSuccessObj.data ? uploadSuccessObj.data.length : 0 }}条SKU
+          <p class="prompt" :class="{ 'short': uploadSuccessObj.totalNum==uploadSuccessObj.realNum }" v-if="uploadSuccessObj.isSuccess">
+            总共
+            <span class="red">{{ uploadSuccessObj.totalNum }}</span>条订单， 上传成功
+            <span class="red">{{ uploadSuccessObj.realNum }}</span>条， 上传失败
+            <span class="red">{{ uploadSuccessObj.totalNum-uploadSuccessObj.realNum }}</span>条, 共
+            <span class="red">{{ uploadSuccessObj.data ? uploadSuccessObj.data.length : 0 }}</span>条SKU
             <span v-if="uploadSuccessObj.totalNum!=uploadSuccessObj.realNum" class="link" @click="downFail">下载失败列表</span>
           </p>
         </li>
@@ -82,8 +87,8 @@
         </li>
         <!-- 上传CSV成功后显示 -->
         <li class="forList" v-if="uploadSuccessObj.isSuccess && postOrderType==1">
-          <div v-for="(item, index) in uploadSuccessObj.data" :key="index">
-            <p style="margin: 10px 0">{{ index+1 }}.商品名称:
+          <div v-show="!cantCreatTask" v-for="(item, index) in uploadSuccessObj.data" :key="index">
+            <p style="margin: 10px 0; font-weight: bolder;">{{ index+1 }}.商品名称:
               <span>{{ item.productName }}</span>
             </p>
             <p style="margin-bottom:20px;">
@@ -94,7 +99,7 @@
           </div>
         </li>
         <li class="creatTask">
-          <button class="btn" @click="sureToBuildTask">创建任务</button>
+          <button class="btn" :class="{ 'disabled': cantCreatTask }" :disabled="cantCreatTask" @click="sureToBuildTask">创建任务</button>
         </li>
       </ul>
     </div>
@@ -103,6 +108,7 @@
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
 import md5 from 'md5'
+// import model from '../../assets/model/上传模板.zip'
 export default {
   name: 'batchOrder',
   data () {
@@ -111,6 +117,7 @@ export default {
         isSuccess: false,
         data: ''
       },
+      cantCreatTask: true,
       isCanPostCreat: false,
       postCompant: '1',
       postShop: '',
@@ -181,6 +188,11 @@ export default {
     dele (index) {
       this.inputArr.splice(index, 1)
     },
+    // 下载模板
+    downModel () {
+      // let model = require('../../assets/model/上传模板.zip')
+      window.open('../../../static/上传模板.zip')
+    },
     // 上传之前
     getFileName (file) {
       let name = md5(file.name) + '.csv'
@@ -190,17 +202,24 @@ export default {
       let num = (Math.random() * (m - n + 1) + n).toFixed(2)
       return num
     },
+    testCanCreatTask () { // 如果上传文件有失败的
+      if (parseInt(this.postOrderType) === 1 && this.uploadSuccessObj.totalNum !== this.uploadSuccessObj.realNum) {
+        this.cantCreatTask = true
+      } else {
+        this.cantCreatTask = false
+      }
+    },
     // 上传成功
     uploadSuccess (res, file, fileList) {
       if (res.code === '200') {
         let arr = []
         for (let m of res.data.productNames) {
-          let min = this.randNum(0.05, 40) - 0
-          let max = this.randNum(min, 40) - 0
+          // let min = this.randNum(0.05, 40) - 0
+          // let max = this.randNum(min, 40) - 0
           arr.push({
             productName: m,
-            minWeight: min,
-            maxWeight: max
+            minWeight: '',
+            maxWeight: ''
           })
         }
         this.uploadSuccessObj.data = arr
@@ -208,6 +227,7 @@ export default {
         this.uploadSuccessObj.realNum = res.data.realNum
         this.uploadSuccessObj.uploadFileName = res.data.uploadFileName
         this.uploadSuccessObj.isSuccess = true
+        this.testCanCreatTask()
       } else {
         this.$message({
           message: res.message,
@@ -217,15 +237,15 @@ export default {
     },
     // 记住设置的重量
     remberHistory (index, val) {
-      if (index === 1) {
-        sessionStorage.setItem('__minWeight__', val)
-      } else if (index === 2) {
-        sessionStorage.setItem('__maxWeight__', val)
-      }
+      // if (index === 1) {
+      //   sessionStorage.setItem('__minWeight__', val)
+      // } else if (index === 2) {
+      //   sessionStorage.setItem('__maxWeight__', val)
+      // }
     },
     // 下载失败列表
     downFail () {
-      window.open('/api/task/downloadErrorOrderIds?fileName=' + this.uploadSuccessObj.uploadFileName)
+      window.open('/api/task/downloadErrorOrderIds?fileName=' + this.uploadSuccessObj.uploadFileName + '&shopType=' + this.postShop.shopType)
     },
     // 验证输入的地址格式
     testAddress (index, val) {
@@ -248,29 +268,46 @@ export default {
         })
       } else {
         if (parseInt(this.postOrderType) === 1) {
-          this.$ajax.post('/api/task/parseFile', { // 批量
-            uploadFileName: this.uploadSuccessObj.uploadFileName,
-            shopType: this.postShop.shopType,
-            logisticsType: this.postCompant,
-            sellerShipAddressId: this.postAddress.shipAddressId,
-            sellerAccountId: this.postAddress.sellerAccountId,
-            sellerShopId: this.postShop.sellerShopId,
-            shopName: this.postShop.shopName,
-            realNum: this.uploadSuccessObj.realNum,
-            totalNum: this.uploadSuccessObj.totalNum,
-            productNames: this.uploadSuccessObj.data
-          }).then((data) => {
-            if (data.data.code === '200') {
-              this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
-            } else {
-              this.$message({
-                message: data.data.message,
-                type: 'warning'
-              })
+          let isCan = true
+          for (let m of this.uploadSuccessObj.data) {
+            for (let i in m) {
+              if ((i === 'minWeight' && m[i] === '') || (i === 'maxWeight' && m[i] === '')) {
+                isCan = false
+                this.$message({
+                  message: '请填写完整重量',
+                  type: 'warning'
+                })
+                return false
+              } else {
+                isCan = true
+              }
             }
-          }).catch(() => {
-            this.$message.error('服务器错误！')
-          })
+          }
+          if (isCan) {
+            this.$ajax.post('/api/task/parseFile', { // 批量
+              uploadFileName: this.uploadSuccessObj.uploadFileName,
+              shopType: this.postShop.shopType,
+              logisticsType: this.postCompant,
+              sellerShipAddressId: this.postAddress.shipAddressId,
+              sellerAccountId: this.postAddress.sellerAccountId,
+              sellerShopId: this.postShop.sellerShopId,
+              shopName: this.postShop.shopName,
+              realNum: this.uploadSuccessObj.realNum,
+              totalNum: this.uploadSuccessObj.totalNum,
+              productNames: this.uploadSuccessObj.data
+            }).then((data) => {
+              if (data.data.code === '200') {
+                this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
+              } else {
+                this.$message({
+                  message: data.data.message,
+                  type: 'warning'
+                })
+              }
+            }).catch(() => {
+              this.$message.error('服务器错误！')
+            })
+          }
         } else if (parseInt(this.postOrderType) === 2) { // 手动
           let arr = []
           for (let m of this.inputArr) {
@@ -303,14 +340,14 @@ export default {
                 if (data.data.data.length === 0) {
                   this.creatTaskByHandPost()
                 } else if (data.data.data.length !== 0) {
-                  this.$notify({
-                    title: '订单号重复,请修改该订单!',
+                  this.$message({
+                    // title: '订单号重复,请修改该订单!',
                     dangerouslyUseHTMLString: true,
                     duration: 10000,
-                    offset: 50,
+                    // offset: 50,
                     type: 'warning',
                     showClose: true,
-                    message: data.data.data.join(',<br />')
+                    message: '<p style="font-size:16px;color:#ff3341;margin-bottom: 10px;">订单号重复,请修改该订单!</p>' + data.data.data.join(',<br />')
                   })
                 }
               } else {
@@ -389,12 +426,6 @@ export default {
   },
   mounted () {
     this.getShopList()
-    if (sessionStorage.getItem('__minWeight__')) {
-      this.handObj.minWeight = sessionStorage.getItem('__minWeight__')
-    }
-    if (sessionStorage.getItem('__maxWeight__')) {
-      this.handObj.maxWeight = sessionStorage.getItem('__maxWeight__')
-    }
   }
 }
 </script>
@@ -439,7 +470,7 @@ export default {
           margin-top 12px
           margin-left 101px
         .prompt
-          width 420px
+          width 480px
           height 32px
           border-radius 15px
           background #222039
@@ -447,6 +478,11 @@ export default {
           line-height 32px
           padding-left 10px
           position relative
+          .red
+            margin-right 0
+            font-size 20px
+            font-weight bold
+            color #ff3341
           .fontIcon
             font-size 20px
             color white
