@@ -62,17 +62,25 @@ export default {
           password: md5(this.password),
           ip: this.ip
         }).then((data) => {
-          // console.log(data)
+          console.log(data)
           if (data.data.code === '200') {
             this.setUserInfo(data.data.data)
             this.setUserToken(data.headers.accesstoken)
-            this.$message({
-              message: '登录成功,页面跳转中...',
-              type: 'success',
-              onClose: () => {
-                this.$router.push({ name: 'overView' })
-              }
-            })
+            if (data.data.data.status === '2') {
+              this.$message({
+                message: '您的账号已被冻结,请及时联系管理员',
+                type: 'warning'
+              })
+              return false
+            } else {
+              this.$message({
+                message: '登录成功,页面跳转中...',
+                type: 'success',
+                onClose: () => {
+                  this.$router.push({ name: 'overView' })
+                }
+              })
+            }
           } else {
             this.$message({
               message: data.data.message,
