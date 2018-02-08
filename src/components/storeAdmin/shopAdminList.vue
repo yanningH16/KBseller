@@ -10,9 +10,9 @@
             <tr>
               <i style="margin-left:20px">店铺名称:
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
+                <span class="right">
+                  <!-- <em>{{item.status}}</em> -->
+                  <i style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)">修改</i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -33,9 +33,9 @@
             <tr>
               <i style="margin-left:20px">店铺名称:
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
+                <span class="right">
+                  <!-- <em>{{item.status}}</em> -->
+                  <i style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)">修改</i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -56,9 +56,9 @@
             <tr>
               <i style="margin-left:20px">店铺名称:
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
+                <span class="right">
+                  <!-- <em>{{item.status}}</em> -->
+                  <i style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)">修改</i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -79,9 +79,9 @@
             <tr>
               <i style="margin-left:20px">店铺名称:
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
+                <span class="right">
+                  <!-- <em>{{item.status}}</em> -->
+                  <i style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)">修改</i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -102,9 +102,9 @@
             <tr>
               <i style="margin-left:20px">店铺名称:
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
-                <span class="right">状态 :
-                  <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
+                <span class="right">
+                  <!-- <em>{{item.status}}</em> -->
+                  <i style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)">修改</i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>

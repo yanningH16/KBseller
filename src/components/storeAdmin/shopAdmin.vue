@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
-    <div class="shop">
-      <em class="gray">其他管理</em>>店铺管理</div>
+    <!-- <div class="shop">
+      <em class="gray">其他管理</em>>店铺管理</div> -->
     <div class="content">
       <h3>商家绑定店铺</h3>
       <div class="line"></div>
@@ -11,7 +11,7 @@
           <!-- <span>{{this.$route.query.number===2?'天猫':'京东'}}</span> -->
           <el-input disabled v-model="input8" placeholder="请输入内容" style="width:384px"></el-input>
         </li>
-        <li class="site">
+        <li class="site" v-if="this.$route.query.number != 4">
           <span>店铺首页链接&nbsp;&nbsp;</span>
           <el-input v-model="input" placeholder="请输入内容" style="width:384px"></el-input>
           <span class="shopInfo" @click="getShopInfo">读取店铺信息</span>
@@ -245,7 +245,7 @@ export default {
     },
     // 当点击确认绑定的时候做的请求
     addSure () {
-      if (this.input === '' || this.input1 === '' || this.saveAddressId.length === 0) {
+      if (this.input1 === '' || this.saveAddressId.length === 0) {
         this.$message({
           message: '请正确填写所有内容,不能留空哦...',
           type: 'warning'

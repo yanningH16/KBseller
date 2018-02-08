@@ -18,7 +18,10 @@
     </div>
     <div class="state">
       <p class="balance">客服微信:{{userInfo.serviceWechatNum}}</p>
-      <p class="balance">客服QQ:{{userInfo.serviceQQ}}</p>
+      <p class="balance">
+        <span style="qq">客服QQ:</span>
+        <span class="setWidth">{{userInfo.serviceQQ}}</span>
+      </p>
     </div>
   </div>
 </template>
@@ -262,4 +265,15 @@ export default {
     font-size 14px
     .balance
       margin-top 12px
+      .qq
+        vertical-align top
+        display inline-block
+      .setWidth
+        vertical-align top
+        width 100px
+        // background red
+        display inline-block
+        word-break break-all
+        word-wrap break-word
+        line-height 20px
 </style>
