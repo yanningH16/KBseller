@@ -96,8 +96,9 @@
               <el-table-column prop="logisticsOrderId" align="center" label="订单信息">
                 <template slot-scope="scope">
                   <p>物品重量：{{scope.row.weight}}kg</p>
+                  <p>商品名字:{{scope.row.productName}}</p>
                   <p>平台订单号:{{scope.row.thirdOrderId||'--'}}</p>
-                  <p>快递单号:{{scope.row.logisticsOrderId}}</p>
+                  <p>快递单号:{{scope.row.logisticsOrderId||'--'}}</p>
                 </template>
               </el-table-column>
               <el-table-column prop="status" align="center" label="状态">
