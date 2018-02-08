@@ -17,8 +17,8 @@
       </div>
     </div>
     <div class="state">
-      <p class="balance">客服微信:15700177632</p>
-      <p class="balance">客服QQ:12356453</p>
+      <p class="balance">客服微信:{{userInfo.serviceWechatNum}}</p>
+      <p class="balance">客服QQ:{{userInfo.serviceQQ}}</p>
     </div>
   </div>
 </template>

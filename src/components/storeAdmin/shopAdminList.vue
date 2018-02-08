@@ -12,7 +12,7 @@
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -20,7 +20,7 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
@@ -35,7 +35,7 @@
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -43,7 +43,7 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
@@ -58,7 +58,7 @@
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -66,7 +66,7 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
@@ -81,7 +81,7 @@
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -89,7 +89,7 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
@@ -104,7 +104,7 @@
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">状态 :
                   <em>{{item.status}}</em>
-                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(index)"></i>
+                  <i class="el-icon-document" style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)"></i>
                   <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
@@ -112,7 +112,7 @@
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
                 地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
-                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],shopList[index])">设为默认地址</span>
+                <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
             </tr>
@@ -168,7 +168,7 @@ export default {
     setAddress (val, id) {
       console.log(val, id)
       this.$ajax.post('/api/seller/shopAddress/setDefaultShopAddress', {
-        shopId: id.shopId,
+        shopId: id,
         shipAddressId: val.shipAddressId
       }).then((data) => {
         console.log(data)
@@ -277,8 +277,9 @@ export default {
         this.$message.error(err)
       })
     },
-    change (index) {
-      this.$router.push({ name: 'changeShop', query: { sellerShopId: this.shopList[index].shopId } })
+    change (val) {
+      console.log(val)
+      this.$router.push({ name: 'changeShop', query: { shopId: val, number: this.activeName === 'first' ? 3 : this.activeName === 'two' ? 1 : this.activeName === 'three' ? 2 : this.activeName === 'four' ? 4 : 5 } })
     },
     ...mapActions([
       'setUserInfo'

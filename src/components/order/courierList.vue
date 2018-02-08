@@ -83,7 +83,6 @@
                 <template slot-scope="scope">
                   <p>发货人姓名:{{scope.row.senderName}}</p>
                   <p>发货人电话：{{scope.row.senderTelephone}}</p>
-                  <p>物品质量：{{scope.row.weight}}kg</p>
                   <p>发货人地址：{{scope.row.senderProvince+scope.row.senderCity+scope.row.senderRegion+scope.row.senderAddress}}</p>
                 </template>
               </el-table-column>
@@ -91,12 +90,12 @@
                 <template slot-scope="scope">
                   <p>收货人姓名:{{scope.row.receiveName}}</p>
                   <p>收货人电话：{{scope.row.receiveTelephone}}</p>
-                  <p>物品质量：{{scope.row.weight}}kg</p>
                   <p>收货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+scope.row.receiveRegion+scope.row.receiveAddress}}</p>
                 </template>
               </el-table-column>
               <el-table-column prop="logisticsOrderId" align="center" label="订单信息">
                 <template slot-scope="scope">
+                  <p>物品重量：{{scope.row.weight}}kg</p>
                   <p>平台订单号:{{scope.row.thirdOrderId||'--'}}</p>
                   <p>快递单号:{{scope.row.logisticsOrderId}}</p>
                 </template>
@@ -190,7 +189,7 @@ export default {
         orderStatus: this.value2,
         receiveTelephone: this.input2,
         sellerTaskId: this.input1,
-        sellerOrderId: this.input,
+        thirdOrderId: this.input,
         sellerAccountId: this.userInfo.sellerAccountId
       }
     },

@@ -37,8 +37,22 @@ export default {
   data () {
     return {
       username: '',
-      password: ''
+      password: '',
+      ip: ''
     }
+  },
+  created () {
+    this.$ajax.get('/ipApi', {
+    }).then((data) => {
+      console.log(data)
+      if (data.statusText === 'OK') {
+        this.ip = data.data.ip
+      } else {
+        this.$message.error('获取ip失败')
+      }
+    }).catch(() => {
+      this.$message.error('服务器错误！')
+    })
   },
   methods: {
     login () {
@@ -58,7 +72,8 @@ export default {
         // 登录
         this.$ajax.post('/apiseller/login', {
           telephone: this.username,
-          password: md5(this.password)
+          password: md5(this.password),
+          ip: this.ip
         }).then((data) => {
           // console.log(data)
           if (data.data.code === '200') {

@@ -82,6 +82,7 @@
                     <el-button v-if="scope.row.status==='1'" @click="handleClicklook(scope.row)" type="text" size="small">查看</el-button>
                     <el-button v-if="scope.row.status==='0'" @click="handleClickGo(scope.row)" type="text" size="small">去支付</el-button>
                     <el-button v-if="scope.row.status==='0'" @click="handleClickDel(scope.row)" type="text" size="small">撤销</el-button>
+                    <el-button v-if="scope.row.status==='1'" @click="handleClickUpload(scope.row)" type="text" size="small">导出</el-button>
                   </div>
                 </template>
               </el-table-column>
@@ -174,6 +175,10 @@ export default {
     },
     search () {
       this.getTask()
+    },
+    handleClickUpload (val) {
+      // console.log(val)
+      window.open('/api/task/downloadSellerOrdersBySellerTaskId?sellerTaskId=' + val.sellerTaskId)
     },
     // 当点击去支付
     handleClickGo (val) {

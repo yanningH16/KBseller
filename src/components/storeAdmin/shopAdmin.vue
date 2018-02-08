@@ -25,7 +25,7 @@
         </li>
         <li class="addAddress">
           <i :class='{"activeColor":pull}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="add"> 添加发货地址</i>
-          <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从地址库选择</em>
+          <!-- <em :class='{"activeColor":haveAdd}' class="el-icon-circle-plus" style="color:rgba(23,159,255,1);cursor:pointer" @click="getAdd"> 从地址库选择</em> -->
         </li>
         <li class="addContent" v-for="(item,index) in addArr" :key='index'>
           <!-- <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i> -->
@@ -62,7 +62,7 @@
                 <el-option v-for="(item,index) in zone" :key="index" :label="item.name" :value="item"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="街道地址">
+            <el-form-item label="详细地址">
               <el-input v-model="jieName" style="width:384px"></el-input>
               <!-- <p style="font-size:12px;color:#FF2933;margin-left:20px">添加后无法修改，一个店铺地址最多绑定5个，您还可以绑定3个</p> -->
             </el-form-item>
@@ -71,18 +71,13 @@
           <button class="btn" style="background:gray" @click="cencel">取消</button>
         </li>
 
-        <li class="accountTab" v-show="haveAdd">
+        <!-- <li class="accountTab" v-show="haveAdd">
           <el-table :data="getAddressList" @selection-change="handSelect" style="width: 100%" @select-all="selectAll" border="true">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column prop="address" align="center" label="已添加的地址">
             </el-table-column>
-            <!-- <el-table-column prop="setdef" align="center" label="是否设为默认地址">
-              <template slot-scope="scope">
-                <el-button @click="handleClicklook(scope.row)" type="text" size="small">设为默认</el-button>
-              </template>
-            </el-table-column> -->
           </el-table>
-        </li>
+        </li> -->
         <li class="clickBtn">
           <button class=" btn" style="margin-bottom:60px" @click="addSure">确认绑定</button>
           <router-link :to="{name:'shopAdminList'}">
@@ -126,10 +121,6 @@ export default {
       addArr: [],
       // 存放地址的id
       saveAddressId: [],
-      getAddressList: [
-        { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' },
-        { address: '点击foefoe复健科垃圾毒素拉萨路辅导老师法拉盛链接科雷嘉的了解法律家佛尔发' }
-      ],
       // 已有地址
       haveAdd: false,
       // 添加新的地址
@@ -181,44 +172,10 @@ export default {
       })
     },
     add () {
-      this.pull = true
-      this.haveAdd = false
+      this.pull = !this.pull
     },
     cencel () {
       this.pull = false
-    },
-    // 获取店铺地址
-    getAdd () {
-      this.pull = false
-      this.haveAdd = true
-      // this.addArr = []
-      this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
-        sellerAccountId: this.userInfo.sellerAccountId
-      }).then((data) => {
-        console.log(data)
-        let res = data.data
-        if (res.code === '200') {
-          let arr = []
-          for (let word of res.data) {
-            let obj = {
-              address: word.senderName + ' ' + word.senderPhone + ' ' + word.province + ' ' + word.city + ' ' + word.region + ' ' + word.address,
-              shipAddressId: word.shipAddressId
-            }
-            arr.push(obj)
-          }
-          this.getAddressList = arr
-        } else {
-          this.$message({
-            message: res.message,
-            type: 'error'
-          })
-        }
-      }).catch(() => {
-        this.$message({
-          message: '网络错误,刷新试试',
-          type: 'error'
-        })
-      })
     },
     // 当点击保存的时候进行收货地的保存
     save () {
