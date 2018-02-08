@@ -114,7 +114,7 @@ export default {
               sureTime: word.gmtModify,
               revenue: (word.afterMoney - word.beforMoney).toFixed(2) || '--',
               type: word.statusDetail,
-              balance: word.money,
+              balance: word.afterMoney,
               number: word.sellerFundFlowId,
               remark: word.flowTypeDetail
             }

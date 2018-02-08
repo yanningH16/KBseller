@@ -31,7 +31,7 @@
 </template>
 <script type="text/ecmascript-6">
 import md5 from 'md5'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'login',
   data () {
@@ -88,6 +88,9 @@ export default {
     ...mapActions([
       'setUserInfo',
       'setUserToken'
+    ]),
+    ...mapGetters([
+      'userInfo'
     ])
   }
 }
