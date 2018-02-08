@@ -44,23 +44,22 @@
           <el-upload accept=".csv" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="/api/task/uploadFile" :data="uploadParams" :headers="headers">
             <button class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传CSV文件</button>
           </el-upload>
-          <p class="prompt" v-if="uploadSuccessObj.isSuccess">总共{{ uploadSuccessObj.totalNum }}条订单，上传成功{{ uploadSuccessObj.realNum }}条，共{{ uploadSuccessObj.data ? uploadSuccessObj.data.length : 0 }}条SKU
-            <span class="link" @click="downFail">下载失败列表</span>
-            <i class="el-icon-circle-close fontIcon"></i>
+          <p class="prompt" :class="{ 'short': uploadSuccessObj.totalNum==uploadSuccessObj.realNum }" v-if="uploadSuccessObj.isSuccess">总共{{ uploadSuccessObj.totalNum }}条订单，上传成功{{ uploadSuccessObj.realNum }}条，共{{ uploadSuccessObj.data ? uploadSuccessObj.data.length : 0 }}条SKU
+            <span v-if="uploadSuccessObj.totalNum!=uploadSuccessObj.realNum" class="link" @click="downFail">下载失败列表</span>
           </p>
         </li>
         <!-- 手工发货 -->
         <li class="hand" v-if="postOrderType==2">
           <strong style="display:inline-block;width:100px;">收件地址</strong>
-          <p style="font-size:12px;color:#ff3341;padding-bottom:10px;display:inline-block;">地址示例：浙江省杭州市萧山区东三路海神苑K幢678（必须包含省市区信息，不得含有空格、逗号及其他特殊字符）</p>
+          <p style="font-size:12px;color:#ff3341;padding-bottom:10px;display:inline-block;">地址示例：浙江省 杭州市 萧山区 东三路海神苑K幢678（必须包含省市区信息，省市区一定要以空格隔开）</p>
           <p class="info" v-for="(item,index) in inputArr" :key="index">
             <input type="text" v-model="item.thirdOrder" placeholder="订单编号">
             <input type="text" v-model="item.reciverName" placeholder="姓名">
             <input type="number" v-model="item.telephone" placeholder="手机号">
-            <br v-if="postShop.shopType==4" />
+            <!-- <br v-if="postShop.shopType==4" />
             <input v-if="postShop.shopType==4" type="text" v-model="item.province" placeholder="省">
             <input v-if="postShop.shopType==4" type="text" v-model="item.city" placeholder="市">
-            <input v-if="postShop.shopType==4" type="text" v-model="item.region" placeholder="区">
+            <input v-if="postShop.shopType==4" type="text" v-model="item.region" placeholder="区"> -->
             <input type="text" v-model="item.address" class="first" placeholder="地址">
             <span @click="dele(index)" style="cursor:pointer;" class="el-icon-delete">删除</span>
           </p>
@@ -112,6 +111,7 @@ export default {
         isSuccess: false,
         data: ''
       },
+      isCanPostCreat: false,
       postCompant: '1',
       postShop: '',
       shopListArr: [],
@@ -121,9 +121,9 @@ export default {
       inputArr: [{
         thirdOrder: '',
         reciverName: '',
-        province: '',
-        city: '',
-        region: '',
+        // province: '',
+        // city: '',
+        // region: '',
         address: '',
         telephone: ''
       }],
@@ -171,9 +171,9 @@ export default {
       this.inputArr.push({
         thirdOrder: '',
         reciverName: '',
-        province: '',
-        city: '',
-        region: '',
+        // province: '',
+        // city: '',
+        // region: '',
         address: '',
         telephone: ''
       })
@@ -186,16 +186,21 @@ export default {
       let name = md5(file.name) + '.csv'
       this.uploadFileName = name
     },
+    randNum (n, m) {
+      let num = (Math.random() * (m - n + 1) + n).toFixed(2)
+      return num
+    },
     // 上传成功
     uploadSuccess (res, file, fileList) {
-      console.log(this.uploadFileName)
       if (res.code === '200') {
         let arr = []
         for (let m of res.data.productNames) {
+          let min = this.randNum(0.05, 40) - 0
+          let max = this.randNum(min, 40) - 0
           arr.push({
             productName: m,
-            minWeight: '',
-            maxWeight: ''
+            minWeight: min,
+            maxWeight: max
           })
         }
         this.uploadSuccessObj.data = arr
@@ -236,54 +241,114 @@ export default {
     },
     // 创建任务按钮
     sureToBuildTask () {
-      if (parseInt(this.postOrderType) === 1) {
-        this.$ajax.post('/api/task/parseFile', { // 批量
-          uploadFileName: this.uploadSuccessObj.uploadFileName,
-          shopType: this.postShop.shopType,
-          logisticsType: this.postCompant,
-          sellerShipAddressId: this.postAddress.shipAddressId,
-          sellerAccountId: this.postAddress.sellerAccountId,
-          sellerShopId: this.postShop.sellerShopId,
-          shopName: this.postShop.shopName,
-          realNum: this.uploadSuccessObj.realNum,
-          totalNum: this.uploadSuccessObj.totalNum,
-          productNames: this.uploadSuccessObj.data
-        }).then((data) => {
-          if (data.data.code === '200') {
-            this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
-          } else {
-            this.$message({
-              message: data.data.message,
-              type: 'warning'
+      if (this.postShop === '' || this.postAddress === '') {
+        this.$message({
+          message: '请选择店铺相关信息!',
+          type: 'warning'
+        })
+      } else {
+        if (parseInt(this.postOrderType) === 1) {
+          this.$ajax.post('/api/task/parseFile', { // 批量
+            uploadFileName: this.uploadSuccessObj.uploadFileName,
+            shopType: this.postShop.shopType,
+            logisticsType: this.postCompant,
+            sellerShipAddressId: this.postAddress.shipAddressId,
+            sellerAccountId: this.postAddress.sellerAccountId,
+            sellerShopId: this.postShop.sellerShopId,
+            shopName: this.postShop.shopName,
+            realNum: this.uploadSuccessObj.realNum,
+            totalNum: this.uploadSuccessObj.totalNum,
+            productNames: this.uploadSuccessObj.data
+          }).then((data) => {
+            if (data.data.code === '200') {
+              this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
+            } else {
+              this.$message({
+                message: data.data.message,
+                type: 'warning'
+              })
+            }
+          }).catch(() => {
+            this.$message.error('服务器错误！')
+          })
+        } else if (parseInt(this.postOrderType) === 2) { // 手动
+          let arr = []
+          for (let m of this.inputArr) {
+            for (let i in m) {
+              if (m[i] === '') {
+                this.$message({
+                  message: '请完善订单信息!',
+                  type: 'warning'
+                })
+                this.isCanPostCreat = false
+                return false
+              } else if (i === 'address' && !((/(^(([\u4e00-\u9fa5]+)([\s]+)){3}([\u4e00-\u9fa5]+))/g).test(m[i]))) {
+                this.$message({
+                  message: '地址格式有误!',
+                  type: 'warning'
+                })
+                this.isCanPostCreat = false
+                return false
+              } else {
+                this.isCanPostCreat = true
+              }
+            }
+            arr.push(m.thirdOrder)
+          }
+          if (this.isCanPostCreat) {
+            this.$ajax.post('/api/task/checkDuplicateThirdOrderId', { // 请求去重
+              thirdOrderIds: arr
+            }).then((data) => {
+              if (data.data.code === '200') {
+                if (data.data.data.length === 0) {
+                  this.creatTaskByHandPost()
+                } else if (data.data.data.length !== 0) {
+                  this.$notify({
+                    title: '订单号重复,请修改该订单!',
+                    dangerouslyUseHTMLString: true,
+                    duration: 10000,
+                    offset: 50,
+                    type: 'warning',
+                    showClose: true,
+                    message: data.data.data.join(',<br />')
+                  })
+                }
+              } else {
+                this.$message({
+                  message: data.data.message,
+                  type: 'warning'
+                })
+              }
+            }).catch(() => {
+              this.$message.error('服务器错误！')
             })
           }
-        }).catch(() => {
-          this.$message.error('服务器错误！')
-        })
-      } else if (parseInt(this.postOrderType) === 2) { // 手动
-        this.$ajax.post('/api/task/createTaskByHand', {
-          shopType: this.postShop.shopType,
-          logisticsType: this.postCompant,
-          sellerShipAddressId: this.postAddress.shipAddressId,
-          sellerAccountId: this.postAddress.sellerAccountId,
-          sellerShopId: this.postShop.sellerShopId,
-          shopName: this.postShop.shopName,
-          minWeight: this.handObj.minWeight,
-          maxWeight: this.handObj.maxWeight,
-          orders: this.inputArr
-        }).then((data) => {
-          if (data.data.code === '200') {
-            this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
-          } else {
-            this.$message({
-              message: data.data.message,
-              type: 'warning'
-            })
-          }
-        }).catch(() => {
-          this.$message.error('服务器错误！')
-        })
+        }
       }
+    },
+    creatTaskByHandPost () {
+      this.$ajax.post('/api/task/createTaskByHand', {
+        shopType: this.postShop.shopType,
+        logisticsType: this.postCompant,
+        sellerShipAddressId: this.postAddress.shipAddressId,
+        sellerAccountId: this.postAddress.sellerAccountId,
+        sellerShopId: this.postShop.sellerShopId,
+        shopName: this.postShop.shopName,
+        minWeight: this.handObj.minWeight,
+        maxWeight: this.handObj.maxWeight,
+        orders: this.inputArr
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
     },
     // 获取店铺地址
     getShopList () {
@@ -385,6 +450,8 @@ export default {
           .fontIcon
             font-size 20px
             color white
+        .short
+          width 300px
       .weight
         color #444444
         font-size 12px
