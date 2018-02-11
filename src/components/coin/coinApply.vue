@@ -25,7 +25,7 @@
             <el-table :data="tableData" style="width: 100%" v-if="tableData.length!==0">
               <el-table-column prop="number" align="center" label="流水号">
               </el-table-column>
-              <el-table-column prop="remark" align="center" label="交易内容">
+              <el-table-column prop="typeContet" align="center" label="交易内容">
               </el-table-column>
               <el-table-column prop="revenue" align="center" label="交易金额">
               </el-table-column>
@@ -115,7 +115,8 @@ export default {
               type: word.statusDetail,
               balance: word.afterMoney,
               number: word.sellerFundFlowId,
-              remark: word.flowTypeDetail
+              remark: word.content,
+              typeContet: word.flowTypeDetail
             }
             arr.push(goods)
           }
