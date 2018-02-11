@@ -135,7 +135,8 @@ export default {
     },
     qqNum: function () {
       let qq = this.userInfo.serviceQQ
-      qq = qq.split('，')
+      qq = qq.replace(/，/ig, ',')
+      qq = qq.split(',')
       return qq
     },
     ...mapGetters([
