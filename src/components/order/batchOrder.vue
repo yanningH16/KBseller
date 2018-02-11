@@ -42,7 +42,8 @@
           </p>
           <p>3、单次上次最多上传500条记录</p>
           <el-upload :accept="'.csv' || '.xls' || '.xlsx'" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="/api/task/uploadFile" :data="uploadParams" :headers="headers">
-            <button class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传CSV文件</button>
+            <button v-if="!uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传CSV文件</button>
+            <button v-if="uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload" style="background:#ededed;color:#9b9b9b;">重新上传</button>
           </el-upload>
           <p class="prompt" :class="{ 'short': uploadSuccessObj.totalNum==uploadSuccessObj.realNum }" v-if="uploadSuccessObj.isSuccess">
             总共
@@ -50,8 +51,8 @@
             <span class="red">{{ uploadSuccessObj.realNum }}</span>条， 上传失败
             <span class="red">{{ uploadSuccessObj.totalNum-uploadSuccessObj.realNum }}</span>条, 共
             <span class="red">{{ uploadSuccessObj.data ? uploadSuccessObj.data.length : 0 }}</span>条SKU
-            <span v-if="uploadSuccessObj.totalNum!=uploadSuccessObj.realNum" class="link" @click="downFail">下载失败列表</span>
           </p>
+          <button v-if="uploadSuccessObj.totalNum!=uploadSuccessObj.realNum" class="btn" @click="downFail" style="margin-left:20px;">下载失败列表</button>
         </li>
         <!-- 手工发货 -->
         <li class="hand" v-if="postOrderType==2">
@@ -433,7 +434,7 @@ export default {
 .wrapBg
   padding 20px
   .link
-    color #ff3341
+    color #1C95FF
     cursor pointer
   .disabled
     cursor not-allowed
@@ -470,8 +471,10 @@ export default {
           margin-top 12px
           margin-left 101px
         .prompt
-          width 480px
+          // width 480px
           height 32px
+          padding 0 10px
+          display inline-block
           border-radius 15px
           background #222039
           color white
