@@ -95,7 +95,7 @@
             </tr>
           </table>
         </el-tab-pane>
-        <el-tab-pane label='其它' name="five">
+        <!-- <el-tab-pane label='其它' name="five">
           <table class="border" v-for="(item,index) in shopList" :key="index">
             <div class="icon">
             </div>
@@ -103,9 +103,7 @@
               <i style="margin-left:20px">店铺名称:
                 <em style="font-size:16px;color:#ff3341">{{item.shopName}}</em>
                 <span class="right">
-                  <!-- <em>{{item.status}}</em> -->
                   <i style="margin-right:10px;margin-left:10px;cursor:pointer" @click="change(item.shopId)">修改</i>
-                  <!-- <i class="el-icon-delete" style="cursor:pointer" @click="open2(index)"></i> -->
                 </span>
               </i>
             </tr>
@@ -117,7 +115,7 @@
               </i>
             </tr>
           </table>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
       <button class="btn" @click="addShop">+添加店铺</button>
     </div>

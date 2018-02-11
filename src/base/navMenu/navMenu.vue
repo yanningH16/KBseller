@@ -20,7 +20,9 @@
       <p class="balance">客服微信:{{userInfo.serviceWechatNum}}</p>
       <p class="balance">
         <span class="qq">客服QQ:</span>
-        <span class="setWidth">{{userInfo.serviceQQ}}</span>
+        <span class="setWidth">
+          <em v-for="(item,index) in qqNum" :key="index">{{ item }}</em>
+        </span>
       </p>
     </div>
   </div>
@@ -130,6 +132,11 @@ export default {
       set (val) {
         return val
       }
+    },
+    qqNum: function () {
+      let qq = this.userInfo.serviceQQ
+      qq = qq.split('，')
+      return qq
     },
     ...mapGetters([
       'userInfo',
@@ -271,6 +278,7 @@ export default {
       .setWidth
         vertical-align top
         width 100px
+        display inline-block
         // background red
         display inline-block
         word-break break-all
