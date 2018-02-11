@@ -1,20 +1,21 @@
 <template>
   <div class="login">
     <div class="logo">
-      <h1>包裹网</h1>
+      <!-- <img src="../../assets/images/ico.png" alt="logo"> -->
+      <!-- <span>抱 一 云 信</span> -->
     </div>
     <div class="cont">
       <div class="board">
-        <h2>忘记密码</h2>
+        <h2>修改密码</h2>
         <div class="inputCont">
           <div class="input" :class="{'actives':focus}">
-            <span class="el-icon-edit"></span>
-            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false">
+            <img src="../../assets/image/phone.png" alt="">
+            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus>
           </div>
           <div class="inputCode">
-            <div class="smInput" :class="{'actives':focusCode}">
-              <span class="el-icon-edit-outline"></span>
-              <input type="password" v-model="code" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
+            <div class="smInput input" :class="{'actives':focusCode}">
+              <img src="../../assets/image/password.png" alt="">
+              <input type="text" v-model="code" placeholder="输入验证码" @focus="focusCode=true" @blur="focusCode=false">
             </div>
             <span class="testButton" v-show="!isCan">
               验证码
@@ -25,14 +26,14 @@
             </span>
           </div>
           <div class="input pCont" :class="{'actives':focusWord}">
-            <span class="el-icon-edit-outline"></span>
+            <img src="../../assets/image/password.png" alt="">
             <input type="password" placeholder="输入新密码" v-model="newpass" @focus="focusWord=true" @blur="focusWord=false">
           </div>
           <div class="input" :class="{'actives':focusWords}">
-            <span class="el-icon-edit-outline"></span>
+            <img src="../../assets/image/password.png" alt="">
             <input type="password" placeholder="再次输入密码" v-model="agpass" @focus="focusWords=true" @blur="focusWords=false">
           </div>
-          <button @click="submit">提&nbsp;交</button>
+          <button @click="submit">确认修改</button>
           <h3>
             <span>
               <router-link :to="{ name: 'login', params: { userId: 123 }}">去登录</router-link>
@@ -45,8 +46,9 @@
 </template>
 <script type="text/ecmascript-6">
 import md5 from 'md5'
+import { mapActions } from 'vuex'
 export default {
-  name: 'reg',
+  name: 'password',
   data () {
     return {
       isCan: false,
@@ -54,13 +56,17 @@ export default {
       newpass: '',
       agpass: '',
       code: '',
+      intervalCode: this.$route.query.inviteCode || '',
+      picPassword: '',
       show: true,
       time: 60,
       focus: false,
       focusCode: false,
       focusWord: false,
       focusWords: false,
-      isSendMsg: true
+      focusWordss: false,
+      isSendMsg: true,
+      numberArr: ''
     }
   },
   methods: {
@@ -76,7 +82,7 @@ export default {
       this.isSendMsg = false
       this.$ajax.post('/api/config/sms/sendSms', {
         telephone: this.phoneNum,
-        type: 2
+        type: 1
       }).then((data) => {
         if (data.data.code === '200') {
           this.$message({
@@ -103,46 +109,14 @@ export default {
         this.$message.error('服务器错误！')
       })
     },
-    testCode () {
-      this.$ajax.post('/api/config/sms/vertify', {
-        telephone: this.phoneNum,
-        type: 2,
-        code: this.code
-      }).then((data) => {
-        if (data.data.code === '200') {
-          this.$ajax.post('/api/sellerAccout/resetPassword', {
-            telephone: this.phoneNum,
-            newPassword: md5(this.newpass),
-            oldPassword: md5(this.agpass)
-          }).then(data => {
-            if (data.data.code === '200') {
-              this.$message({
-                message: data.data.message,
-                type: 'success',
-                onClose: () => {
-                  this.$router.push({ name: 'login' })
-                }
-              })
-            } else {
-              this.$message({
-                message: data.data.message,
-                type: 'warning'
-              })
-            }
-          }).catch(() => {
-            this.$message.error('服务器错误！')
-          })
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch(() => {
-        this.$message.error('服务器错误！')
-      })
-    },
     submit () {
+      if (this.phoneNum === '' || this.code === '' || this.newpass === '' || this.agpass === '') {
+        this.$message({
+          message: '请正确填写修改信息!!!',
+          type: 'warning'
+        })
+        return false
+      }
       if (this.newpass !== this.agpass) {
         this.$message({
           message: '两次密码不一致,请重新输入',
@@ -150,8 +124,34 @@ export default {
         })
         return false
       }
-      this.testCode()
-    }
+      this.$ajax.post('/api/seller/resetPwd', {
+        telephone: this.phoneNum,
+        code: this.code,
+        newPwd: md5(this.newpass),
+        rePwd: md5(this.agpass),
+        type: 1
+      }).then((data) => {
+        if (data.data.code === '200') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.$router.push({ name: 'login' })
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((error) => {
+        this.$message.error(error)
+        console.log(error)
+      })
+    },
+    ...mapActions([
+      'setUserInfo',
+      'setUserToken'
+    ])
   }
 }
 </script>
@@ -161,21 +161,25 @@ export default {
   min-width 800px
   width 100%
   height 100%
-  background #f8f8f8
+  // background url('../../assets/images/bg.png')
   .logo
-    font-size 30px
-    height 75px
+    color #ffffff
+    height 33px
     padding 26px 45px
     overflow hidden
     img
-      height 75px
+      height 60px
+      line-height 36.5px
+      opacity 37.53
       float left
       vertical-align middle
+      margin-top -11px
     span
       font-size 18px
-      line-height 33px
+      line-height 30px
       margin-left 12px
-      color #000000
+      float left
+      margin-top 5px
   .cont
     display flex
     justify-content space-around
@@ -190,22 +194,24 @@ export default {
     .board
       align-self center
       background #ffffff
-      border 1px solid #cccccc
+      border 1px solid #BAC6DC
       box-shadow 0 1px 12px rgba(255, 255, 255, 0.5)
       h2
         font-size 24px
-        color #7c7c7c
+        color #525F75
         line-height 60px
         box-shadow 0 1px 0 #cfc9c9
         text-align center
       .inputCont
         padding 30px
+        overflow hidden
+        position relative
         .inputCode
           display flex
           .smInput
             width 176px
             height 16px
-            border 1px solid #cccccc
+            border 1px solid #BAC6DC
             padding 14px 9px
             margin-bottom 24px
             span
@@ -238,8 +244,28 @@ export default {
             height 44px
             line-height 44px
             color #ffffff
-            background #999999
+            background #BAC6DC
             font-size 16px
+          .testButtonPic
+            display inline-block
+            border-radius 2px
+            text-align center
+            cursor pointer
+            margin-left 23px
+            width 108px
+            height 30px
+            line-height 30px
+            // color red
+            // background white
+            border 1px solid #BAC6DC
+            font-size 16px
+          .change
+            position absolute
+            right 60px
+            top 135px
+            font-size 12px
+            color #40B6FF
+            cursor pointer
           .active
             background #40b6ff
           .actives
@@ -247,14 +273,15 @@ export default {
         .input
           width 310px
           height 16px
-          border 1px solid #cccccc
+          border 1px solid #BAC6DC
           padding 14px 9px
-          margin-bottom 24px
-          span
+          margin-bottom 17px
+          img
             display inline-block
-            width 24px
+            // width 24px
             height 24px
             text-align center
+            vertical-align middle
           input
             width 250px
             margin-left 15px
@@ -273,33 +300,42 @@ export default {
         .pCont
           margin-bottom 42px
           &:after
-            // content '6-18位数字+字母'
+            content '6-18位数字/字母'
             display inline-block
             font-size 12px
-            color #999999
+            color #525F75
             line-height 28px
+            margin-top 5px
+        .left
+          float left
+          width 176px
+        .right
+          float left
+          width 108px
         button
+          clear both
           width 100%
           border none
           outline none
           line-height 52px
           color #ffffff
           font-size 16px
-          background #ff3341
+          background #40b6ff
           cursor pointer
           border-radius 2px
           margin-bottom 16px
           &:hover
-            background #ff3341
+            background #40b6f2
         h3
           overflow hidden
           span
-            font-size 12px
+            font-size 14px
             float right
             line-height 38px
             cursor pointer
-            :hover
-              color #ff3341
+            color #525F75
+            // :hover
+            // color #40b6ff
         .actives
           border 1px solid #40b6f2
 </style>
