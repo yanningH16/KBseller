@@ -89,10 +89,10 @@
         <!-- 上传CSV成功后显示 -->
         <li class="forList" v-if="uploadSuccessObj.isSuccess && postOrderType==1">
           <div v-show="!cantCreatTask" v-for="(item, index) in uploadSuccessObj.data" :key="index">
-            <p style="margin: 10px 0; font-weight: bolder;">{{ index+1 }}.商品名称:
-              <span>{{ item.productName }}</span>
+            <p style="margin: 10px 0; font-weight: bolder;font-size:16px;">{{ index+1 }}.商品名称:
+              <span style="color: rgb(13,188,121)">{{ item.productName }}</span>
             </p>
-            <p style="margin-bottom:20px;">
+            <p style="margin-bottom:40px;font-size:14px;">
               物品重量
               <el-input v-model="item.minWeight" style="width:75px;" type="number" placeholder="请输入内容"></el-input>&nbsp; kg&nbsp;&nbsp;- &nbsp;&nbsp;
               <el-input v-model="item.maxWeight" style="width:75px;" type="number" placeholder="请输入内容"></el-input>&nbsp;&nbsp;kg

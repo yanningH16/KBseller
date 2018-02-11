@@ -120,11 +120,11 @@ export default {
               {
                 text: '申请底单',
                 link: 'pushAdmin'
-              },
-              {
-                text: '公告',
-                link: 'myReport'
               }
+              // {
+              //   text: '公告',
+              //   link: 'myReport'
+              // }
             ]
           }
         ]
