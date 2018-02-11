@@ -57,7 +57,8 @@
         <!-- 手工发货 -->
         <li class="hand" v-if="postOrderType==2">
           <strong style="display:inline-block;width:100px;">收件地址</strong>
-          <p style="font-size:12px;color:#ff3341;padding-bottom:10px;display:inline-block;">地址示例：浙江省 杭州市 萧山区 东三路海神苑K幢678（必须包含省市区信息，省市区一定要以空格隔开）</p>
+          <p style="font-size:12px;color:#ff3341;padding-bottom:10px;display:inline-block;">地址示例：浙江省 杭州市 萧山区 东三路海神苑K幢678（必须包含省市区信息，省市区一定要以
+            <em style="font-weight:bolder;font-size:16px;">空格隔开</em>）</p>
           <p class="info" v-for="(item,index) in inputArr" :key="index">
             <input type="text" v-model="item.thirdOrder" placeholder="订单编号">
             <input type="text" v-model="item.reciverName" placeholder="姓名">
