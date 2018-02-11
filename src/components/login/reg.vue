@@ -10,7 +10,7 @@
         <div class="inputCont">
           <div class="input" :class="{'actives':focus}">
             <img src="../../assets/image/phone.png" alt="">
-            <input v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus>
+            <input @input="isCanUse" v-model="phoneNum" type="number" placeholder="输入手机号" @focus="focus=true" @blur="focus=false" autofocus>
           </div>
           <div class="inputCode">
             <div class="smInput input" :class="{'actives':focusCode}">
@@ -85,7 +85,7 @@ export default {
     },
     send () {
       this.isSendMsg = false
-      this.$ajax.post('/api/sms/sendVcode', {
+      this.$ajax.post('/api/config/sms/sendSms', {
         telephone: this.phoneNum,
         type: 1
       }).then((data) => {

@@ -59,8 +59,7 @@ export default {
         // 登录
         this.$ajax.post('/apiseller/login', {
           telephone: this.username,
-          password: md5(this.password),
-          ip: this.ip
+          password: md5(this.password)
         }).then((data) => {
           console.log(data)
           if (data.data.code === '200') {

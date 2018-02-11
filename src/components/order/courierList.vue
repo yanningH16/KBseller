@@ -144,6 +144,7 @@ export default {
       restaurants: [],
       shopNameArr: [],
       shopAdressArr: [],
+      ceshiData: '',
       options: [{
         value: '1',
         label: '圆通'
@@ -191,7 +192,8 @@ export default {
         receiveTelephone: this.input2,
         sellerTaskId: this.input1,
         thirdOrderId: this.input,
-        sellerAccountId: this.userInfo.sellerAccountId
+        sellerAccountId: this.userInfo.sellerAccountId,
+        sellerShopId: this.ceshiData
       }
     },
     ...mapGetters([
@@ -250,7 +252,8 @@ export default {
           let arr = []
           for (let word of res.data) {
             let obj = {
-              value: word.shopName
+              value: word.shopName,
+              sellerShopId: word.sellerShopId
             }
             arr.push(obj)
           }
@@ -278,7 +281,8 @@ export default {
       }
     },
     handleSelect (item) {
-      this.shopNameId = item.shopNameId
+      console.log(item)
+      this.ceshiData = item.sellerShopId
     }
   }
 

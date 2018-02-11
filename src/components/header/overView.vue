@@ -24,7 +24,7 @@
       <li class="carAddress">
         <h3>我的发货地址</h3>
         <p>共计:
-          <span style="color:#ff3341;font-size:20px">{{userInfo.shipAddressSum}}</span> 个</p>
+          <span style="color:#ff3341;font-size:20px">{{shipAddressSum}}</span> 个</p>
         <p>{{shopArd}}</p>
         <router-link :to="{name:'shopAdminList'}">
           <p class="more">查看更多</p>
@@ -165,6 +165,7 @@ export default {
       }],
       value: '',
       value1: '',
+      shipAddressSum: '',
       apiUrl: '/api/order/search/getSellerTaskByCondition',
       taskState: [{
         value2: '0',
@@ -199,6 +200,7 @@ export default {
   },
   created () {
     this.getAllShop()
+    this.getInfoNum()
   },
   mounted () {
     this.getMoney()
@@ -277,6 +279,22 @@ export default {
           message: '网络错误,刷新试试',
           type: 'error'
         })
+      })
+    },
+    getInfoNum () {
+      this.$ajax.post('/api/seller/getSellerAccountBySellerAccountId', {
+        sellerAccountId: this.userInfo.sellerAccountId
+      }).then((data) => {
+        console.log(data)
+        if (data.data.code === '200') {
+          this.shipAddressSum = data.data.data.shipAddressSum
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.data.message
+          })
+        }
+      }).catch(() => {
       })
     },
     // 获取店铺列表
