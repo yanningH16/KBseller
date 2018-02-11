@@ -328,7 +328,7 @@ export default {
                 })
                 this.isCanPostCreat = false
                 return false
-              } else if (i === 'telephone' && !((/\d{6,13}/g).test(m[i]))) {
+              } else if (i === 'telephone' && !((/^\d{6,13}$/g).test(m[i]))) {
                 this.$message({
                   message: '手机号码格式有误!',
                   type: 'warning'
