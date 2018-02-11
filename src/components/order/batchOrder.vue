@@ -486,8 +486,6 @@ export default {
           .fontIcon
             font-size 20px
             color white
-        .short
-          width 300px
       .weight
         color #444444
         font-size 12px
