@@ -57,7 +57,7 @@ export default {
         return false
       } else {
         // 登录
-        this.$ajax.post('/apiseller/login', {
+        this.$ajax.post('/api/seller/login', {
           telephone: this.username,
           password: md5(this.password)
         }).then((data) => {
