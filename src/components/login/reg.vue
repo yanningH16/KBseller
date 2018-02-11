@@ -37,7 +37,7 @@
             <img src="../../assets/image/password.png" alt="">
             <input type="text" placeholder="请输入邀请码" v-model="intervalCode" @focus="focusWordss=true" @blur="focusWordss=false">
           </div>
-          <button @click="submit">下一步</button>
+          <button @click="submit">确认注册</button>
           <h3>
             <span>
               <router-link :to="{ name: 'login', params: { userId: 123 }}">去登录</router-link>
