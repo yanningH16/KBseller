@@ -10,7 +10,7 @@
           <span class="icon" :class="item.icon"></span>
           <span class="text">{{item.header}}</span>
         </div>
-        <router-link tag="div" class="routerLine" v-for="(line,lineIndex) in item.lines" :key="lineIndex" :to="{name:line.link}" ref="routerLine">
+        <router-link tag="div" class="routerLine" @click.native="refresh(line.link)" v-for="(line,lineIndex) in item.lines" :key="lineIndex" :to="{name:line.link}" ref="routerLine">
           <span class="text">{{line.text}}</span>
           <span class="bradge" v-if="line.bradge">{{line.bradge}}</span>
         </router-link>
@@ -189,6 +189,12 @@ export default {
     },
     copyText () {
       // this.pointNum()
+    },
+    // 点击当前导航刷新
+    refresh (routerName) {
+      if (this.$route.name === routerName) {
+        this.$router.go(0)
+      }
     }
   }
 }

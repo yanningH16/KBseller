@@ -31,7 +31,7 @@
           <span class="pay" @click="$router.push({name: 'coinPay'})">立即充值</span>
         </p>
         <button class="btn" @click="sureToPay">确认支付</button>
-        <button class="btn" @click="$router.push({name: 'taskList'})">稍后支付</button>
+        <button class="btn" style="background:#ededed;color:#9b9b9b;" @click="$router.push({name: 'taskList'})">稍后支付</button>
       </div>
     </div>
   </div>
