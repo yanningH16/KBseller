@@ -115,7 +115,6 @@ export default {
             newPassword: md5(this.newpass),
             oldPassword: md5(this.agpass)
           }).then(data => {
-            // console.log(data)
             if (data.data.code === '200') {
               this.$message({
                 message: data.data.message,

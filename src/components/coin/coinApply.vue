@@ -104,7 +104,6 @@ export default {
         startTime: this.value3 ? this.value3[0] : null,
         endTime: this.value3 ? this.value3[1] : null
       }).then((data) => {
-        console.log(data)
         let res = data.data
         this.totalCount = res.data.total
         if (res.code === '200') {

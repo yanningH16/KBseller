@@ -210,7 +210,6 @@ export default {
   methods: {
     // 当点击删除进行删除操作
     handleClickDel (val) {
-      console.log(val)
       this.sellerTaskId = val.sellerTaskId
       this.centerDialogVisible = true
     },
@@ -245,7 +244,6 @@ export default {
     },
     // 当点击去支付
     handleClickGo (val) {
-      console.log(val)
       this.$router.push({ name: 'pay', query: { sellerTaskId: val.sellerTaskId } })
     },
     search () {
@@ -253,7 +251,6 @@ export default {
     },
     // 当点击导出的时候进行导出
     handleClickUpload (val) {
-      // console.log(val)
       window.open('/api/task/downloadSellerOrdersBySellerTaskId?sellerTaskId=' + val.sellerTaskId)
     },
     // 获取所有地址
@@ -261,13 +258,11 @@ export default {
       this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           for (let i = 0; i < res.data.length; i++) {
             this.shopArd = res.data[0].senderName + ' ' + res.data[0].senderPhone + ' ' + res.data[0].province + ' ' + res.data[0].city + ' ' + res.data[0].region + ' ' + res.data[0].address
           }
-          console.log(this.shopArd)
         } else {
           this.$message({
             message: res.message,
@@ -285,7 +280,6 @@ export default {
       this.$ajax.post('/api/seller/getSellerAccountBySellerAccountId', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
           this.shipAddressSum = data.data.data.shipAddressSum
         } else {
@@ -302,7 +296,6 @@ export default {
       this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []

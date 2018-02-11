@@ -177,12 +177,10 @@ export default {
       this.getTask()
     },
     handleClickUpload (val) {
-      // console.log(val)
       window.open('/api/task/downloadSellerOrdersBySellerTaskId?sellerTaskId=' + val.sellerTaskId)
     },
     // 当点击去支付
     handleClickGo (val) {
-      // console.log(val)
       this.$router.push({ name: 'pay', query: { sellerTaskId: val.sellerTaskId } })
     },
     handleClick () {
@@ -192,7 +190,6 @@ export default {
     },
     // 当点击删除进行删除操作
     handleClickDel (val) {
-      console.log(val)
       this.sellerTaskId = val.sellerTaskId
       this.centerDialogVisible = true
     },
@@ -220,7 +217,6 @@ export default {
       this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -255,7 +251,6 @@ export default {
       }
     },
     handleSelect (item) {
-      console.log(item)
       this.ceshiData = item.sellerShopId
     }
   },

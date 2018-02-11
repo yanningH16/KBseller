@@ -219,7 +219,6 @@ export default {
       this.$ajax.post('/api/seller/shopAddress/getAllAddressList', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -246,7 +245,6 @@ export default {
       this.$ajax.post('/api/seller/shopAddress/getShopShortList', {
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -281,7 +279,6 @@ export default {
       }
     },
     handleSelect (item) {
-      console.log(item)
       this.ceshiData = item.sellerShopId
     }
   }

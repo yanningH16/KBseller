@@ -75,7 +75,6 @@ export default {
   },
   methods: {
     isCanUse () {
-      console.log(this.picPassword)
       if (/^1[34578]\d{9}$/.test(this.phoneNum)) {
         this.isCan = true
         this.isSendMsg = true
@@ -89,7 +88,6 @@ export default {
         telephone: this.phoneNum,
         type: 1
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
           this.$message({
             message: '发送成功',
@@ -138,7 +136,6 @@ export default {
         type: 1,
         inviteCode: this.intervalCode
       }).then((data) => {
-        console.log(data)
         if (data.data.code === '200') {
           this.$message({
             message: '注册成功',
@@ -148,7 +145,6 @@ export default {
             telephone: data.data.data.telephone,
             password: md5(this.newpass)
           }).then(data => {
-            console.log(data)
             if (data.data.code === '200') {
               this.setUserInfo(data.data.data)
               this.setUserToken(data.headers.accesstoken)

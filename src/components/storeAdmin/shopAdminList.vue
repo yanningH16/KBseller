@@ -166,12 +166,10 @@ export default {
     },
     // 设置默认地址
     setAddress (val, id) {
-      console.log(val, id)
       this.$ajax.post('/api/seller/shopAddress/setDefaultShopAddress', {
         shopId: id,
         shipAddressId: val.shipAddressId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$message({
@@ -244,7 +242,6 @@ export default {
         sellerAccountId: this.userInfo.sellerAccountId,
         type: this.activeName === 'first' ? 3 : this.activeName === 'two' ? 1 : this.activeName === 'three' ? 2 : this.activeName === 'four' ? 4 : 5
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -278,7 +275,6 @@ export default {
       })
     },
     change (val) {
-      console.log(val)
       this.$router.push({ name: 'changeShop', query: { shopId: val, number: this.activeName === 'first' ? 3 : this.activeName === 'two' ? 1 : this.activeName === 'three' ? 2 : this.activeName === 'four' ? 4 : 5 } })
     },
     ...mapActions([

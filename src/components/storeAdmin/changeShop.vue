@@ -138,7 +138,6 @@ export default {
       this.$ajax.post('/api/seller/shopAddress/getShopDetailByShopId', {
         shopId: this.$route.query.shopId
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.input = res.data.shopUrl
@@ -164,7 +163,6 @@ export default {
           this.addArr = arr
           // 获取到所有的店铺id
           this.addAdre = arr1
-          console.log(this.addAdre)
         } else {
           this.$message({
             message: data.data.message,
@@ -210,7 +208,6 @@ export default {
           regionCode: this.zoneCode,
           address: this.jieName
         }).then((data) => {
-          console.log(data)
           let res = data.data
           if (res.code === '200') {
             this.$message({
@@ -218,7 +215,6 @@ export default {
               type: 'success'
             })
             this.saveAddressId.push(res.data.shipAddressId)
-            console.log(this.saveAddressId)
           } else {
             this.$message({
               message: res.message,
@@ -259,7 +255,6 @@ export default {
           }
         }
       }
-      console.log(dataArr, this.saveAddressId, this.removeArr)
       if (this.input === '' || this.input1 === '' || this.saveAddressId.length === 0) {
         this.$message({
           message: '请正确填写所有内容,不能留空哦...',
@@ -421,10 +416,8 @@ export default {
       })
     },
     remove (val, index) {
-      console.log(val, index)
       this.removeArr.push(val)
       this.addArr.splice(index, 1)
-      console.log(this.removeArr)
     },
     ...mapActions([
       'setUserInfo'

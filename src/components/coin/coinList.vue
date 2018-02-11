@@ -132,7 +132,6 @@ export default {
       this.$ajax.post('/api/config/bankCard/getBankInfoList', {
         // sellerUserId: this.userInfo.sellerUserId
       }).then((data) => {
-        // console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -165,7 +164,6 @@ export default {
         cardNo: this.Card,
         isDefault: this.checked === true ? '1' : '0'
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$message({
@@ -192,7 +190,6 @@ export default {
         pageNo: 1,
         pageSize: 20
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           let arr = []
@@ -225,7 +222,6 @@ export default {
     },
     // 获取银行卡信息
     bianji (val) {
-      console.log(val)
       this.getBank = val.bankName
       this.getName = val.userName
       this.getCarNo = val.bankCardNo
@@ -263,7 +259,6 @@ export default {
         isDefault: this.checked === true ? '1' : '0',
         sellerAccountId: this.userInfo.sellerAccountId
       }).then((data) => {
-        // console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.$message({

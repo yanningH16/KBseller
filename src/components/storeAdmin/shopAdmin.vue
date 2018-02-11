@@ -150,7 +150,6 @@ export default {
         shopUrl: this.input,
         shopType: this.$route.query.number
       }).then((data) => {
-        console.log(data)
         let res = data.data
         if (res.code === '200') {
           this.input1 = res.data.title
@@ -205,7 +204,6 @@ export default {
           regionCode: this.zoneCode,
           address: this.jieName
         }).then((data) => {
-          console.log(data)
           let res = data.data
           if (res.code === '200') {
             this.$message({
@@ -213,7 +211,6 @@ export default {
               type: 'success'
             })
             this.saveAddressId.push(res.data.shipAddressId)
-            console.log(this.saveAddressId)
           } else {
             this.$message({
               message: res.message,
@@ -448,7 +445,6 @@ export default {
         arr.push(obj.shop)
       }
       this.saveAddressId = arr
-      console.log(this.saveAddressId.join(','))
     },
     selectAll () {
 
