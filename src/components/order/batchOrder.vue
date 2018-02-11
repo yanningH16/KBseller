@@ -327,6 +327,13 @@ export default {
                 })
                 this.isCanPostCreat = false
                 return false
+              } else if (i === 'telephone' && !((/^[1][3,4,5,7,8][0-9]{9}$/).test(m[i]))) {
+                this.$message({
+                  message: '手机号码格式有误!',
+                  type: 'warning'
+                })
+                this.isCanPostCreat = false
+                return false
               } else {
                 this.isCanPostCreat = true
               }
