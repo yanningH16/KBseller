@@ -41,8 +41,10 @@
             <i style="cursor:pointer;" @click="downModel">下载模板</i>
           </p>
           <p>3、单次上次最多上传500条记录</p>
-          <el-upload :accept="'.csv' || '.xls' || '.xlsx'" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="/api/task/uploadFile" :data="uploadParams" :headers="headers">
-            <button v-if="!uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传CSV文件</button>
+          <!-- :accept="accept" -->
+          <!-- :http-request="httpUpload" -->
+          <el-upload :accept="['.xlsx','.xls','.csv']" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" :action="uploadUrls" :data="uploadParams" :headers="headers">
+            <button v-if="!uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传文件</button>
             <button v-if="uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload" style="background:#ededed;color:#9b9b9b;">重新上传</button>
           </el-upload>
           <p class="prompt" :class="{ 'short': uploadSuccessObj.totalNum==uploadSuccessObj.realNum }" v-if="uploadSuccessObj.isSuccess">
@@ -109,12 +111,15 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
-import md5 from 'md5'
+// import md5 from 'md5'
 // import model from '../../assets/model/上传模板.zip'
 export default {
   name: 'batchOrder',
   data () {
     return {
+      uploadFileName: '',
+      oldFileName: '',
+      uploadUrls: '',
       uploadSuccessObj: {
         isSuccess: false,
         data: ''
@@ -143,16 +148,24 @@ export default {
     }
   },
   computed: {
-    uploadFileName: function (val) {
-      if (val) {
-        return val
-      } else {
-        return ''
-      }
-    },
+    // uploadUrls: function () {
+    //   let url = ''
+    //   let reg1 = /(\.csv)$/g
+    //   let reg2 = /(\.xlsx)$/g
+    //   let reg3 = /(\.xls)$/g
+    //   console.log(this.uploadFileName)
+    //   if (reg1.test(this.uploadFileName)) {
+    //     console.log('csv')
+    //     url = '/api/task/uploadFile'
+    //   } else if (reg2.test(this.uploadFileName) || reg3.test(this.uploadFileName)) {
+    //     console.log('excel')
+    //     url = '/api/task/uploadFile/excel'
+    //   }
+    //   return url
+    // },
     uploadParams: function (val) {
       let obj = {
-        oldFileName: this.uploadFileName,
+        oldFileName: this.oldFileName,
         shopType: this.postShop.shopType
       }
       return obj
@@ -195,10 +208,36 @@ export default {
       // let model = require('../../assets/model/上传模板.zip')
       window.open('../../../static/上传模板.zip')
     },
+    uploadUrl () {
+      let url = ''
+      let reg1 = /(\.csv)$/g
+      let reg2 = /(\.xlsx)$/g
+      let reg3 = /(\.xls)$/g
+      console.log(this.uploadFileName)
+      if (reg1.test(this.uploadFileName)) {
+        console.log('csv')
+        url = '/api/task/uploadFile'
+      } else if (reg2.test(this.uploadFileName) || reg3.test(this.uploadFileName)) {
+        console.log('excel')
+        url = '/api/task/uploadFile/excel'
+      }
+      return url
+    },
+    // httpUpload (file) {
+    //   console.log(file, 1111)
+    //   this.$ajax.post(this.uploadUrl(), file.file).then((response) => {
+    //     console.log(response)
+    //   }).catch((error) => {
+    //     console.error(error)
+    //   })
+    // },
     // 上传之前
     getFileName (file) {
-      let name = md5(file.name) + '.csv'
-      this.uploadFileName = name
+      // let name = md5(file.name) + file.name
+      if (this.uploadSuccessObj.uploadFileName) {
+        this.oldFileName = this.uploadSuccessObj.uploadFileName
+      }
+      this.uploadUrls = this.uploadUrl()
     },
     randNum (n, m) {
       let num = (Math.random() * (m - n + 1) + n).toFixed(2)
