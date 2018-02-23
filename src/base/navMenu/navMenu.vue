@@ -2,7 +2,7 @@
   <div class="menu" @dblclick="copyText">
     <div class="logo">
       <!-- <img src="../../assets/image/logow.png" alt="Logo" class="img"> -->
-      <span style="color:#ffffff;line-height:80px;font-size:18px;">包裹网</span>
+      <span style="color:#ffffff;line-height:80px;font-size:18px;">{{input}}</span>
     </div>
     <div class="router">
       <div class="routerBox" v-for="(item,index) in menus" :key="index" ref="routerBox" @click="setRouterActive">
@@ -38,11 +38,12 @@ export default {
       favorWaitPassCount: 0,
       notPassTaskCount: 0,
       orderWaitPassCount: 0,
-      toAddFavorCount: 0
+      toAddFavorCount: 0,
+      input: ''
     }
   },
   created () {
-    // this.pointNum()
+    this.getInfo()
   },
   computed: {
     menus: {
@@ -183,6 +184,23 @@ export default {
         } else if (activeRouter.indexOf('othersAdmin') !== -1) {
           this.isActive = 3
         }
+      })
+    },
+    getInfo () {
+      this.$ajax.post('/api/substation/getBaseStationInfo', {
+        substationId: this.userInfo.substationId
+      }).then((data) => {
+        let res = data.data.data
+        if (data.data.code === '200') {
+          this.input = res.substationName
+        } else {
+          this.$message({
+            message: data.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
       })
     },
     personInfo () {

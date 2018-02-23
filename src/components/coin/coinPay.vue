@@ -27,6 +27,25 @@
         <button class="buttn buttn_small" style="margin-left:180px" @click="getChargeInfo">生成充值单</button>
       </div>
     </div>
+    <!-- 升级规则 -->
+    <div class="leave">
+      <el-table :data="tableDataL" style="width: 300px">
+        <el-table-column prop="levelDetail" label="会员等级" align="center">
+        </el-table-column>
+        <el-table-column prop="conditionNeed" label="升级条件" align="center">
+          <template slot-scope="scope">
+            <span>累计充值满{{scope.row.conditionNeed}}元</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="leavePrice">
+      <el-table :data="priceSet" style="width: 200px">
+        <el-table-column prop="price" label="圆通价格" align="center">
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="coverWhite"></div>
     <div class="contentDelit">
       <h3>待处理充值
         <span class="balance">您的押金账户余额:
@@ -170,12 +189,16 @@ export default {
       getMon: '',
       item: '',
       apiUrl: '/api/seller/recharge/getRechargeListBySellerAccount',
-      disabled: false
+      disabled: false,
+      tableDataL: [],
+      priceSet: []
     }
   },
   created () {
     this.addBank()
     this.pointNum = Math.round(Math.random() * 99)
+    this.setInfo()
+    this.getPrice()
   },
   mounted () {
     this.getMoney()
@@ -396,6 +419,51 @@ export default {
         this.$message.error('未知错误！')
       })
     },
+    // 获取用户升级规则设置
+    setInfo () {
+      this.$ajax.post('/api/substation/getLevelUpList', {
+        substationId: this.userInfo.substationId
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (const word of res.data) {
+            let obj = {
+              levelDetail: word.levelDetail,
+              conditionNeed: word.conditionNeed,
+              id: word.id
+            }
+            arr.push(obj)
+            arr = arr.splice(0, 4)
+          }
+          this.tableDataL = arr
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
+    // 获取快递价格设置
+    getPrice () {
+      this.$ajax.post('/api/substation/getChargeRuleList', {
+        substationId: this.userInfo.substationId,
+        logisticType: 1
+      }).then((data) => {
+        let res = data.data
+        if (res.code === '200') {
+          let arr = []
+          for (const word of res.data) {
+            let obj = {
+              price: word.price
+            }
+            arr.push(obj)
+            arr = arr.splice(0, 4)
+          }
+          this.priceSet = arr
+        }
+      }).catch(() => {
+        this.$message.error('服务器错误！')
+      })
+    },
     ...mapActions([
       'setUserMoney'
     ])
@@ -480,4 +548,20 @@ export default {
         font-weight 600
       .star
         color #ff3341
+  .leave
+    position absolute
+    top 118px
+    right 400px
+  .leavePrice
+    position absolute
+    top 118px
+    right 220px
+  .coverWhite
+    position absolute
+    top 171px
+    right 200px
+    width 500px
+    height 204px
+    background rgba(0, 0, 0, 0)
+    z-index 999
 </style>
