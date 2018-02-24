@@ -1,6 +1,6 @@
 <template>
   <div class="overView">
-    <img class="guide" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291795730&di=6f65b2e18c0ec24c646336f70f121c64&imgtype=0&src=http%3A%2F%2Fimg.warting.com%2Fallimg%2F2016%2F0219%2Ffowr1rkr3gq-320.jpg" alt="">
+    <!-- <img class="guide" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517291795730&di=6f65b2e18c0ec24c646336f70f121c64&imgtype=0&src=http%3A%2F%2Fimg.warting.com%2Fallimg%2F2016%2F0219%2Ffowr1rkr3gq-320.jpg" alt=""> -->
     <ul class="leftMoney">
       <li>
         <h3>我的账户</h3>
