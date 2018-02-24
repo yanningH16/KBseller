@@ -212,7 +212,8 @@ export default {
     justify-content space-around
     align-content center
     height calc(100% - 200px)
-    background url('../../assets/image/timg.jpg')
+    background url('../../assets/image/bg.png') no-repeat
+    background-size 1980px
     .text
       align-self center
       font-size 24px

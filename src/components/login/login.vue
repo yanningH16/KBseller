@@ -14,6 +14,7 @@
           <div class="input">
             <span class="el-icon-edit-outline"></span>
             <input type="password" placeholder="输入登录密码" v-model="password">
+            <p class="textBottom">系统已升级，登入账户更改为绑定手机号、初始密码为：123456 登入后请尽快修改密码</p>
           </div>
           <button @click="login">登&nbsp;录</button>
           <h3>
@@ -239,7 +240,8 @@ export default {
     justify-content space-around
     align-content center
     height calc(100% - 200px)
-    background url('../../assets/image/timg.jpg')
+    background url('../../assets/image/bg.png') no-repeat
+    background-size 1980px
     .text
       align-self center
       font-size 24px
@@ -276,7 +278,11 @@ export default {
             border none
             font-size 16px
             line-height 22px
+          .textBottom
+            margin-top 10px
+            line-height 20px
         button
+          margin-top 30px
           width 100%
           border none
           outline none
