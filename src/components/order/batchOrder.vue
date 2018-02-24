@@ -43,7 +43,7 @@
           <p>3、单次上次最多上传500条记录</p>
           <!-- :accept="accept" -->
           <!-- :http-request="httpUpload" -->
-          <el-upload :accept="['.xlsx','.xls','.csv']" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" :action="uploadUrls" :data="uploadParams" :headers="headers">
+          <el-upload :accept="['.xlsx','.xls','.csv']" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="" :data="uploadParams" :headers="headers">
             <button v-if="!uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传文件</button>
             <button v-if="uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload" style="background:#ededed;color:#9b9b9b;">重新上传</button>
           </el-upload>
@@ -119,6 +119,7 @@ export default {
     return {
       uploadFileName: '',
       oldFileName: '',
+      filePostfix: '', // 文件上传成功后的格式
       uploadUrls: '',
       uploadSuccessObj: {
         isSuccess: false,
@@ -164,9 +165,17 @@ export default {
     //   return url
     // },
     uploadParams: function (val) {
-      let obj = {
-        oldFileName: this.oldFileName,
-        shopType: this.postShop.shopType
+      let obj = {}
+      if (this.oldFileName) {
+        obj = {
+          oldFileName: this.oldFileName,
+          shopType: this.postShop.shopType
+        }
+      } else {
+        obj = {
+          oldFileName: '',
+          shopType: this.postShop.shopType
+        }
       }
       return obj
     },
@@ -237,7 +246,36 @@ export default {
       if (this.uploadSuccessObj.uploadFileName) {
         this.oldFileName = this.uploadSuccessObj.uploadFileName
       }
-      this.uploadUrls = this.uploadUrl()
+      if ((/(\.csv)$/g).test(file.name)) {
+        console.log('csv')
+        this.uploadUrls = '/api/task/uploadFile'
+      } else if ((/(\.xlsx)$/g).test(file.name) || (/(\.xls)$/g).test(file.name)) {
+        console.log('excel')
+        this.uploadUrls = '/api/task/uploadFile/excel'
+      }
+      let fd = new FormData()
+      fd.append('file', file)
+      if (this.oldFileName) {
+        fd.append('oldFileName', this.oldFileName)
+      } else {
+        fd.append('oldFileName', '')
+      }
+      fd.append('shopType', this.postShop.shopType)
+      this.$ajax.post(this.uploadUrls, fd).then((res) => {
+        console.log(res)
+        if (res.data.code === '200') {
+          this.uploadSuccess(res.data, file)
+        } else {
+          this.$message({
+            message: res.data.message,
+            type: 'warning'
+          })
+        }
+      }).catch((err) => {
+        console.error(err)
+      })
+      return false
+      // this.uploadUrls = this.uploadUrl()
     },
     randNum (n, m) {
       let num = (Math.random() * (m - n + 1) + n).toFixed(2)
@@ -268,6 +306,7 @@ export default {
         this.uploadSuccessObj.realNum = res.data.realNum
         this.uploadSuccessObj.uploadFileName = res.data.uploadFileName
         this.uploadSuccessObj.isSuccess = true
+        this.filePostfix = res.data.filePostfix
         this.testCanCreatTask()
       } else {
         this.$message({
@@ -286,7 +325,7 @@ export default {
     },
     // 下载失败列表
     downFail () {
-      window.open('/api/task/downloadErrorOrderIds?fileName=' + this.uploadSuccessObj.uploadFileName + '&shopType=' + this.postShop.shopType)
+      window.open('/api/task/downloadErrorOrderIds?fileName=' + this.uploadSuccessObj.uploadFileName + '&shopType=' + this.postShop.shopType + '&filePostfix=' + this.filePostfix)
     },
     // 验证输入的地址格式
     testAddress (index, val) {
@@ -325,7 +364,13 @@ export default {
             }
           }
           if (isCan) {
-            this.$ajax.post('/api/task/parseFile', { // 批量
+            let url = ''
+            if (this.filePostfix === 'xlsx' || this.filePostfix === 'xls') {
+              url = '/api/task/parseFile/excel'
+            } else {
+              url = '/api/task/parseFile'
+            }
+            this.$ajax.post(url, { // 批量
               uploadFileName: this.uploadSuccessObj.uploadFileName,
               shopType: this.postShop.shopType,
               logisticsType: this.postCompant,
@@ -335,7 +380,8 @@ export default {
               shopName: this.postShop.shopName,
               realNum: this.uploadSuccessObj.realNum,
               totalNum: this.uploadSuccessObj.totalNum,
-              productNames: this.uploadSuccessObj.data
+              productNames: this.uploadSuccessObj.data,
+              filePostfix: this.filePostfix
             }).then((data) => {
               if (data.data.code === '200') {
                 this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
