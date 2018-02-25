@@ -306,7 +306,7 @@ export default {
         this.uploadSuccessObj.realNum = res.data.realNum
         this.uploadSuccessObj.uploadFileName = res.data.uploadFileName
         this.uploadSuccessObj.isSuccess = true
-        this.filePostfix = res.data.filePostfix
+        this.filePostfix = res.data.filePostfix || ''
         this.testCanCreatTask()
       } else {
         this.$message({
