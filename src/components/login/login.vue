@@ -50,6 +50,7 @@
                 <span v-show="!show">{{time}} s</span>
               </span>
             </div>
+            <p style="margin-top:-15px">若获取不到验证码可修改手机号</p>
           </div>
         </div>
       </div>

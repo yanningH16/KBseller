@@ -19,7 +19,7 @@
             </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+((itemOne.region)||'') +' '+itemOne.address}}
                 <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
@@ -42,7 +42,7 @@
             </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+((itemOne.region)||'')+' '+itemOne.address}}
                 <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
@@ -65,7 +65,7 @@
             </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+((itemOne.region)||'')+' '+itemOne.address}}
                 <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
@@ -88,7 +88,7 @@
             </tr>
             <tr v-for="(itemOne,index) in item.addressId" :key="index">
               <i style="margin-left:20px">
-                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+itemOne.region+' '+itemOne.address}}
+                地址{{index+1}}:{{itemOne.senderName+' '+itemOne.senderPhone+' '+itemOne.province+' '+itemOne.city+' '+((itemOne.region)||'')+' '+itemOne.address}}
                 <span class="setAddress color" v-if="item.defaultAddressId!=itemOne.shipAddressId" @click="setAddress(item.addressId[index],item.shopId)">设为默认地址</span>
                 <span class="setAddress" v-if="item.defaultAddressId===itemOne.shipAddressId">默认地址</span>
               </i>
