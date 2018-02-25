@@ -14,7 +14,7 @@
           <div class="input">
             <span class="el-icon-edit-outline"></span>
             <input type="password" placeholder="输入登录密码" v-model="password">
-            <p class="textBottom">系统已升级，登入账户更改为绑定手机号、初始密码为：123456 登入后请尽快修改密码</p>
+            <h3 class="textBottom">系统已升级，登入账户更改为绑定手机号、初始密码为：123456 登入后请尽快修改密码</h3>
           </div>
           <button @click="login">登&nbsp;录</button>
           <h3>
@@ -281,8 +281,9 @@ export default {
           .textBottom
             margin-top 10px
             line-height 20px
+            font-size 12px
         button
-          margin-top 30px
+          margin-top 40px
           width 100%
           border none
           outline none
