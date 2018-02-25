@@ -185,7 +185,7 @@ export default {
       //   })
       //   return false
       // }
-      if (this.itemCode === '' || this.itemCity === '' || this.itemZone === '' || this.jieName === '' || this.phone === '' || this.sendName === '') {
+      if (this.itemCode === '' || this.itemCity === '' || this.jieName === '' || this.phone === '' || this.sendName === '') {
         this.$message({
           message: '请正确填写信息',
           type: 'warning'
