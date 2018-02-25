@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="logo">
-      <h2>包裹网 </h2>
+      <!-- <h2>包裹网 </h2> -->
     </div>
     <div class="cont">
       <div class="board">
