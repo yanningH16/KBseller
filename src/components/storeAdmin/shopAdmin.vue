@@ -30,7 +30,7 @@
         <li class="addContent" v-for="(item,index) in addArr" :key='index'>
           <!-- <i class="el-icon-delete" style="float:right;font-size:20px;cursor:pointer" @click="remove(index)"></i> -->
           <div>发货地址:
-            <span>{{item.itemCode+' '+item.itemCity+' '+item.itemZone}}</span>
+            <span>{{item.itemCode+' '+item.itemCity+' '+((item.itemZone)||'')}}</span>
           </div>
           <div style="margin-top:10px">发货人姓名:
             <span>{{item.sendName}}</span>
