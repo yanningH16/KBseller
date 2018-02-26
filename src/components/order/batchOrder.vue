@@ -23,7 +23,7 @@
         <li>
           <span>发货地址</span>
           <el-select v-model="postAddress" value-key="id" placeholder="请选择">
-            <el-option v-for="(item,index) in postAddressArr" :key="index" :label="item.senderName + ' ' + item.senderPhone + ' ' + item.province+item.city+item.region+item.address" :value="item">
+            <el-option v-for="(item,index) in postAddressArr" :key="index" :label="(item.senderName || '--') + ' ' + (item.senderPhone || '--') + ' ' + (item.province||'')+(item.city||'')+(item.region || '')+(item.address||'')" :value="item">
             </el-option>
           </el-select>
         </li>
