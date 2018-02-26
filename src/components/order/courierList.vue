@@ -83,14 +83,14 @@
                 <template slot-scope="scope">
                   <p>发货人姓名:{{scope.row.senderName}}</p>
                   <p>发货人电话：{{scope.row.senderTelephone}}</p>
-                  <p>发货人地址：{{scope.row.senderProvince+scope.row.senderCity+scope.row.senderRegion+scope.row.senderAddress}}</p>
+                  <p>发货人地址：{{scope.row.senderProvince+scope.row.senderCity+((scope.row.senderRegion)||'')+scope.row.senderAddress}}</p>
                 </template>
               </el-table-column>
               <el-table-column prop="receiveName" align="center" label="收货信息">
                 <template slot-scope="scope">
                   <p>收货人姓名:{{scope.row.receiveName}}</p>
                   <p>收货人电话：{{scope.row.receiveTelephone}}</p>
-                  <p>收货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+scope.row.receiveRegion+scope.row.receiveAddress}}</p>
+                  <p>收货人地址：{{scope.row.receiveProvince+scope.row.receiveCity+((scope.row.receiveRegion)||'')+scope.row.receiveAddress}}</p>
                 </template>
               </el-table-column>
               <el-table-column prop="logisticsOrderId" align="center" label="订单信息">
@@ -224,7 +224,7 @@ export default {
           let arr = []
           for (let word of res.data) {
             let obj = {
-              valueName: word.province + ' ' + word.city + ' ' + word.region + ' ' + word.address,
+              valueName: word.province + ' ' + word.city + ' ' + ((word.region) || '') + ' ' + word.address,
               value: word.shipAddressId
             }
             arr.push(obj)

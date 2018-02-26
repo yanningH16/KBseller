@@ -261,7 +261,7 @@ export default {
         let res = data.data
         if (res.code === '200') {
           for (let i = 0; i < res.data.length; i++) {
-            this.shopArd = res.data[0].senderName + ' ' + res.data[0].senderPhone + ' ' + res.data[0].province + ' ' + res.data[0].city + ' ' + res.data[0].region + ' ' + res.data[0].address
+            this.shopArd = res.data[0].senderName + ' ' + res.data[0].senderPhone + ' ' + res.data[0].province + ' ' + res.data[0].city + ' ' + ((res.data[0].region) || '') + ' ' + res.data[0].address
           }
         } else {
           this.$message({
