@@ -262,9 +262,14 @@ export default {
       }
       fd.append('shopType', this.postShop.shopType)
       this.$ajax.post(this.uploadUrls, fd).then((res) => {
-        console.log(res)
+        // console.log(res)
         if (res.data.code === '200') {
           this.uploadSuccess(res.data, file)
+        } else if (res.data.code === '1001') {
+          this.$message({
+            message: '数据缺失,请检查上传文件是否匹配店铺类型',
+            type: 'warning'
+          })
         } else {
           this.$message({
             message: res.data.message,
@@ -392,7 +397,7 @@ export default {
                 })
               }
             }).catch(() => {
-              this.$message.error('服务器错误！')
+              this.$message.error('生意太火爆了, 请稍后再试！')
             })
           }
         } else if (parseInt(this.postOrderType) === 2) { // 手动
@@ -426,6 +431,15 @@ export default {
             }
             arr.push(m.thirdOrder)
           }
+          if (this.handObj.minWeight === '' || this.handObj.maxWeight === '') {
+            this.$message({
+              message: '请填写重量范围',
+              type: 'warning'
+            })
+            this.isCanPostCreat = false
+          } else {
+            this.isCanPostCreat = true
+          }
           if (this.isCanPostCreat) {
             this.$ajax.post('/api/task/checkDuplicateThirdOrderId', { // 请求去重
               thirdOrderIds: arr
@@ -451,7 +465,7 @@ export default {
                 })
               }
             }).catch(() => {
-              this.$message.error('服务器错误！')
+              this.$message.error('生意太火爆了, 请稍后再试！！')
             })
           }
         }
@@ -478,7 +492,7 @@ export default {
           })
         }
       }).catch(() => {
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     // 获取店铺地址
@@ -495,7 +509,7 @@ export default {
           })
         }
       }).catch(() => {
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     // 获取发货地址列表
@@ -514,7 +528,7 @@ export default {
           })
         }
       }).catch(() => {
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     }
   },
