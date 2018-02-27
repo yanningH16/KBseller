@@ -167,7 +167,7 @@ export default {
         }
       }).catch((err) => {
         console.log(err)
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     add () {
@@ -299,7 +299,7 @@ export default {
         }
       }).catch((err) => {
         console.log(err)
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     // 刷新本地用户信息
@@ -318,7 +318,7 @@ export default {
     //     }
     //   }).catch((err) => {
     //     console.log(err)
-    //     this.$message.error('服务器错误！')
+    //     this.$message.error('生意太火爆了, 请稍后再试！！')
     //   })
     // },
     // 检测当省份发生变化出发的改变事件
@@ -369,7 +369,7 @@ export default {
         }
       }).catch((err) => {
         console.log(err)
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     // 通过省份获取市
@@ -398,7 +398,7 @@ export default {
         }
       }).catch((err) => {
         console.log(err)
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     // 通过市获取区的值
@@ -427,7 +427,7 @@ export default {
         }
       }).catch((err) => {
         console.log(err)
-        this.$message.error('服务器错误！')
+        this.$message.error('生意太火爆了, 请稍后再试！！')
       })
     },
     remove (index) {
