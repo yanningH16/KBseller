@@ -14,7 +14,7 @@
         <li class="site" v-if="this.$route.query.number != 4">
           <span>店铺首页链接&nbsp;&nbsp;</span>
           <el-input v-model="input" placeholder="请输入内容" style="width:384px"></el-input>
-          <span class="shopInfo" @click="getShopInfo">读取店铺信息</span>
+          <!-- <span class="shopInfo" @click="getShopInfo">读取店铺信息</span> -->
         </li>
         <li class="shopName">
           <span>店铺名称&nbsp;&nbsp;</span>
@@ -489,7 +489,8 @@ export default {
       min-width 800px
       max-width 1100px
       .site
-        margin-left 154px
+        // margin-left 154px
+        margin-left -30px
       .shopName
         margin-top 20px
       .addTititle
