@@ -119,6 +119,8 @@ export default {
                 this.isCan = false
               }
             } else {
+              localStorage.setItem('__userNameAccount__', this.username)
+              localStorage.setItem('__abcps__', this.password)
               this.$message({
                 message: '登录成功,页面跳转中...',
                 type: 'success',
@@ -212,6 +214,14 @@ export default {
     ...mapGetters([
       'userInfo'
     ])
+  },
+  mounted () {
+    if (localStorage.getItem('__userNameAccount__')) {
+      this.username = localStorage.getItem('__userNameAccount__')
+    }
+    if (localStorage.getItem('__abcps__')) {
+      this.password = localStorage.getItem('__abcps__')
+    }
   }
 }
 </script>

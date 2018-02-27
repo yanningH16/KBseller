@@ -9,7 +9,7 @@ import {
   clearErrorTimeList
 } from '../js/cache'
 // axios 配置
-axios.defaults.timeout = 5000
+axios.defaults.timeout = 10000
 clearErrorTimeList()
 // http request 拦截器
 /* axios token认证 */
