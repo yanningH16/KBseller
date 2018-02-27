@@ -441,6 +441,18 @@ export default {
               type: 'warning'
             })
             this.isCanPostCreat = false
+          } else if (this.handObj.minWeight > this.handObj.maxWeight) {
+            this.$message({
+              message: '最小重量不能大于最大重量',
+              type: 'warning'
+            })
+            this.isCanPostCreat = false
+          } else if (!(this.handObj.minWeight >= 0.5 && this.handObj.minWeight <= 40) || !(this.handObj.maxWeight >= 0.5 && this.handObj.maxWeight <= 40)) {
+            this.$message({
+              message: '重量请填写在0.5KG-40KG之间的范围',
+              type: 'warning'
+            })
+            this.isCanPostCreat = false
           } else {
             this.isCanPostCreat = true
           }
