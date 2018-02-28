@@ -30,7 +30,10 @@
         <p v-if="moneyObj.balance-taskObj.actualCost<0">余额不足,还需要¥{{ (taskObj.actualCost-moneyObj.balance) ? (taskObj.actualCost-moneyObj.balance-0).toFixed(2) : '--' }}
           <span class="pay" @click="$router.push({name: 'coinPay'})">立即充值</span>
         </p>
-        <button class="btn" @click="sureToPay">确认支付</button>
+        <button v-show="isPosting" class="btn" @click="sureToPay">确认支付</button>
+        <button v-show="!isPosting" class="btn">
+          <i class="el-icon-loading"></i>
+        </button>
         <button class="btn" style="background:#ededed;color:#9b9b9b;" @click="$router.push({name: 'taskList'})">稍后支付</button>
       </div>
     </div>
@@ -42,6 +45,7 @@ export default {
   name: 'pay',
   data () {
     return {
+      isPosting: true, // 转菊花, 防止多次支付
       tableData: [],
       taskObj: {},
       moneyObj: {}
@@ -93,6 +97,7 @@ export default {
       this.$ajax.post('/api/order/operate/sellerTaskPay', {
         sellerTaskId: this.$route.query.sellerTaskId
       }).then((data) => {
+        this.isPosting = false
         if (data.data.code === '200') {
           this.$message({
             message: '支付成功!',

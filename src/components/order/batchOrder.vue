@@ -107,7 +107,10 @@
           </div>
         </li>
         <li class="creatTask">
-          <button class="btn" :class="{ 'disabled': cantCreatTask }" :disabled="cantCreatTask" @click="sureToBuildTask">创建任务</button>
+          <button v-show="isPosting" class="btn" :class="{ 'disabled': cantCreatTask }" :disabled="cantCreatTask" @click="sureToBuildTask">创建任务</button>
+          <button v-show="!isPosting" class="btn">
+            <i class="el-icon-loading"></i>
+          </button>
         </li>
       </ul>
     </div>
@@ -121,6 +124,7 @@ export default {
   name: 'batchOrder',
   data () {
     return {
+      isPosting: true,
       uploadFileName: '',
       oldFileName: '',
       filePostfix: '', // 文件上传成功后的格式
@@ -356,7 +360,7 @@ export default {
           type: 'warning'
         })
       } else {
-        if (parseInt(this.postOrderType) === 1) {
+        if (parseInt(this.postOrderType) === 1) { // 批量下单
           let isCan = true
           for (let m of this.uploadSuccessObj.data) {
             for (let i in m) {
@@ -367,12 +371,27 @@ export default {
                   type: 'warning'
                 })
                 return false
+              } else if ((!(m['minWeight'] >= 0.5 && m['minWeight'] <= 40)) || (!(m['maxWeight'] >= 0.5 && m['maxWeight'] <= 40))) {
+                isCan = false
+                this.$message({
+                  message: '重量请填写在0.5KG-40KG之间的范围',
+                  type: 'warning'
+                })
+                return false
+              } else if (m['minWeight'] > m['maxWeight']) {
+                isCan = false
+                this.$message({
+                  message: '最小重量不能大于最小重量',
+                  type: 'warning'
+                })
+                return false
               } else {
                 isCan = true
               }
             }
           }
           if (isCan) {
+            this.isPosting = false // 点击提交以后的菊花
             let url = ''
             if (this.filePostfix === 'xlsx' || this.filePostfix === 'xls') {
               url = '/api/task/parseFile/excel'
@@ -457,6 +476,7 @@ export default {
             this.isCanPostCreat = true
           }
           if (this.isCanPostCreat) {
+            this.isPosting = false // 提交以后转菊花
             this.$ajax.post('/api/task/checkDuplicateThirdOrderId', { // 请求去重
               thirdOrderIds: arr
             }).then((data) => {
@@ -464,6 +484,7 @@ export default {
                 if (data.data.data.length === 0) {
                   this.creatTaskByHandPost()
                 } else if (data.data.data.length !== 0) {
+                  this.isPosting = true
                   this.$message({
                     // title: '订单号重复,请修改该订单!',
                     dangerouslyUseHTMLString: true,
