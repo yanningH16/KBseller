@@ -275,7 +275,7 @@ export default {
             account: res.data.account
           }
           this.input = this.item.label + ' ' + this.item.bankCardNo
-          this.input1 = res.data.name + ' ' + res.data.account
+          this.input1 = res.data.name + ' ' + res.data.bankName + '' + res.data.account
           this.input2 = this.input4 + '.' + this.pointNum
           this.input3 = res.data.random6
         } else {
