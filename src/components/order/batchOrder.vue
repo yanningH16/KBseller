@@ -371,17 +371,17 @@ export default {
                   type: 'warning'
                 })
                 return false
-              } else if ((!(m['minWeight'] >= 0.5 && m['minWeight'] <= 40)) || (!(m['maxWeight'] >= 0.5 && m['maxWeight'] <= 40))) {
+              } else if ((!(m['minWeight'] - 0 >= 0.5 && m['minWeight'] - 0 <= 40)) || (!(m['maxWeight'] - 0 >= 0.5 && m['maxWeight'] - 0 <= 40))) {
                 isCan = false
                 this.$message({
                   message: '重量请填写在0.5KG-40KG之间的范围',
                   type: 'warning'
                 })
                 return false
-              } else if (m['minWeight'] > m['maxWeight']) {
+              } else if (m['minWeight'] - 0 > m['maxWeight'] - 0) {
                 isCan = false
                 this.$message({
-                  message: '最小重量不能大于最小重量',
+                  message: '最小重量不能大于最大重量',
                   type: 'warning'
                 })
                 return false
@@ -460,13 +460,13 @@ export default {
               type: 'warning'
             })
             this.isCanPostCreat = false
-          } else if (this.handObj.minWeight > this.handObj.maxWeight) {
+          } else if (this.handObj.minWeight - 0 > this.handObj.maxWeight - 0) {
             this.$message({
               message: '最小重量不能大于最大重量',
               type: 'warning'
             })
             this.isCanPostCreat = false
-          } else if (!(this.handObj.minWeight >= 0.5 && this.handObj.minWeight <= 40) || !(this.handObj.maxWeight >= 0.5 && this.handObj.maxWeight <= 40)) {
+          } else if (!(this.handObj.minWeight - 0 >= 0.5 && this.handObj.minWeight - 0 <= 40) || !(this.handObj.maxWeight - 0 >= 0.5 && this.handObj.maxWeight - 0 <= 40)) {
             this.$message({
               message: '重量请填写在0.5KG-40KG之间的范围',
               type: 'warning'
