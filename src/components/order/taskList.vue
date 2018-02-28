@@ -177,7 +177,7 @@ export default {
       this.getTask()
     },
     handleClickUpload (val) {
-      window.open('/api/task/downloadSellerOrdersBySellerTaskId?sellerTaskId=' + val.sellerTaskId)
+      window.open('/api/task/downloadSellerOrdersBySellerTaskId/excel?sellerTaskId=' + val.sellerTaskId)
     },
     // 当点击去支付
     handleClickGo (val) {

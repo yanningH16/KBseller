@@ -251,7 +251,7 @@ export default {
     },
     // 当点击导出的时候进行导出
     handleClickUpload (val) {
-      window.open('/api/task/downloadSellerOrdersBySellerTaskId?sellerTaskId=' + val.sellerTaskId)
+      window.open('/api/task/downloadSellerOrdersBySellerTaskId/excel?sellerTaskId=' + val.sellerTaskId)
     },
     // 获取所有地址
     getAllShop () {
