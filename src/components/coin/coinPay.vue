@@ -316,7 +316,14 @@ export default {
               })
               this.dialogVisible = false
               this.getTask(1, this.pageSize)
-              this.isPosting = true
+              let time = 2
+              let interval = setInterval(() => {
+                time--
+                if (time === 0) {
+                  this.isPosting = true
+                  clearInterval(interval)
+                }
+              }, 1000)
             } else {
               this.$message({
                 message: data.data.message,
