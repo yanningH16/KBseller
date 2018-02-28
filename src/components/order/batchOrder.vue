@@ -527,6 +527,7 @@ export default {
             message: data.data.message,
             type: 'warning'
           })
+          this.isPosting = true // 出错关闭菊花
         }
       }).catch(() => {
         this.$message.error('生意太火爆了, 请稍后再试！！')
