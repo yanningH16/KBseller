@@ -43,7 +43,7 @@
           <p>3、单次上次最多上传500条记录</p>
           <!-- :accept="accept" -->
           <!-- :http-request="httpUpload" -->
-          <el-upload :accept="['.xlsx','.xls','.csv']" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="" :data="uploadParams" :headers="headers">
+          <el-upload :accept="['.xlsx','.xls']" :before-upload="getFileName" :on-success="uploadSuccess" :show-file-list="false" action="" :data="uploadParams" :headers="headers">
             <button v-if="!uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload">上传文件</button>
             <button v-if="uploadSuccessObj.isSuccess" class="btn" :class="{'disabled': canUpload}" :disabled="canUpload" style="background:#ededed;color:#9b9b9b;">重新上传</button>
           </el-upload>
