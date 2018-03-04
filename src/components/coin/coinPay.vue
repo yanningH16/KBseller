@@ -93,15 +93,15 @@
     <div class="payWrap">
       <el-dialog title="充值单" :visible.sync="dialogVisible" width="600px" :modal-append-to-body='false' center>
         <p>
-          <span style="margin-left:22px">请用您的这张银行卡</span>
+          <span style="padding-left:22px">请用您的这张银行卡</span>
           <el-input v-model="input" disabled></el-input>
         </p>
         <p>
-          <span style="margin-left:64px">向这张银行卡</span>
+          <span style="padding-left:64px">向这张银行卡</span>
           <el-input v-model="input1" disabled></el-input>
         </p>
         <p>
-          <span style="margin-left:120px">转款</span>
+          <span style="padding-left:120px">转款</span>
           <el-input v-model="input2" disabled></el-input>元
         </p>
         <p>
@@ -120,7 +120,7 @@
       </el-dialog>
     </div>
     <!-- 充值单详情的弹窗 -->
-    <el-dialog title="充值单详情" :visible.sync="toview" width="600px" :modal-append-to-body='false'>
+    <el-dialog title="充值单详情" :visible.sync="toview" width="800px" :modal-append-to-body='false'>
       <div class="line"></div>
       <ul class="payPar">
         <li>
@@ -551,8 +551,8 @@ export default {
     font-size 15px
     p
       margin-bottom 10px
-      font-size 14px
       span
+        font-size 14px
         font-weight 600
       .star
         color #ff3341
