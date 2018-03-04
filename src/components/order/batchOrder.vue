@@ -82,14 +82,14 @@
           </p>
           <p class="text">系统自动会给每个订单在您设置范围内随机生成一个重量，如需固定重要，则填写一致即可</p>
           <p class="text">最小重量不能低于
-            <em>0.5KG</em>最大重量不能高于
+            <em>0.05KG</em>最大重量不能高于
             <em>40KG</em>
           </p>
         </li>
         <li class="weight" v-if="postOrderType==1">
           <p>1、包裹重量随机生成，范围在最小和最大重量之间，如果不需要随机把最大和最小重量值设置成一样即可</p>
           <p>2、最小重量不能低于
-            <em>0.5KG</em>最大重量不能高于
+            <em>0.05KG</em>最大重量不能高于
             <em>40KG</em>
           </p>
         </li>
@@ -371,10 +371,10 @@ export default {
                   type: 'warning'
                 })
                 return false
-              } else if ((!(m['minWeight'] - 0 >= 0.5 && m['minWeight'] - 0 <= 40)) || (!(m['maxWeight'] - 0 >= 0.5 && m['maxWeight'] - 0 <= 40))) {
+              } else if ((!(m['minWeight'] - 0 >= 0.05 && m['minWeight'] - 0 <= 40)) || (!(m['maxWeight'] - 0 >= 0.05 && m['maxWeight'] - 0 <= 40))) {
                 isCan = false
                 this.$message({
-                  message: '重量请填写在0.5KG-40KG之间的范围',
+                  message: '重量请填写在0.05KG-40KG之间的范围',
                   type: 'warning'
                 })
                 return false
@@ -466,9 +466,9 @@ export default {
               type: 'warning'
             })
             this.isCanPostCreat = false
-          } else if (!(this.handObj.minWeight - 0 >= 0.5 && this.handObj.minWeight - 0 <= 40) || !(this.handObj.maxWeight - 0 >= 0.5 && this.handObj.maxWeight - 0 <= 40)) {
+          } else if (!(this.handObj.minWeight - 0 >= 0.05 && this.handObj.minWeight - 0 <= 40) || !(this.handObj.maxWeight - 0 >= 0.05 && this.handObj.maxWeight - 0 <= 40)) {
             this.$message({
-              message: '重量请填写在0.5KG-40KG之间的范围',
+              message: '重量请填写在0.05KG-40KG之间的范围',
               type: 'warning'
             })
             this.isCanPostCreat = false
