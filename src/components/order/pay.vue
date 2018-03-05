@@ -46,6 +46,7 @@ export default {
   data () {
     return {
       isPosting: true, // 转菊花, 防止多次支付
+      payStatus: true, // 判断支付状态
       tableData: [],
       taskObj: {},
       moneyObj: {}
@@ -94,25 +95,29 @@ export default {
     },
     // 确认支付按钮
     sureToPay () {
-      this.$ajax.post('/api/order/operate/sellerTaskPay', {
-        sellerTaskId: this.$route.query.sellerTaskId
-      }).then((data) => {
+      if (this.payStatus) {
+        this.payStatus = false
         this.isPosting = false
-        if (data.data.code === '200') {
-          this.$message({
-            message: '支付成功!',
-            type: 'success'
-          })
-          this.$router.push({ name: 'taskList' })
-        } else {
-          this.$message({
-            message: data.data.message,
-            type: 'warning'
-          })
-        }
-      }).catch(() => {
-        this.$message.error('服务器错误！')
-      })
+        this.$ajax.post('/api/order/operate/sellerTaskPay', {
+          sellerTaskId: this.$route.query.sellerTaskId
+        }).then((data) => {
+          if (data.data.code === '200') {
+            this.$message({
+              message: '支付成功!',
+              type: 'success'
+            })
+            this.$router.push({ name: 'taskList' })
+          } else {
+            this.$message({
+              message: data.data.message,
+              type: 'warning'
+            })
+          }
+          this.payStatus = true
+        }).catch(() => {
+          this.$message.error('服务器错误！')
+        })
+      }
     }
   },
   mounted () {

@@ -269,6 +269,10 @@ export default {
         fd.append('oldFileName', '')
       }
       fd.append('shopType', this.postShop.shopType)
+      this.$message({
+        message: '文件上传中, 请稍等!!!',
+        type: 'warning'
+      })
       this.$ajax.post(this.uploadUrls, fd).then((res) => {
         // console.log(res)
         if (res.data.code === '200') {
@@ -321,6 +325,10 @@ export default {
         this.uploadSuccessObj.isSuccess = true
         this.filePostfix = res.data.filePostfix || ''
         this.testCanCreatTask()
+        this.$message({
+          message: '上传完成!',
+          type: 'success'
+        })
       } else {
         this.$message({
           message: res.message,
