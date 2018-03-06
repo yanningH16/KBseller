@@ -113,7 +113,6 @@ export default {
               type: 'warning'
             })
           }
-          this.payStatus = true
         }).catch(() => {
           this.$message.error('服务器错误！')
         })
