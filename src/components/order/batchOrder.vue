@@ -118,8 +118,9 @@
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
-// import md5 from 'md5'
-// import model from '../../assets/model/上传模板.zip'
+let socket
+/* global io */
+/* eslint no-undef: "error" */
 export default {
   name: 'batchOrder',
   data () {
@@ -157,21 +158,6 @@ export default {
     }
   },
   computed: {
-    // uploadUrls: function () {
-    //   let url = ''
-    //   let reg1 = /(\.csv)$/g
-    //   let reg2 = /(\.xlsx)$/g
-    //   let reg3 = /(\.xls)$/g
-    //   console.log(this.uploadFileName)
-    //   if (reg1.test(this.uploadFileName)) {
-    //     console.log('csv')
-    //     url = '/api/task/uploadFile'
-    //   } else if (reg2.test(this.uploadFileName) || reg3.test(this.uploadFileName)) {
-    //     console.log('excel')
-    //     url = '/api/task/uploadFile/excel'
-    //   }
-    //   return url
-    // },
     uploadParams: function (val) {
       let obj = {}
       if (this.oldFileName) {
@@ -206,6 +192,20 @@ export default {
     ])
   },
   methods: {
+    sockets () {
+      socket = io.connect('http://10.0.0.9:8089')
+      // socket.on('connect', () => {
+      //   socket.emit('test', '123')
+      //   console.log('connected')
+      // })
+      // socket.on('my-websocket', () => {
+      //   socket.emit('socket', '123')
+      //   console.log('my-websocket')
+      // })
+      socket.on('/topic/send', () => {
+        console.log(1111)
+      })
+    },
     add () {
       this.inputArr.push({
         thirdOrder: '',
@@ -240,14 +240,6 @@ export default {
       }
       return url
     },
-    // httpUpload (file) {
-    //   console.log(file, 1111)
-    //   this.$ajax.post(this.uploadUrl(), file.file).then((response) => {
-    //     console.log(response)
-    //   }).catch((error) => {
-    //     console.error(error)
-    //   })
-    // },
     // 上传之前
     getFileName (file) {
       // let name = md5(file.name) + file.name
@@ -580,6 +572,10 @@ export default {
   },
   mounted () {
     this.getShopList()
+    this.sockets()
+  },
+  destroyed () {
+    socket.disconnect()
   }
 }
 </script>

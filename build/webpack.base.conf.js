@@ -78,6 +78,7 @@ module.exports = {
     'vuex': 'Vuex',
     'axios': 'axios',
     'element-ui': 'ELEMENT',
-    'echarts': 'echarts'
+    'echarts': 'echarts',
+    'io': 'socket'
   }
 }
