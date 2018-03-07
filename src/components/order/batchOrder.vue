@@ -208,7 +208,7 @@ export default {
   },
   methods: {
     sockets () {
-      var socket = new SockJS('/mySocket')
+      var socket = new SockJS('http://18.218.181.216:8089/chatApp')
       var postUrl = '/user/' + this.userInfo.sellerAccountId + '/msg'
       let time1 = null
       let time2 = null

@@ -48,14 +48,6 @@ module.exports = {
         pathRewrite: {
           "^/ipApi": ""
         }
-      },
-      "/mySocket": {
-        // 解析文件socket
-        target: "http://18.218.181.216:8089/chatApp",
-        changeOrigin: true,
-        pathRewrite: {
-          "^/mySocket": ""
-        }
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
