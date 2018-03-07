@@ -314,7 +314,9 @@ export default {
       fd.append('shopType', this.postShop.shopType)
       this.$message({
         message: '文件上传中, 请稍等!!!',
-        type: 'warning'
+        type: 'warning',
+        duration: 0,
+        showClose: true
       })
       this.$ajax.post(this.uploadUrls, fd).then((res) => {
         // console.log(res)
@@ -351,6 +353,7 @@ export default {
     // 上传成功
     uploadSuccess (res, file, fileList) {
       if (res.code === '200') {
+        this.$message.closeAll()
         let arr = []
         for (let m of res.data.productNames) {
           // let min = this.randNum(0.05, 40) - 0
@@ -369,10 +372,10 @@ export default {
         this.filePostfix = res.data.filePostfix || ''
         this.testCanCreatTask()
         this.sockets() // 开启socket
-        // this.$message({
-        //   message: '上传完成!',
-        //   type: 'success'
-        // })
+        this.$message({
+          message: '上传完成!',
+          type: 'success'
+        })
       } else {
         this.$message({
           message: res.message,
