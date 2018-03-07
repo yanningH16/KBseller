@@ -79,6 +79,7 @@ module.exports = {
     'axios': 'axios',
     'element-ui': 'ELEMENT',
     'echarts': 'echarts',
-    'io': 'socket'
+    'sockjs': 'sockjs',
+    'stomp': 'stomp'
   }
 }

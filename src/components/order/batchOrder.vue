@@ -114,18 +114,33 @@
         </li>
       </ul>
     </div>
+    <!-- <span class="btn" @click="postSocket">店家点击</span> -->
+    <div class="progressWrap" v-show="isParseFile">
+      <div class="process">
+        <el-progress :text-inside="true" :stroke-width="18" :percentage="percent" :status="percent===100 ? 'success' : percent===-1 ? 'exception' : ''"></el-progress>
+        <p v-if="percent===0">开始生成任务</p>
+        <p v-else-if="percent===100">订单生成成功!</p>
+        <p v-else-if="percent===-1">文件解析错误，请联系上级!</p>
+        <p v-else>开始生成任务, 请耐心等待</p>
+      </div>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
 import { mapGetters } from 'vuex'
-let socket
-/* global io */
+let stompClient
+let parseStatus = 0
+/* global Stomp, SockJS */
 /* eslint no-undef: "error" */
 export default {
   name: 'batchOrder',
   data () {
     return {
       isPosting: true,
+      percent: 0,
+      isParseFile: false,
+      // parseStatus: 0, // 文件解析状态
+      parseSellerTaskId: '',
       uploadFileName: '',
       oldFileName: '',
       filePostfix: '', // 文件上传成功后的格式
@@ -193,18 +208,54 @@ export default {
   },
   methods: {
     sockets () {
-      socket = io.connect('http://10.0.0.9:8089')
-      // socket.on('connect', () => {
-      //   socket.emit('test', '123')
-      //   console.log('connected')
-      // })
-      // socket.on('my-websocket', () => {
-      //   socket.emit('socket', '123')
-      //   console.log('my-websocket')
-      // })
-      socket.on('/topic/send', () => {
-        console.log(1111)
+      var socket = new SockJS('/mySocket')
+      var postUrl = '/user/' + this.userInfo.sellerAccountId + '/msg'
+      let time1 = null
+      let time2 = null
+      let num1 = 0
+      let num2 = 80
+      let num3 = 100
+      stompClient = Stomp.over(socket)
+      stompClient.connect({}, (frame) => {
+        stompClient.subscribe(postUrl, (data) => {
+          // this.parseStatus = data.body
+          parseStatus = data.body
+          this.watchStatus(parseStatus, time1, time2, num1, num2, num3)
+        })
       })
+    },
+    // 检测解析文件的状态
+    watchStatus (val, time1, time2, num1, num2, num3) {
+      if (parseInt(val) === 0) {
+        this.percent = 0
+      } else if (parseInt(val) === 1) {
+        time1 = setInterval(() => {
+          num1 = num1 + 1
+          this.percent = num1
+          if (num1 >= num2) {
+            clearInterval(time1)
+          }
+        }, 10)
+      } else if (parseInt(val) === 2) {
+        clearInterval(time1)
+        time2 = setInterval(() => {
+          num2 = num2 + 1
+          this.percent = num2
+          if (num2 >= num3) {
+            clearInterval(time2)
+            this.$router.push({ name: 'pay', query: { sellerTaskId: this.parseSellerTaskId } })
+          }
+        }, 40)
+        // this.percent = 100
+      } else if (parseInt(val) === -1) {
+        this.percent = -1
+      }
+    },
+    // 请求socket获取该用户上传的文件解析情况
+    postSocket () {
+      stompClient.send('/app/login', {}, JSON.stringify({
+        'userId': this.userInfo.sellerAccountId
+      }))
     },
     add () {
       this.inputArr.push({
@@ -317,10 +368,11 @@ export default {
         this.uploadSuccessObj.isSuccess = true
         this.filePostfix = res.data.filePostfix || ''
         this.testCanCreatTask()
-        this.$message({
-          message: '上传完成!',
-          type: 'success'
-        })
+        this.sockets() // 开启socket
+        // this.$message({
+        //   message: '上传完成!',
+        //   type: 'success'
+        // })
       } else {
         this.$message({
           message: res.message,
@@ -392,6 +444,7 @@ export default {
           }
           if (isCan) {
             this.isPosting = false // 点击提交以后的菊花
+            this.isParseFile = true // 上传文件进度条
             let url = ''
             if (this.filePostfix === 'xlsx' || this.filePostfix === 'xls') {
               url = '/api/task/parseFile/excel'
@@ -409,10 +462,12 @@ export default {
               realNum: this.uploadSuccessObj.realNum,
               totalNum: this.uploadSuccessObj.totalNum,
               productNames: this.uploadSuccessObj.data,
-              filePostfix: this.filePostfix
+              filePostfix: this.filePostfix,
+              userId: this.userInfo.sellerAccountId
             }).then((data) => {
               if (data.data.code === '200') {
-                this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
+                this.parseSellerTaskId = data.data.data.sellerTaskId
+                // this.$router.push({ name: 'pay', query: { sellerTaskId: data.data.data.sellerTaskId } })
               } else {
                 this.$message({
                   message: data.data.message,
@@ -572,10 +627,11 @@ export default {
   },
   mounted () {
     this.getShopList()
-    this.sockets()
   },
   destroyed () {
-    socket.disconnect()
+    if (stompClient != null) {
+      stompClient.disconnect()
+    }
   }
 }
 </script>
@@ -692,4 +748,27 @@ export default {
           font-size 12px
           color #999999
           margin-top 8px
+  .progressWrap
+    position fixed
+    top 0
+    left 0
+    width 100%
+    height 100%
+    background rgba(25, 25, 25, 0.7)
+    z-index 999
+    .process
+      position absolute
+      top 0
+      left 0
+      bottom 0
+      right 0
+      margin auto
+      width 255px
+      height 100px
+      p
+        line-height 20px
+        font-size 18px
+        color #ff3341
+        margin-top 20px
+        text-align center
 </style>
