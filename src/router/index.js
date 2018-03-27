@@ -8,7 +8,7 @@ import reg from './reg/reg'
 
 const defaultRouter = [{
   path: '/',
-  redirect: 'login'
+  redirect: 'home'
 }]
 
 Vue.use(Router)
@@ -17,6 +17,7 @@ const routes = [...defaultRouter, ...error, ...home, ...login, ...reg]
 let router = new Router({
   routes,
   mode: 'history',
+  // return 期望滚动到哪个的位置
   scrollBehavior (to, from, savedPosition) {
     return { x: 0, y: 0 }
   }
